@@ -1,0 +1,39 @@
+Actividad 1:
+Parte 1. Depende de lo que se quiera, si se quiere acceder solo de manera local o desde cualquier punto. 
+Sí es correcto(red conectada de computadoras), pero no completamente,
+La distencion del director se debe a que la web se utiliza sobre internet internet. WEB usa los protocolos para enviar la informacion
+
+Parte 2. Ambos, pero si se habilita de manera privada.
+
+Parte 3. IETF tiene mayor peso en temas operativos para arrancar el servidor y aegurar la conexion, pero se pueden utilizar cualquiera de las 2 opciones, ya que IETF define lo que es TLS/HTTP, HTTPS y DNS, por otro lado W3C define HTML/CSS y accesiblidad
+
+Actividad 2:
+Parte 1.
+A: Internet
+La decisión se debe a que es un espacio en donde cualquier persona puede acceder, sin necesidad de pertenecer o tener un acceso especial, y el inicio de sesión es opcional.
+B: Intranet
+Se debe a que a el sistema solo tendrán acceso las personas asociadas directamente, por ejemplo, un empleado accede a la red de una organización, acá si es obligatorío el uso de autenticación.
+C: Extranet
+Se debe a que el acceso lo tienen usuarios externos autorizados (continuando el ejemplo de la municipalidad, el acceso podria otorgarse a una empresa constructora).Se necesita acceso controlado desde fuera de la institución con autenticación.
+
+
+Parte 2. El c y el b, ambas manejan información sensible.
+
+Parte 3. Sí se puede, trabajando con mismo hardward (por ejemplo, switch) se puede separar de manera lógica, mediante maquinas virtuales, VLANDs, etc.
+
+
+
+Actividad 3:
+Parte 1
+Esquema: https://
+Host/dominio: api.github.com
+Puerto: :443
+Ruta:   /repos/bryancs/isw521/issues
+Query string:?state=open&labels
+Fragmentos: #comentarios
+
+
+Parte 2
+1./cursos/isw-521/2026-2/san-carlos
+2./estudiantes/2022-0001
+3./cursos/isw-521/semanas/3/materiales

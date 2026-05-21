@@ -1,0 +1,44 @@
+Actividad #1
+1. No, porque aunque UDP es mas rápido, no es igual de seguro que TCP al momento de recibir paquetes porque TCP sabe reconocer cuando se perdió alguna parte del paquete, en cambio al UDP eso no le importa, si al momento de enviar un paquete se segmente por ejemplo en 10 partes, a TCP le importa recibir las 10 partes del paquete, si falta algo lo pide nuevamente, en cambio UDP si una de las 10 partes del paquete se pierde no le importa
+
+2. Se perderian la confirmacion de recepcion (ACK), retransmission automatica de paquetes perdidos, entrega ordenada de los datos, control dce flujo, control de congestion, deteccion de duplicados y manejo automatico de sesiones
+
+3. Donde si puede ser util, es en caso de alguna retransmission en tiempo real, por ejemplo, en Disney+ alguna carrera de la Formula 1, al usuario lo que le interesa es ver la carrera al mismo tiempo que se transmite, por eso se usa UDP, porque es el metodo de transmision mas rapido, por eso cuando la transmission se traba es porque el siguiente paquete de informacion se perdio, pero cuando se reanuda la transmission es porque llego un nuevo paquete
+
+4. Este agrega latencia inicial, porque antes de enviar datos debe realizarse un SYN(cliente), SYN-ACK(servidor) y un ACK(cliente) lo que implica un RTT extra antes de empezar a transmitir
+
+Actividad #2
+1. El beneficio es un mejor rendimiento y menor latencia, http/2 permite enviar multiples solicitudes al mismo tiempo usando una conexion TCP (multiplexacion), evitando abrir muchas conexiones como en HTTP/1.
+
+2. Eso es porque HTTP/2 aun utiliza TCP como protocolo de transporte, aunque http/2 permite varios streams simultaneous, si un paquete TCP se pierde, el protocolo se detiene temporalmente hasta que se recupere el paquete, eso provoca que los demas streams esperen
+
+3. Si tiene sentido, especialmente en sistemas con mucha trafico o usuarios moviles, http/3 ofrece menor latencia y mejor manejo de perdidas de paquetes debido a QUIC, abria que evaluar temas como la compatibilidad de los servidores, soporte de UDP en el servidor, compatibilidad de CDN, monitoreo y seguridad y estabilidad de la infraestructura
+
+4. La forma mas sencilla es usando herramientas del navegador o Tambien desde la terminal con comandos como Curl -I --http2 https://sitio.com o con Curl -I --http3 https://sitio.com
+
+Actividad #3
+
+A. E8, intermediate CA
+
+B. 2/8/26, 1:33:49 a. m. GMT-6
+
+C. TLS (OID.1.3.6.1.5.5.7.3.1)
+
+D. TLS_AES_GCM_SHA256
+
+E. Si el certificado esta vencido no puede garantizar autenticidad del sitio, ademas de que mostrara una advertencia de seguridad, ademas de que la conexion puede seguir cifrada pero no seria confiable porque el certificado no esta vigente
+
+Actividad #4
+
+1. 80 ms
+
+2. 40 ms
+
+3. 30 ms
+
+4. 70 recursos, la mayoria uso http/2 (h2)
+
+5. una imagen, puede optimizarse usando WebP
+
+6. La pagina tarda 80 ms en DNS, 40 ms en TCP y 30 ms en TLS, para un total aproximado de 150 ms de latencia inicial, carga 70 recursos, la mayoria usando HTTP/2, lo que mejora el rendimiento, el recurso más pesado es una imagen, que puede optimizarse usando WebP
+

@@ -1,0 +1,10 @@
+actividad 2.1 - elegi tu modelo de hosting
+
+A. exchange de criptomonedas
+	bare metal: requiere una latencia extremadamente baja y máximo rendimiento, con esto se evita virtualización ofreciendo un acceso 	directo al hardware
+
+B. api rest para app móvil
+	contenedores: el trafico es variable con picos altos, los contenedores permiten escalar automáticamente y desplegarse rápidamente sin intervención
+
+C. plataforma Saas multi-tenant
+	contenedores: maneja multiples microservicios frecuentes sin downtime

@@ -1,0 +1,80 @@
+actividad 1.1 hardware vs daemon
+
+1. systeminfo ---- información general del sistema
+   wmic cpu get loadpercentage ---- ver si el cpu esta saturado
+   sc query nginx ---- ver si el servicio esta detenido
+
+2. sc query nginx
+   wevtutil qe System /c:20 /f:text
+   nginx -t
+   net start nginx
+
+	1.revisar estado del servicio
+	2.ver logs del sistema
+	3.validar configuración
+	4.iniciar el servicio
+
+
+3. cuando no responde RDP ni comandos, uso del CPU al 100% sin poder matar los procesos, errores críticos en el visor de eventos, disco con fallos
+
+	comando para reiniciar: shutdown /r /t 0
+
+actividad 1.2 virtual hosting
+
+1. 192.168.1.10 portafolio.local
+   192.168.1.10 api.local
+   192.168.1.10 admin.local
+
+2. server {
+    listen 80;
+    server_name portafolio.local;
+
+    root /var/www/portafolio;
+    index index.html;
+}
+
+server {
+    listen 80;
+    server_name api.local;
+
+    root /var/www/api;
+    index index.html;
+}
+
+server {
+    listen 80;
+    server_name admin.local;
+
+    root /var/www/admin;
+    index index.html;
+}
+
+3. nginx responde con el primer server definido para ese puerto
+
+actividad - tema 1: diagnostico de entorno
+
+1. signidica que el puerto 8080 ya esta ocupado en otro proceso, el OS lo bloquea porque esta en uso
+
+2. netstat -ano | findstr :8080
+   	TCP 0.0.0.0:8080 ... LISTENING 1234
+   tasklist | findstr 1234
+
+3. taskkill /PID 1234 /F
+
+4. usar otro puerto o usar una herramienta como nodemon
+
+actividad 1.4 - apache vs nginx
+
+a. nginx, un menor consumo de RAM ya que no crea un proceso por conexion, y el modelo event-driven ya que asi maneja miles de conexiones con pocos procesos
+
+b. 10mb por proceso, por lo que 50mil conexiones es equivalente a 500GB de RAM
+
+c. location /socket {
+    proxy_pass http://backend;
+
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+
+    proxy_set_header Host $host;
+} 

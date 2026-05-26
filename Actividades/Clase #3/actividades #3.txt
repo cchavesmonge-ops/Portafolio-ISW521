@@ -1,0 +1,17 @@
+actividad 3.1 ¿sitio o aplicación?
+
+A. hibrido
+B. sitio web
+C. aplicación web
+
+actividad - tema 3: elegi tu arquitectura
+A.SSG
+B.CSR hibrido
+C.SSG
+
+actividad 3.3 - sesiones y tokens
+
+Descarto inmediatamente C ya que guarda la contrasela y usuario del estudiante localmente y envia constantemente en cada petición
+Escojeria la B, porque las Cookies HttpOnly evitan que scripts maliciosos puedan robar el token o sesión directamente desde el navegador
+
+

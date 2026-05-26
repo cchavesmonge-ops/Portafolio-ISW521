@@ -1,0 +1,13 @@
+actividad - tema 4: despliegue manual
+
+1. SCP porque ya se tiene acceso por SSH al VPS y SCP utiliza el mismo canal seguro cifrado
+	scp -r dist/ usuario@IP_DEL_SERVIDOR:/var/www/app/
+
+2. las configuraría como variables de entorno en el VPS, no hardcodeadas en el código
+	export DB_URL="mongodb://localhost:27017/app"
+	export JWT_SECRET="super_secreto"
+	export PORT=3000O
+
+3. expone secretos sendibles
+   queda en el historial de git
+   cada entorno usa configuraciones distintas

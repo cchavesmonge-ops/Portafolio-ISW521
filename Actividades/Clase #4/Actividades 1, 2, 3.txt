@@ -1,0 +1,44 @@
+Actividad - tema 1
+
+1. arreglo del login ---- fix(auth): fix the authentication error
+   cambios de bryan esta semana ---- chore: update weekly changes
+   feature nueva para el cliente ---- feat(client): add new function
+
+   node_modules/ ---- .gitignore debió tenerlo desde el inicio
+   .env ---- credenciales expuestas. rota todas las claves ahora
+
+2. .env      node:modules/express/index.js
+	crear un .gitignore antes del primer commit
+	
+3. archivo recién creado sin git add: Untracked
+   archivo con git add sin commit: Staged
+
+Actividad - tema 2
+
+1. git fetch
+	solo descarga los cambios del remoto, no mezcla ni reescribre automáticamente el trabajo local y permite inspeccionar que cambio 	antes de integrarlo
+
+2. git fetch
+   git rebase origin/main
+
+3. significa que hay commits que no se tienen localmente, git esta evitando que se sobrescriba para no perder trabajo
+	git fetch
+   	git rebase origin/main
+	git push origin/main
+
+Actividad - tema 3
+
+1. 3-way-merge
+	el git muestra que main (2c9e) y feature/user-profile
+
+2. git fetch origin
+   git log origin/feature/dark-mode --oneline
+   git diff origin/feature/dark-mode
+   git diff --name-only origin/feature/dark-mode
+   git diff main..origin/feature/dark-mode
+
+3.
+	objetivo/contexto: explicar que problema resuelve o que feature agrega
+	resumen de cambios realizados: lista concreta de modificaciones importantes
+	evidencia o testing: como se probo
+	impacto o consideraciones: advertencias para reviewers

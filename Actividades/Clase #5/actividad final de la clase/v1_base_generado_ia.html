@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<!-- ERROR: Falta atributo lang="es". Sin él, los lectores de pantalla
+     no conocen el idioma del documento (WCAG 2.1 criterio 3.1.1). -->
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- ERROR: Falta <meta name="viewport">. Sin él la página no es
+         responsiva en dispositivos móviles. -->
+    <!-- ERROR: Falta <meta name="description">. Impacto directo en SEO. -->
+    <title>Congreso Universitario</title>
+    <!-- ERROR: El <title> es demasiado genérico. No describe el evento
+         ni la institución, perjudicando SEO y la pestaña del navegador. -->
+    <style>
+        body { font-family: Arial; margin: 0; padding: 0; background: #f0f0f0; }
+        /* ERROR: font-family: Arial sin fuente de respaldo (sans-serif).
+           Si Arial no está disponible el navegador usará su fuente por defecto. */
+        .header { background: #003366; color: white; padding: 20px; text-align: center; }
+        /* ERROR: Clase genérica ".header" en lugar de usar el elemento
+           semántico <header>. No aporta significado estructural. */
+        .nav { background: #0055a5; padding: 10px; }
+        /* ERROR: Los enlaces de nav no tienen estado :focus visible.
+           Falla WCAG 2.1 criterio 2.4.7 (Focus Visible). */
+        .nav a { color: white; margin: 0 10px; text-decoration: none; }
+        .main { padding: 20px; }
+        .footer { background: #003366; color: white; padding: 15px; text-align: center; }
+        .card { background: white; border: 1px solid #ccc; padding: 15px; margin: 10px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        td, th { border: 1px solid #ccc; padding: 8px; }
+        th { background: #0055a5; color: white; }
+        input, select, textarea { width: 100%; padding: 8px; margin: 5px 0; box-sizing: border-box; }
+        .btn { background: #0055a5; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+        /* ERROR: .btn no tiene estado :focus visible ni :hover definido.
+           Inaccesible para navegación por teclado (WCAG 2.1 criterio 2.4.7). */
+    </style>
+</head>
+<body>
+    <!-- ERROR: <div class="header"> debe ser <header role="banner">.
+         Ausencia del landmark semántico priva a lectores de pantalla
+         de la región de encabezado del sitio. -->
+    <div class="header">
+        <!-- ERROR: <div> anidados sin propósito semántico (Div-Soup).
+             No aportan estructura ni significado al documento. -->
+        <div>
+            <div>
+                <h1>Congreso Universitario de Tecnología y Sostenibilidad</h1>
+                <!-- ERROR: Los siguientes <div> deberían ser <p>.
+                     Usar <div> para texto de párrafo rompe la semántica
+                     del flujo de contenido. -->
+                <div>UTN Sede San Carlos · 15, 16 y 17 de Agosto 2025</div>
+                <div>Innovar para un futuro verde y digital</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ERROR: <div class="nav"> debe ser <nav aria-label="Navegación principal">.
+         Sin el elemento <nav>, los lectores de pantalla no pueden saltar
+         directamente a la navegación mediante landmarks. -->
+    <div class="nav">
+        <!-- ERROR: Los enlaces de navegación deben estar dentro de una
+             lista <ul><li> para que tecnologías asistivas anuncien
+             cuántos ítems contiene el menú. -->
+        <a href="#inicio">Inicio</a>
+        <a href="#ponentes">Ponentes</a>
+        <a href="#horario">Horario</a>
+        <a href="#registro">Registro</a>
+        <a href="#ubicacion">Ubicación</a>
+    </div>
+
+    <!-- ERROR: <div class="main"> debe ser <main id="contenido-principal">.
+         Sin <main>, los lectores de pantalla no pueden saltar al contenido
+         principal (WCAG 2.1 criterio 2.4.1 - Bypass Blocks). -->
+    <div class="main">
+        <!-- ERROR: <div class="card"> debe ser <section aria-labelledby="...">.
+             Las regiones de contenido distinguibles deben usar elementos
+             semánticos de sección. -->
+        <div id="inicio" class="card">
+            <h2>Sobre el Congreso</h2>
+            <!-- ERROR: <div> envolviendo párrafos sin propósito semántico.
+                 Los <p> pueden ser hijos directos de <section>. -->
+            <div>
+                <p>El Congreso Universitario de Tecnología y Sostenibilidad es el evento académico más importante del año en la Sede San Carlos. Reunirá a investigadores, docentes, estudiantes y profesionales del sector tecnológico para discutir los desafíos del desarrollo sostenible en la era digital.</p>
+                <p>Este año el congreso se enfoca en tres ejes temáticos: Inteligencia Artificial Ética, Energías Renovables y Software para el Bien Común.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Video Promocional</h2>
+            <div>
+                <div class="mediaplugin mediaplugin_videojs d-block">
+                    <div style="max-width:100px;">
+                        <!-- ERROR 1: Falta atributo poster="img/poster.jpg".
+                             Sin poster el navegador reserva altura 0 hasta
+                             cargar el video, causando CLS (Core Web Vitals). -->
+                        <!-- ERROR 2: Falta atributo controls. Sin él el video
+                             es inoperable por teclado (WCAG 2.1 criterio 2.1.1). -->
+                        <!-- ERROR 3: Solo hay una fuente MP4. Se necesita también
+                             WebM para compatibilidad cross-browser. -->
+                        <!-- ERROR 4: Falta texto alternativo de accesibilidad
+                             (aria-label o <track>) para usuarios con discapacidad. -->
+                        <!-- ERROR 5: Falta atributo preload="metadata" para
+                             optimizar la carga inicial de la página. -->
+                        <!-- ERROR 6: El <video> no está dentro de <figure>/<figcaption>
+                             para proveer contexto semántico al medio. -->
+                        <video data-setup-lazy="{&quot;language&quot;: &quot;es&quot;, &quot;fluid&quot;: true, &quot;playbackRates&quot;: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2], &quot;userActions&quot;: {&quot;hotkeys&quot;: true}}" id="id_videojs_6a1db478553a5_1" class="video-js" title="promo_congreso.mp4">
+                            <source src="video/promo_congreso.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+                <!-- ERROR: Este <div> de fallback no es accesible ni semántico.
+                     El texto alternativo debe estar dentro del propio <video>
+                     como contenido de respaldo nativo de HTML5. -->
+                <div>Si no puedes ver el video, actualiza tu navegador.</div>
+            </div>
+        </div>
+
+        <!-- ERROR: <div class="card"> con ponentes debe ser <section>
+             y cada ponente debe ser un <article> con su propio <h3>
+             correctamente jerarquizado. -->
+        <div id="ponentes" class="card">
+            <h2>Ponentes Destacados</h2>
+            <div>
+                <!-- ERROR: Cada ponente es una entidad independiente y
+                     debe marcarse como <article> con encabezado <h3>,
+                     no como <div> con <strong> para simular un título. -->
+                <div class="card">
+                    <!-- ERROR: <strong> usado como sustituto de encabezado.
+                         No crea jerarquía de headings navegable por
+                         tecnologías asistivas. -->
+                    <div><strong>Dra. Laura Rodríguez</strong></div>
+                    <!-- ERROR: <div> para texto descriptivo; debería ser <p>. -->
+                    <div>Especialista en Inteligencia Artificial Ética - UCR</div>
+                    <div>Ponencia: "Sesgos algorítmicos en sistemas de contratación: el caso latinoamericano"</div>
+                </div>
+                <div class="card">
+                    <div><strong>Ing. Carlos Mendoza</strong></div>
+                    <div>Director de Innovación - Instituto Costarricense de Electricidad</div>
+                    <div>Ponencia: "Microrredes eléctricas rurales con energía solar: experiencias en zonas alejadas"</div>
+                </div>
+                <div class="card">
+                    <div><strong>MSc. Patricia Vega</strong></div>
+                    <div>Investigadora en Software Libre - TEC</div>
+                    <div>Ponencia: "Código abierto como herramienta para la democratización del conocimiento"</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="horario" class="card">
+            <h2>Horario del Congreso</h2>
+            <div>
+                <table>
+                    <!-- ERROR 1: Falta <caption>. Sin él la tabla no tiene
+                         título programáticamente asociado (WCAG 2.1 criterio 1.3.1). -->
+                    <!-- ERROR 2: Falta <thead>. Los navegadores y lectores de
+                         pantalla no pueden distinguir encabezados de datos. -->
+                    <!-- ERROR 3: Falta <tbody>. Sin él la estructura semántica
+                         de la tabla es incompleta. -->
+                    <!-- ERROR 4: Falta <tfoot> para la fila de totales. -->
+                    <!-- ERROR 5: Ningún <th> tiene atributo scope="col" o
+                         scope="row". JAWS/NVDA no pueden asociar cada celda
+                         con su encabezado al navegar de forma no lineal. -->
+                    <tr>
+                        <th>Hora</th>
+                        <th>Lunes 15 Ago</th>
+                        <th>Martes 16 Ago</th>
+                        <th>Miércoles 17 Ago</th>
+                    </tr>
+                    <tr>
+                        <!-- ERROR: Las celdas de hora de cada fila deberían
+                             ser <th scope="row"> no <td>, ya que funcionan
+                             como encabezados de su propia fila. -->
+                        <td>8:00 - 9:00</td>
+                        <td>Acreditación y Bienvenida</td>
+                        <td>Apertura del día</td>
+                        <td>Apertura del día</td>
+                    </tr>
+                    <tr>
+                        <td>9:00 - 10:30</td>
+                        <td>Conferencia Magistral: Dra. Rodríguez</td>
+                        <td>Taller de Machine Learning</td>
+                        <td>Panel: Futuro Verde</td>
+                    </tr>
+                    <tr>
+                        <td>10:30 - 11:00</td>
+                        <td>Coffee Break</td>
+                        <td>Coffee Break</td>
+                        <td>Coffee Break</td>
+                    </tr>
+                    <tr>
+                        <td>11:00 - 12:30</td>
+                        <td>Mesa Redonda: IA y Sociedad</td>
+                        <td>Presentaciones de investigación</td>
+                        <td>Conferencia: Ing. Mendoza</td>
+                    </tr>
+                    <tr>
+                        <td>12:30 - 14:00</td>
+                        <td>Almuerzo</td>
+                        <td>Almuerzo</td>
+                        <td>Almuerzo y clausura</td>
+                    </tr>
+                    <tr>
+                        <td>14:00 - 15:30</td>
+                        <td>Taller: Energías Renovables</td>
+                        <td>Conferencia: MSc. Vega</td>
+                        <td>Ceremonia de clausura</td>
+                    </tr>
+                    <tr>
+                        <td>15:30 - 17:00</td>
+                        <td>Exposición de Proyectos</td>
+                        <td>Networking y actividades</td>
+                        <td>-</td>
+                    </tr>
+                    <!-- ERROR: La fila de totales debería estar en <tfoot>
+                         y sus celdas de encabezado con scope="row". -->
+                    <tr>
+                        <td><strong>Total horas</strong></td>
+                        <td><strong>8 horas</strong></td>
+                        <td><strong>8 horas</strong></td>
+                        <td><strong>6 horas</strong></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="registro" class="card">
+            <h2>Formulario de Registro</h2>
+            <div>
+                <form action="#" method="post">
+                    <!-- ERROR: No hay <fieldset> ni <legend> para agrupar
+                         campos relacionados. Las tecnologías asistivas no
+                         pueden contextualizar los grupos de campos
+                         (WCAG 2.1 criterio 1.3.1). -->
+
+                    <!-- ERROR: <div> usado como etiqueta de campo. Debe ser
+                         <label for="nombre-completo"> vinculado por id.
+                         Sin esta asociación los lectores de pantalla no
+                         anuncian el campo al recibir el foco. -->
+                    <div>Nombre completo:</div>
+                    <!-- ERROR: Falta id, name, type correcto, autocomplete
+                         y required en todos los campos del formulario. -->
+                    <input type="text" placeholder="Ingrese su nombre completo">
+
+                    <div>Número de cédula:</div>
+                    <!-- ERROR: type="text" en vez de type="text" con pattern.
+                         Falta inputmode="numeric" para teclado numérico en móvil. -->
+                    <input type="text" placeholder="X-XXXX-XXXX">
+
+                    <div>Correo electrónico institucional:</div>
+                    <!-- ERROR: type="text" en lugar de type="email".
+                         El navegador no validará el formato de correo
+                         ni mostrará el teclado de email en móvil. -->
+                    <input type="text" placeholder="usuario@utn.ac.cr">
+
+                    <div>Número de teléfono:</div>
+                    <!-- ERROR: type="text" en lugar de type="tel".
+                         Falta inputmode="tel" y autocomplete="tel". -->
+                    <input type="text" placeholder="XXXX-XXXX">
+
+                    <div>Tipo de participante:</div>
+                    <!-- ERROR: <select> sin id, name ni <label> asociado.
+                         La primera <option> no tiene value="" ni disabled,
+                         lo que permite enviar el formulario sin selección. -->
+                    <select>
+                        <option>Seleccione una opción</option>
+                        <option>Estudiante de grado</option>
+                        <option>Estudiante de posgrado</option>
+                        <option>Docente universitario</option>
+                        <option>Profesional externo</option>
+                        <option>Investigador</option>
+                    </select>
+
+                    <div>Carrera o Departamento:</div>
+                    <!-- ERROR: <select> cerrado para lista no exhaustiva.
+                         Debe reemplazarse por <input list="..."> + <datalist>
+                         que permite entrada libre y sugerencias filtradas.
+                         Además falta id, name y <label> asociado. -->
+                    <select>
+                        <option>Seleccione su carrera</option>
+                        <option>Ingeniería en Sistemas</option>
+                        <option>Ingeniería en Electrónica</option>
+                        <option>Administración de Empresas</option>
+                        <option>Contaduría Pública</option>
+                        <option>Ingeniería en Construcción</option>
+                        <option>Seguridad e Higiene Laboral</option>
+                        <option>Trabajo Social</option>
+                        <option>Educación</option>
+                        <option>Otra</option>
+                    </select>
+
+                    <div>¿Cuáles talleres le interesan?</div>
+                    <!-- ERROR: Falta id, name y <label for="..."> asociado. -->
+                    <input type="text" placeholder="Ej: Machine Learning, Energías Renovables...">
+
+                    <div>Necesidades especiales o requerimientos de accesibilidad:</div>
+                    <!-- ERROR: <textarea> sin id, name ni <label> vinculado.
+                         Falta aria-describedby para instrucciones adicionales. -->
+                    <textarea rows="3" placeholder="Indique si tiene alguna necesidad especial..."></textarea>
+
+                    <div>Modalidad de asistencia:</div>
+                    <!-- ERROR: <select> sin id, name ni <label> asociado.
+                         Las <option> no tienen atributos value definidos. -->
+                    <select>
+                        <option>Presencial</option>
+                        <option>Virtual</option>
+                        <option>Híbrida</option>
+                    </select>
+
+                    <!-- ERROR CRÍTICO: Los checkboxes no tienen id ni <label for="...">.
+                         El área de clic no funciona y los lectores de pantalla
+                         no anuncian el texto del consentimiento al enfocar el campo. -->
+                    <!-- ERROR: <div> envuelve el checkbox en lugar de una
+                         estructura semántica <div class="checkbox-group"> con
+                         <label> correctamente posicionado. -->
+                    <div><input type="checkbox"> Acepto los términos y condiciones del congreso</div>
+                    <div><input type="checkbox"> Autorizo el uso de mis datos para fines académicos</div>
+                    <br>
+                    <!-- ERROR: <br> usado para espaciado. Debe usarse CSS margin/padding. -->
+                    <button class="btn" type="submit">Enviar Registro</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="ubicacion" class="card">
+            <h2>Ubicación</h2>
+            <div>
+                <!-- ERROR: Información de dirección debe estar dentro de
+                     <address>. Usar <div> pierde la semántica de contacto
+                     geográfico definida en HTML5. -->
+                <div>UTN Sede San Carlos, Ciudad Quesada, Alajuela, Costa Rica</div>
+                <div>Carretera Florencia - Ciudad Quesada, frente al Banco Nacional</div>
+                <br>
+                <!-- ERROR 1: Falta title descriptivo en el <iframe>.
+                     Sin él los lectores de pantalla anuncian "frame sin título"
+                     (WCAG 2.1 criterio 4.1.2). -->
+                <!-- ERROR 2: Falta loading="lazy". El iframe bloquea recursos
+                     críticos al cargarse inmediatamente con el documento. -->
+                <!-- ERROR 3: Falta atributo sandbox. Sin restricciones, el contenido
+                     embebido hereda el contexto de confianza del padre (riesgo XSS). -->
+                <!-- ERROR 4: Falta referrerpolicy="no-referrer-when-downgrade"
+                     para proteger información del referrer. -->
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.1234567890!2d-84.4234567!3d10.3234567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTPCsDE5JzI0LjQiTiA4NMKwMjUnMjQuNCJX!5e0!3m2!1ses!2scr!4v1234567890" width="100%" height="400" style="border:0;" allowfullscreen=""></iframe>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Información Importante</h2>
+            <div>
+                <p>Para más información sobre el congreso, contacte a la comisión organizadora:</p>
+                <!-- ERROR CRÍTICO DE ANIDAMIENTO: <div> y <h3> son elementos
+                     de bloque anidados dentro de <span> que es inline.
+                     El parser HTML5 cierra el <span> prematuramente y rompe
+                     el layout. Viola el modelo de contenido de HTML5. -->
+                <span>
+                    <div>
+                        <h3>Contacto Principal</h3>
+                        <!-- ERROR: El correo debe ser un enlace <a href="mailto:...">
+                             para permitir apertura directa en cliente de correo. -->
+                        <div>congreso.tecnologia@utn.ac.cr</div>
+                        <!-- ERROR: El teléfono debe ser <a href="tel:...">
+                             para permitir marcado directo en dispositivos móviles. -->
+                        <div>Teléfono: 2401-3000 ext. 5200</div>
+                    </div>
+                </span>
+                <p>También puede visitar nuestra página de redes sociales:</p>
+                <!-- ERROR CRÍTICO DE ANIDAMIENTO: <div> elementos de bloque
+                     anidados dentro de <a> que en este contexto actúa como inline.
+                     Crea áreas de clic ambiguas y los lectores de pantalla
+                     anuncian todo el bloque como un único enlace sin descripción
+                     clara. El contenido textual múltiple dentro del <a> confunde
+                     al árbol de accesibilidad. -->
+                <a href="https://www.utn.ac.cr">
+                    <div>
+                        <div>Visitar sitio oficial de la UTN</div>
+                        <div>www.utn.ac.cr · Sede San Carlos</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ERROR: <div class="footer"> debe ser <footer role="contentinfo">.
+         Sin el landmark <footer>, los lectores de pantalla no pueden
+         identificar ni saltar a la región del pie de página. -->
+    <div class="footer">
+        <!-- ERROR: Contenido del footer en <div> anidados sin semántica.
+             Deben ser elementos <p> directos dentro de <footer>. -->
+        <div>
+            <div>© 2025 UTN Sede San Carlos. Todos los derechos reservados.</div>
+            <div>Congreso Universitario de Tecnología y Sostenibilidad</div>
+            <div>Desarrollado por el Departamento de Tecnología de Información</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería Multimedia - ISW-521</title>
+</head>
+<body>
+
+    <header>
+        <h1>Galería Multimedia del Curso ISW-521</h1>
+        <p>Recursos audiovisuales para estudiantes.</p>
+    </header>
+
+    <main>
+
+        <section>
+            <h2>Portada del Curso</h2>
+
+            <picture>
+                <source
+                    media="(max-width: 600px)"
+                    srcset="imagenes/portada-mobile.webp"
+                    type="image/webp">
+
+                <source
+                    media="(min-width: 601px)"
+                    srcset="imagenes/portada-desktop.webp"
+                    type="image/webp">
+
+                <img
+                    src="imagenes/portada-desktop.jpg"
+                    alt="Portada oficial del curso ISW-521 Programación en Ambiente Web I"
+                    loading="lazy"
+                    width="1200"
+                    height="630">
+            </picture>
+        </section>
+
+        <section>
+            <h2>Video de la Clase</h2>
+
+            <video
+                controls
+                poster="imagenes/video-thumb.jpeg"
+                preload="metadata"
+                width="640"
+                height="360">
+
+                <source
+                    src="videos/clase5.mp4"
+                    type="video/mp4">
+
+                <source
+                    src="videos/clase5.webm"
+                    type="video/webm">
+
+                <p>
+                    Tu navegador no soporta video HTML5.
+                    <a href="videos/clase5.mp4">Descargar video</a>
+                </p>
+
+            </video>
+        </section>
+
+        <section>
+            <h2>Podcast del Curso</h2>
+
+            <audio controls preload="none">
+                <source
+                    src="audio/podcast-ep1.mp3"
+                    type="audio/mpeg">
+
+                <source
+                    src="audio/podcast-ep1.ogg"
+                    type="audio/ogg">
+
+                <p>
+                    Tu navegador no soporta audio HTML5.
+                </p>
+            </audio>
+        </section>
+
+        <section>
+            <h2>Ubicación de la Universidad</h2>
+
+            <iframe
+                src="https://maps.google.com/maps?q=UTN%20San%20Carlos&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                title="Mapa de ubicación de la Universidad Técnica Nacional sede San Carlos"
+                width="600"
+                height="400"
+                loading="lazy"
+                sandbox="allow-scripts allow-same-origin">
+            </iframe>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 ISW-521 - Programación en Ambiente Web I</p>
+    </footer>
+
+</body>
+</html>

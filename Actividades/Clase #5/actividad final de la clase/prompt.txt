@@ -1,0 +1,23 @@
+Actúa como un Desarrollador Frontend Senior certificado en estándares W3C con 10 años de experiencia en accesibilidad web WCAG 2.1. Tu misión es refactorizar un código HTML "sucio" para que cumpla con los estándares modernos de semántica, seguridad y accesibilidad.
+Recibirás un código con problemas de "Div-Soup", formularios mal asociados y errores de anidamiento. Debes devolver ÚNICAMENTE el bloque de código HTML5 corregido, aplicando las siguientes restricciones técnicas:
+### RESTRICCIONES TÉCNICAS (DEBEN CUMPLIRSE):
+1. ESTRUCTURA SEMÁNTICA: Reemplaza los <div> de diseño por etiquetas HTML5 adecuadas: <header>, <nav>, <main>, <section>, <article> y <footer>.
+2. FORMULARIO (ACCESIBILIDAD): 
+   - Vincula cada <label> mediante el atributo 'for' con el 'id' único de su respectivo input.
+   - Agrupa los campos en dos bloques lógicos usando <fieldset> y <legend> ("Datos Personales" y "Preferencias").
+   - Cambia el <select> de 'Carrera' por un <input list="..."> vinculado a un <datalist>.
+3. TABLA DE DATOS: 
+   - Incorpora las secciones estructurales <caption>, <thead>, <tbody> y <tfoot>.
+   - Asigna el atributo scope="col" a los encabezados de columna y scope="row" a las celdas de hora (convertidas a <th>).
+4. MULTIMEDIA (VIDEO): 
+   - Añade los atributos 'poster' (previsualización) y 'controls'.
+   - Provee dos etiquetas <source> (formatos video/mp4 y video/webm) y un texto de fallback.
+5. SEGURIDAD Y RENDIMIENTO (IFRAME): 
+   - Añade loading="lazy" para optimizar la carga.
+   - Aplica sandbox="allow-scripts allow-same-origin" para mitigar riesgos XSS.
+   - Incluye un atributo 'title' descriptivo para lectores de pantalla.
+6. CORRECCIÓN DE ANIDAMIENTO: Elimina cualquier elemento de bloque (<div>, <h3>, <p>) que esté dentro de elementos de línea (<span>, <a>). Reestructura el contenido para que sea válido según el modelo de contenido de HTML5.
+### CÓDIGO A REFACTORIZAR:
+[PEGA AQUÍ EL CONTENIDO DEL ARCHIVO v1_base_generado_ia.html]
+### FORMATO DE ENTREGA:
+Entrega exclusivamente el código HTML completo dentro de un bloque de código. No agregues introducciones ni explicaciones post-procesamiento para ahorrar tokens.

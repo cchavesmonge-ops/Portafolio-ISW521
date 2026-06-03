@@ -1,0 +1,106 @@
+Actividad de análisis #1 - Auditoria de Contraste
+
+A. Contraste = L1 + 0.05
+               ---------
+               L2 + 0.05
+
+ R: 4.50:1
+
+
+B. Si cumple con AA, ya que requiere mínimo 4.5:1
+   No cumple AAA, ya que requiere mínimo 7:1
+
+C. Con un texto de 16px alcanza AA
+
+
+Actividad de análisis #2 - Trampa de Teclado
+
+1. El foco sale del modal porque no existe una trampa de teclado que limite la navegacion con TAB
+
+2. La solución es mantener el foco dentro del modal mientras este abierto
+
+3. 
+const focusables = modal.querySelectorAll(
+  'a, button, input, [tabindex]'
+);
+
+const first = focusables[0];
+const last = focusables[focusables.length - 1];
+
+modal.addEventListener('keydown', (e) => {
+
+  if (e.key === 'Tab') {
+
+    if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    }
+
+  }
+
+});
+
+Actividad de Análisis #3 - Diagnostico ARIA
+
+4 problemas:
+1.Uso de <div role="button">
+
+Impacto: Un div no tiene el comportamiento nativo de un botón (Enter, Espacio, estados, etc.). Puede generar problemas de accesibilidad y mantenimiento.
+
+Corrección:
+<button aria-expanded="false">
+  <img src="menu.png" alt="">
+</button>
+
+2.Nombre accesible duplicado
+
+El botón tiene:
+aria-label="Menu"
+Y además la imagen:
+alt="Menu principal"
+
+Impacto: Los lectores de pantalla pueden anunciar información redundante o confusa.
+
+Corrección:
+
+<button aria-label="Menú principal">
+  <img src="menu.png" alt="">
+</button>
+
+3.aria-labelledby apunta a un elemento oculto
+<nav aria-labelledby="nav-title">
+<h2 id="nav-title" aria-hidden="true">
+
+Impacto: El elemento usado como etiqueta está oculto para tecnologías asistivas, por lo que el nombre accesible de la navegación puede perderse.
+
+Corrección:
+<h2 id="nav-title">Navegación principal</h2>
+
+O:
+
+<nav aria-label="Navegación principal">
+
+4.Uso incorrecto de aria-live="assertive"
+<div aria-live="assertive">
+  Bienvenido a la aplicación.
+</div>
+
+Impacto: Los mensajes "assertive" interrumpen inmediatamente al lector de pantalla. Un mensaje de bienvenida no es urgente.
+
+Corrección:
+
+<div aria-live="polite">
+  Bienvenido a la aplicación.
+</div>
+
+o eliminar aria-live si el texto es estático.
+
+Actividad de analisis #4 - Batalla de Selectores
+
+Parrafo A: Color Verde - Gana #contenido p (1,0,1)
+Parrafo B: Color Verde - Gana #contenido p (1,0,1)

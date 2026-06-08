@@ -1,0 +1,717 @@
+/* =============================================================
+   ISW-521 · Laboratorio #3 — Maquetación con Flexbox
+   Dashboard de Monitoreo Hídrico — AcueductosIoT
+   ============================================================= */
+
+/* ----- Reset y base global ----- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #0f172a;
+  color: #1e293b;
+  min-height: 100vh;
+
+  /*
+   * EJERCICIO 4 (base escritorio):
+   * En escritorio usamos display:block para que navbar, sensor-grid
+   * y dashboard-layout se apilen en flujo normal vertical.
+   * La columna se activa solo en el media query móvil.
+   */
+  display: block;
+}
+
+
+/* =============================================================
+   EJERCICIO 1 · Barra de Navegación
+   Concepto: main axis (horizontal) y cross axis (vertical)
+   ============================================================= */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 60px;
+  padding: 0 32px;
+  background-color: #0f172a;
+  color: #e2e8f0;
+  border-bottom: 3px solid #0ea5e9;
+}
+
+.nav-logo span {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #e2e8f0;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 4px;
+}
+
+.nav-links a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.88rem;
+  padding: 4px 12px;
+  border-radius: 4px;
+  transition: color 0.2s;
+}
+
+.nav-links a.active,
+.nav-links a:hover {
+  color: #e2e8f0;
+  background-color: #1e293b;
+}
+
+.nav-links a.active {
+  background-color: #1e3a5f;
+  color: #38bdf8;
+}
+
+.btn-logout {
+  background-color: transparent;
+  color: #94a3b8;
+  border: 1px solid #334155;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background-color: #1e293b;
+  color: #e2e8f0;
+  border-color: #475569;
+}
+
+
+/* =============================================================
+   EJERCICIO 2 · Cuadrícula de Sensores IoT
+   Concepto: flex-wrap para multilínea + gap moderno
+   ============================================================= */
+
+.sensor-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 16px 24px;
+  background-color: #0f172a;
+  border-bottom: 1px solid #1e293b;
+}
+
+.sensor-card {
+  flex-basis: calc(33.333% - 14px);
+  flex-grow: 1;
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 14px 16px;
+  transition: border-color 0.2s;
+}
+
+.sensor-card:hover {
+  border-color: #0ea5e9;
+}
+
+.sensor-card .sensor-title {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.sensor-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  margin-bottom: 4px;
+  line-height: 1.1;
+}
+
+.sensor-label {
+  font-size: 0.73rem;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.sensor-bar {
+  height: 3px;
+  background-color: #334155;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.sensor-bar-fill {
+  height: 100%;
+  background-color: #0ea5e9;
+  border-radius: 2px;
+}
+
+/* Tarjeta en estado de alerta */
+.sensor-card.alerta {
+  border-color: #334155;
+}
+
+.sensor-card.alerta .sensor-value {
+  color: #f1f5f9;
+}
+
+.sensor-bar-fill.alerta-bar {
+  background-color: #22c55e;
+}
+
+
+/* =============================================================
+   EJERCICIO 3 · Layout Principal — 3 Columnas
+   Concepto: flex-grow, flex-shrink, flex-basis (shorthand flex)
+   ============================================================= */
+
+.dashboard-layout {
+  display: flex;
+  flex-direction: row;
+  min-height: calc(100vh - 60px - 41px - 110px - 48px); /* navbar + footer + sensor-grid + stats-band */
+  background-color: #0f172a;
+}
+
+.sidebar {
+  flex: 1;
+  min-width: 160px;
+  background-color: #0f172a;
+  color: #cbd5e1;
+  padding: 20px 14px;
+  border-right: 1px solid #1e293b;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #475569;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  padding: 0 14px;
+}
+
+.sidebar nav ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar nav ul li {
+  padding: 9px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #64748b;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar nav ul li.active {
+  background-color: #1e293b;
+  color: #38bdf8;
+}
+
+.sidebar nav ul li:hover {
+  background-color: #1e293b;
+  color: #cbd5e1;
+}
+
+.sidebar-version {
+  margin-top: auto;
+  padding: 14px;
+  font-size: 0.72rem;
+  color: #334155;
+}
+
+.main-content {
+  flex: 3;
+  padding: 24px 28px;
+  background-color: #0f172a;
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.main-content h1 {
+  font-size: 1.3rem;
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.main-content h2 strong {
+  color: #f1f5f9;
+  font-weight: 700;
+}
+
+.btn-live {
+  background-color: transparent;
+  color: #22c55e;
+  border: 1px solid #166534;
+  padding: 5px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Chart */
+.chart-container {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 0.88rem;
+  color: #94a3b8;
+}
+
+.chart-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.chart-area {
+  width: 100%;
+}
+
+.chart-svg {
+  width: 100%;
+  height: auto;
+  background-color: transparent;
+}
+
+.chart-x-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #475569;
+  margin-top: 6px;
+  padding: 0 2px;
+}
+
+/* Alert panel */
+.alert-panel {
+  flex: 1;
+  min-width: 180px;
+  background-color: #0f172a;
+  padding: 20px 14px;
+  border-left: 1px solid #1e293b;
+  display: flex;
+  flex-direction: column;
+}
+
+.alert-panel h2 {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.alert-count {
+  background-color: #ef4444;
+  color: white;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.75rem;
+}
+
+/* Tarjetas de alerta individuales */
+.alert {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 0.78rem;
+  border-left: 3px solid transparent;
+}
+
+.alert-icon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.alert-body strong {
+  display: block;
+  font-size: 0.8rem;
+  margin-bottom: 2px;
+}
+
+.alert-body p {
+  font-size: 0.72rem;
+  margin-bottom: 2px;
+}
+
+.alert-time {
+  font-size: 0.68rem;
+  opacity: 0.7;
+}
+
+.alerta-critica {
+  background-color: #1c1408;
+  border-left-color: #f59e0b;
+  color: #fcd34d;
+}
+
+.alerta-critica .alert-body strong {
+  color: #fbbf24;
+}
+
+.alerta-critica .alert-body p {
+  color: #d97706;
+}
+
+.alerta-ok {
+  background-color: #052e16;
+  border-left-color: #22c55e;
+  color: #86efac;
+}
+
+.alerta-ok .alert-body strong {
+  color: #4ade80;
+}
+
+.alerta-ok .alert-body p {
+  color: #16a34a;
+}
+
+.alerta-info {
+  background-color: #0c1a3a;
+  border-left-color: #3b82f6;
+  color: #93c5fd;
+}
+
+.alerta-info .alert-body strong {
+  color: #60a5fa;
+}
+
+.alerta-info .alert-body p {
+  color: #2563eb;
+}
+
+.alert-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.72rem;
+  color: #475569;
+  gap: 2px;
+}
+
+.countdown {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* =============================================================
+   Footer
+   ============================================================= */
+
+.site-footer {
+  background-color: #0a0f1e;
+  color: #334155;
+  padding: 8px 24px;
+  font-size: 0.72rem;
+  min-height: 41px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #1e293b;
+}
+
+.footer-status {
+  color: #334155;
+}
+
+.footer-status::before {
+  content: "● ";
+  color: #22c55e;
+}
+
+
+/* =============================================================
+   EXTRA · Banda de Estadísticas Rápidas
+   Concepto: flexbox con separadores decorativos
+   ============================================================= */
+
+.stats-band {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 10px 24px;
+  background-color: #0a1628;
+  border-bottom: 1px solid #1e293b;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 28px;
+}
+
+.stat-number {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #e2e8f0;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-number.stat-ok {
+  color: #22c55e;
+}
+
+.stat-number.stat-warn {
+  color: #f59e0b;
+}
+
+.stat-desc {
+  font-size: 0.68rem;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 32px;
+  background-color: #1e293b;
+  flex-shrink: 0;
+}
+
+
+/* =============================================================
+   EXTRA · Tabla de Historial de Lecturas
+   Concepto: tabla semántica con estilos de dashboard oscuro
+   ============================================================= */
+
+.readings-table-wrapper {
+  margin-top: 20px;
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 16px 20px;
+  overflow-x: auto;
+}
+
+.readings-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 14px;
+  letter-spacing: 0.3px;
+}
+
+.readings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.readings-table thead th {
+  text-align: left;
+  padding: 8px 12px;
+  color: #475569;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border-bottom: 1px solid #334155;
+}
+
+.readings-table tbody tr {
+  border-bottom: 1px solid #1e293b;
+  transition: background-color 0.15s;
+}
+
+.readings-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.readings-table tbody tr:hover {
+  background-color: #263347;
+}
+
+.readings-table tbody td {
+  padding: 9px 12px;
+  color: #cbd5e1;
+  vertical-align: middle;
+}
+
+.readings-table tbody td:first-child {
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+}
+
+/* Badges de estado */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.badge-ok {
+  background-color: #052e16;
+  color: #4ade80;
+  border: 1px solid #166534;
+}
+
+.badge-warn {
+  background-color: #1c1408;
+  color: #fbbf24;
+  border: 1px solid #713f12;
+}
+
+.badge-info {
+  background-color: #0c1a3a;
+  color: #60a5fa;
+  border: 1px solid #1e3a5f;
+}
+
+/* Clase utilitaria para accesibilidad */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* =============================================================
+   EJERCICIO 4 · Responsividad Móvil
+   Concepto: Media Queries + flex-direction:column + min-height:100vh
+   ============================================================= */
+
+@media (max-width: 768px) {
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .dashboard-layout {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .sidebar,
+  .alert-panel {
+    flex: none;
+    width: 100%;
+    min-height: auto;
+    min-width: unset;
+    border: none;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 20px 16px;
+  }
+
+  .sensor-card {
+    flex-basis: 100%;
+  }
+
+  .sensor-grid {
+    padding: 16px;
+    gap: 10px;
+  }
+
+  .navbar {
+    padding: 0 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: auto;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .nav-links {
+    gap: 8px;
+    font-size: 0.82rem;
+  }
+
+  .site-footer {
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+
+  .stats-band {
+    gap: 0;
+    padding: 10px 8px;
+  }
+
+  .stat-item {
+    padding: 6px 14px;
+  }
+
+  .stat-divider {
+    height: 24px;
+  }
+
+}
+
+/* Tablet: 2 columnas de tarjetas (entre 480px y 768px) */
+@media (min-width: 480px) and (max-width: 768px) {
+  .sensor-card {
+    flex-basis: calc(50% - 10px);
+  }
+}

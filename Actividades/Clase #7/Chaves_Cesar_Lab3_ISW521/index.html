@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AcueductosIoT — Dashboard de Monitoreo Hídrico</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- EJERCICIO 1 · Barra de Navegación -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <span>💧 AcueductosIoT</span>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="#" class="active">Inicio</a></li>
+      <li><a href="#">Sensores</a></li>
+      <li><a href="#">Alertas</a></li>
+      <li><a href="#">Reportes</a></li>
+    </ul>
+
+    <button class="btn-logout">⏻ Cerrar Sesión</button>
+  </nav>
+
+  <!-- EJERCICIO 2 · Cuadrícula de Sensores IoT -->
+  <section class="sensor-grid">
+
+    <div class="sensor-card">
+      <p class="sensor-title">△ NIVEL TANQUE PRINCIPAL</p>
+      <p class="sensor-value">73%</p>
+      <p class="sensor-label">✓ Sector A · 2 min</p>
+      <div class="sensor-bar"><div class="sensor-bar-fill" style="width:73%"></div></div>
+    </div>
+
+    <div class="sensor-card">
+      <p class="sensor-title">⚡ PRESION RED CALLE 2</p>
+      <p class="sensor-value">28 PSI</p>
+      <p class="sensor-label">↑ Min. 20 PSI · 1 min</p>
+      <div class="sensor-bar"><div class="sensor-bar-fill" style="width:56%"></div></div>
+    </div>
+
+    <div class="sensor-card">
+      <p class="sensor-title">🧪 CLORO RESIDUAL</p>
+      <p class="sensor-value">0.4 mg/L</p>
+      <p class="sensor-label">✓ Rango 0.3–2.3 · 3 min</p>
+      <div class="sensor-bar"><div class="sensor-bar-fill" style="width:40%"></div></div>
+    </div>
+
+    <div class="sensor-card">
+      <p class="sensor-title">← CAUDAL NACIENTE SUR</p>
+      <p class="sensor-value">142 L/min</p>
+      <p class="sensor-label">→ normal · 4 min</p>
+      <div class="sensor-bar"><div class="sensor-bar-fill" style="width:71%"></div></div>
+    </div>
+
+    <div class="sensor-card">
+      <p class="sensor-title">↓ TEMPERATURA AGUA</p>
+      <p class="sensor-value">18.2°C</p>
+      <p class="sensor-label">↑ Normal · 5 min</p>
+      <div class="sensor-bar"><div class="sensor-bar-fill" style="width:36%"></div></div>
+    </div>
+
+    <div class="sensor-card alerta">
+      <p class="sensor-title">↖ VÁLVULA EMERGENCIA</p>
+      <p class="sensor-value">CERRADA</p>
+      <p class="sensor-label">✓ Estado normal · 1 min</p>
+      <div class="sensor-bar"><div class="sensor-bar-fill alerta-bar" style="width:0%"></div></div>
+    </div>
+
+  </section>
+
+  <!-- EJERCICIO 3 · Layout Principal de 3 columnas -->
+  <div class="dashboard-layout">
+
+    <aside class="sidebar">
+      <p class="sidebar-label">MENÚ</p>
+      <nav>
+        <ul>
+          <li class="active">📊 Resumen</li>
+          <li>💧 Tanques</li>
+          <li>⚡ Presiones</li>
+          <li>🧪 Calidad</li>
+          <li>🗺️ Mapa Red</li>
+          <li>⚙️ Configuración</li>
+        </ul>
+      </nav>
+      <div class="sidebar-version">
+        <p>v3.4.1 · Online</p>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="main-header">
+        <div>
+          <h1>Monitoreo en <strong>Tiempo Real</strong></h1>
+        </div>
+        <button class="btn-live">● En vivo</button>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <span>Presión de Red — Últimas 6 horas</span>
+          <span class="chart-value">28 PSI</span>
+        </div>
+        <div class="chart-area">
+          <svg viewBox="0 0 600 120" xmlns="http://www.w3.org/2000/svg" class="chart-svg">
+            <!-- Grid lines -->
+            <line x1="0" y1="20" x2="600" y2="20" stroke="#334155" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="50" x2="600" y2="50" stroke="#334155" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="80" x2="600" y2="80" stroke="#334155" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <!-- Y labels -->
+            <text x="5" y="24" fill="#64748b" font-size="8">min. 50 PSI</text>
+            <!-- Area fill -->
+            <defs>
+              <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.02"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,85 C30,82 60,78 90,72 C120,66 150,60 180,58 C210,56 240,58 270,55 C300,52 330,50 360,48 C390,46 420,50 450,52 C480,54 510,58 540,60 C570,62 590,64 600,65 L600,120 L0,120 Z" fill="url(#chartGrad)"/>
+            <!-- Line -->
+            <path d="M0,85 C30,82 60,78 90,72 C120,66 150,60 180,58 C210,56 240,58 270,55 C300,52 330,50 360,48 C390,46 420,50 450,52 C480,54 510,58 540,60 C570,62 590,64 600,65" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round"/>
+            <!-- Dot at end -->
+            <circle cx="600" cy="65" r="4" fill="#0ea5e9"/>
+          </svg>
+          <div class="chart-x-labels">
+            <span>00:00</span>
+            <span>01:00</span>
+            <span>02:00</span>
+            <span>03:00</span>
+            <span>04:00</span>
+            <span>05:00</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="alert-panel">
+      <h2>🔔 <span class="alert-count">8</span> ALERTAS ACTIVAS</h2>
+
+      <div class="alert alerta-critica">
+        <div class="alert-icon">△</div>
+        <div class="alert-body">
+          <strong>Presión baja — Calle 2</strong>
+          <p>28 PSI · Mínimo 30 PSI min</p>
+          <span class="alert-time">Hace 3 minutos</span>
+        </div>
+      </div>
+
+      <div class="alert alerta-info">
+        <div class="alert-icon">▶</div>
+        <div class="alert-body">
+          <strong>Fluctuación detectada</strong>
+          <p>Sector B · Variación ±8 PSI</p>
+          <span class="alert-time">Hace 12 minutos</span>
+        </div>
+      </div>
+
+      <div class="alert alerta-ok">
+        <div class="alert-icon">✓</div>
+        <div class="alert-body">
+          <strong>Cloro en rango normal</strong>
+          <p>0.4 mg/L · OMS: 0.3–0.5</p>
+          <span class="alert-time">Hace 15 minutos</span>
+        </div>
+      </div>
+
+      <div class="alert alerta-ok">
+        <div class="alert-icon">✓</div>
+        <div class="alert-body">
+          <strong>Tanque Principal OK</strong>
+          <p>73% · Sin riesgo de desabasto</p>
+          <span class="alert-time">Hace 18 minutos</span>
+        </div>
+      </div>
+
+      <div class="alert-footer">
+        <span>Próxima actualización</span>
+        <span class="countdown">00:47</span>
+      </div>
+    </aside>
+
+  </div>
+
+  <footer class="site-footer">
+    <p>AcueductosIoT Dashboard v7.4.1</p>
+    <p class="footer-status">● Todos los sistemas operativos &nbsp;|&nbsp; 🔌 17 sensores conectados &nbsp;|&nbsp; Última sync: 06/06/2025 · 05:13</p>
+  </footer>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AcueductosIoT — Dashboard de Monitoreo Hídrico</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- EJERCICIO 1 · Barra de Navegación -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <span>💧 AcueductosIoT</span>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="#" class="active">Inicio</a></li>
+      <li><a href="#">Sensores</a></li>
+      <li><a href="#">Alertas</a></li>
+      <li><a href="#">Reportes</a></li>
+    </ul>
+
+    <button class="btn-logout" type="button">⏻ Cerrar Sesión</button>
+  </nav>
+
+  <!-- EJERCICIO 2 · Cuadrícula de Sensores IoT -->
+  <section class="sensor-grid">
+
+    <div class="sensor-card">
+      <p class="sensor-title">△ NIVEL TANQUE PRINCIPAL</p>
+      <p class="sensor-value">73%</p>
+      <p class="sensor-label">✓ Sector A · 2 min</p>
+      <div class="sensor-bar"><div class="sensor-bar-fill" style="width:73%"></div></div>
+    </div>
+
+    <div class="sensor-card">
+      <p class="sensor-title">⚡ PRESION RED CALLE 2</p>
+      <p class="sensor-value">28 PSI</p>
+      <p class="sensor-label">↑ Min. 20 PSI · 1 min</p>
+      <div class="sensor-bar"><div class="sensor-bar-fill" style="width:56%"></div></div>
+    </div>
+
+    <div class="sensor-card">
+      <p class="sensor-title">🧪 CLORO RESIDUAL</p>
+      <p class="sensor-value">0.4 mg/L</p>
+      <p class="sensor-label">✓ Rango 0.3–2.3 · 3 min</p>
+      <div class="sensor-bar"><div class="sensor-bar-fill" style="width:40%"></div></div>
+    </div>
+
+    <div class="sensor-card">
+      <p class="sensor-title">← CAUDAL NACIENTE SUR</p>
+      <p class="sensor-value">142 L/min</p>
+      <p class="sensor-label">→ normal · 4 min</p>
+      <div class="sensor-bar"><div class="sensor-bar-fill" style="width:71%"></div></div>
+    </div>
+
+    <div class="sensor-card">
+      <p class="sensor-title">↓ TEMPERATURA AGUA</p>
+      <p class="sensor-value">18.2°C</p>
+      <p class="sensor-label">↑ Normal · 5 min</p>
+      <div class="sensor-bar"><div class="sensor-bar-fill" style="width:36%"></div></div>
+    </div>
+
+    <div class="sensor-card alerta">
+      <p class="sensor-title">↖ VÁLVULA EMERGENCIA</p>
+      <p class="sensor-value">CERRADA</p>
+      <p class="sensor-label">✓ Estado normal · 1 min</p>
+      <div class="sensor-bar"><div class="sensor-bar-fill alerta-bar" style="width:0%"></div></div>
+    </div>
+
+  </section>
+
+  <!-- EXTRA · Banda de Estadísticas Rápidas -->
+  <section class="stats-band" aria-label="Estadísticas del sistema">
+    <div class="stat-item">
+      <span class="stat-number">17</span>
+      <span class="stat-desc">Sensores activos</span>
+    </div>
+    <div class="stat-divider" aria-hidden="true"></div>
+    <div class="stat-item">
+      <span class="stat-number stat-ok">99.8%</span>
+      <span class="stat-desc">Uptime último mes</span>
+    </div>
+    <div class="stat-divider" aria-hidden="true"></div>
+    <div class="stat-item">
+      <span class="stat-number">3</span>
+      <span class="stat-desc">Zonas monitoreadas</span>
+    </div>
+    <div class="stat-divider" aria-hidden="true"></div>
+    <div class="stat-item">
+      <span class="stat-number stat-warn">8</span>
+      <span class="stat-desc">Alertas activas</span>
+    </div>
+    <div class="stat-divider" aria-hidden="true"></div>
+    <div class="stat-item">
+      <span class="stat-number">2.4 km</span>
+      <span class="stat-desc">Red supervisada</span>
+    </div>
+  </section>
+
+  <!-- EJERCICIO 3 · Layout Principal de 3 columnas -->
+  <div class="dashboard-layout">
+
+    <aside class="sidebar">
+      <p class="sidebar-label">MENÚ</p>
+      <nav>
+        <ul>
+          <li class="active">📊 Resumen</li>
+          <li>💧 Tanques</li>
+          <li>⚡ Presiones</li>
+          <li>🧪 Calidad</li>
+          <li>🗺️ Mapa Red</li>
+          <li>⚙️ Configuración</li>
+        </ul>
+      </nav>
+      <div class="sidebar-version">
+        <p>v3.4.1 · Online</p>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="main-header">
+        <div>
+          <h1>Monitoreo en <strong>Tiempo Real</strong></h1>
+        </div>
+        <button class="btn-live" type="button">● En vivo</button>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <span>Presión de Red — Últimas 6 horas</span>
+          <span class="chart-value">28 PSI</span>
+        </div>
+        <div class="chart-area">
+          <svg viewBox="0 0 600 120" xmlns="http://www.w3.org/2000/svg" class="chart-svg" role="img" aria-label="Gráfica de presión de red en las últimas 6 horas">
+            <title>Presión de Red — Últimas 6 horas</title>
+            <desc>Línea de tendencia de presión mostrando valores entre 28 y 50 PSI a lo largo del tiempo</desc>
+            <!-- Grid lines -->
+            <line x1="0" y1="20" x2="600" y2="20" stroke="#334155" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="50" x2="600" y2="50" stroke="#334155" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="80" x2="600" y2="80" stroke="#334155" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <!-- Y labels -->
+            <text x="5" y="24" fill="#64748b" font-size="8">min. 50 PSI</text>
+            <!-- Area fill -->
+            <defs>
+              <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.02"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,85 C30,82 60,78 90,72 C120,66 150,60 180,58 C210,56 240,58 270,55 C300,52 330,50 360,48 C390,46 420,50 450,52 C480,54 510,58 540,60 C570,62 590,64 600,65 L600,120 L0,120 Z" fill="url(#chartGrad)"/>
+            <!-- Line -->
+            <path d="M0,85 C30,82 60,78 90,72 C120,66 150,60 180,58 C210,56 240,58 270,55 C300,52 330,50 360,48 C390,46 420,50 450,52 C480,54 510,58 540,60 C570,62 590,64 600,65" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round"/>
+            <!-- Dot at end -->
+            <circle cx="600" cy="65" r="4" fill="#0ea5e9"/>
+          </svg>
+          <div class="chart-x-labels">
+            <span>00:00</span>
+            <span>01:00</span>
+            <span>02:00</span>
+            <span>03:00</span>
+            <span>04:00</span>
+            <span>05:00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXTRA · Tabla de historial de lecturas recientes -->
+      <div class="readings-table-wrapper">
+        <h2 class="readings-title">Historial de Lecturas Recientes</h2>
+        <table class="readings-table">
+          <caption class="visually-hidden">Últimas lecturas registradas por los sensores IoT del sistema AcueductosIoT</caption>
+          <thead>
+            <tr>
+              <th scope="col">Hora</th>
+              <th scope="col">Sensor</th>
+              <th scope="col">Valor</th>
+              <th scope="col">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>05:11</td>
+              <td>Nivel Tanque Principal</td>
+              <td>73%</td>
+              <td><span class="badge badge-ok">Normal</span></td>
+            </tr>
+            <tr>
+              <td>05:09</td>
+              <td>Presión Red Calle 2</td>
+              <td>28 PSI</td>
+              <td><span class="badge badge-warn">Bajo</span></td>
+            </tr>
+            <tr>
+              <td>05:07</td>
+              <td>Cloro Residual</td>
+              <td>0.4 mg/L</td>
+              <td><span class="badge badge-ok">Normal</span></td>
+            </tr>
+            <tr>
+              <td>05:04</td>
+              <td>Caudal Naciente Sur</td>
+              <td>142 L/min</td>
+              <td><span class="badge badge-ok">Normal</span></td>
+            </tr>
+            <tr>
+              <td>05:01</td>
+              <td>Temperatura Agua</td>
+              <td>18.2°C</td>
+              <td><span class="badge badge-ok">Normal</span></td>
+            </tr>
+            <tr>
+              <td>04:58</td>
+              <td>Válvula Emergencia</td>
+              <td>Cerrada</td>
+              <td><span class="badge badge-info">Standby</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </main>
+
+    <aside class="alert-panel">
+      <h2>🔔 <span class="alert-count">8</span> ALERTAS ACTIVAS</h2>
+
+      <div class="alert alerta-critica">
+        <div class="alert-icon">△</div>
+        <div class="alert-body">
+          <strong>Presión baja — Calle 2</strong>
+          <p>28 PSI · Mínimo 30 PSI min</p>
+          <span class="alert-time">Hace 3 minutos</span>
+        </div>
+      </div>
+
+      <div class="alert alerta-info">
+        <div class="alert-icon">▶</div>
+        <div class="alert-body">
+          <strong>Fluctuación detectada</strong>
+          <p>Sector B · Variación ±8 PSI</p>
+          <span class="alert-time">Hace 12 minutos</span>
+        </div>
+      </div>
+
+      <div class="alert alerta-ok">
+        <div class="alert-icon">✓</div>
+        <div class="alert-body">
+          <strong>Cloro en rango normal</strong>
+          <p>0.4 mg/L · OMS: 0.3–0.5</p>
+          <span class="alert-time">Hace 15 minutos</span>
+        </div>
+      </div>
+
+      <div class="alert alerta-ok">
+        <div class="alert-icon">✓</div>
+        <div class="alert-body">
+          <strong>Tanque Principal OK</strong>
+          <p>73% · Sin riesgo de desabasto</p>
+          <span class="alert-time">Hace 18 minutos</span>
+        </div>
+      </div>
+
+      <div class="alert-footer">
+        <span>Próxima actualización</span>
+        <span class="countdown">00:47</span>
+      </div>
+    </aside>
+
+  </div>
+
+  <footer class="site-footer">
+    <p>AcueductosIoT Dashboard v7.4.1</p>
+    <p class="footer-status">● Todos los sistemas operativos &nbsp;|&nbsp; 🔌 17 sensores conectados &nbsp;|&nbsp; Última sync: 06/06/2025 · 05:13</p>
+  </footer>
+
+</body>
+</html>

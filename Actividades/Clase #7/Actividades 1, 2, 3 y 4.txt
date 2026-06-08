@@ -1,0 +1,30 @@
+Actividad #1 - Diagnostico: ¿que le pasa a estos elementos al activar el flex?
+
+1. float: left de .item-a
+se ignora y los elementos dejan de comportarse como elementos float y pasan a ser flex items
+
+2. display: inline de .item-b
+ya no afecta su distribución, dentro de flexbox todos los hijos se tratan como flex items, por lo que inline, block o inline-block dejan de influir en la colocación principal
+
+3. margin-top: -20px de .item-c
+el margen negativo sigue aplicándose, sin embargo no existe margin collapsing en flexbox, por lo que el comportamiento no sera igual al flujo normal
+
+Actividad #2 - ¿En que eje actúa cada propiedad?
+
+propiedad - con row - con column
+justify-content - eje principal (horizontal) - eje principal (vertical)
+align-items - eje cruzado (vertical - eje cruzado (horizontal)
+flex-basis - tamaño sobre el eje principal (ancho) - tamaño sobre el eje principal (alto)
+width: 200px - actúa sobre el ancho (horizontal) - sigue actuando sobre el ancho (horizontal)
+
+Actividad #3 - Bug de alineación: ¿que esta mal y como se arregla?
+
+1. hacia abajo, porque justify-content actúa sobre el eje principal, y con column, el eje principal es vertical
+2. el eje horizontal (eje cruzado)
+3. lo mas sencillo es usar flex-directions:row, ya que se quiere alineación horizontal a la derecha y centrado vertical
+
+Actividad #4 - ¿por que no funciona align-content aquí?
+
+1. Falta flex-wrap: wrap;, porque align-content solo funciona con varias líneas de elementos.
+2. align-items sí puede funcionar, ya que alinea los elementos dentro de una misma línea.
+3. Agregar flex-wrap: wrap; para que las tarjetas se distribuyan en varias filas y align-content: space-between; tenga efecto.

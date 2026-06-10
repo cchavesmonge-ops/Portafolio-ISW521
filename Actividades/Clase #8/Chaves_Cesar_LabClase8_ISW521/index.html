@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard de Restauración — Toyota Land Cruiser HJ61 | MecaClásica San Carlos</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-brand">
+      <span class="brand-icon" aria-hidden="true">⚙</span>
+      <div class="brand-text">
+        <span class="brand-name">MecaClásica</span>
+        <span class="brand-location">San Carlos · Costa Rica</span>
+      </div>
+    </div>
+    <nav class="header-nav" aria-label="Navegación principal">
+      <a href="#resumen" class="nav-link active">Resumen</a>
+      <a href="#inventario" class="nav-link">Inventario</a>
+      <a href="#bitacora" class="nav-link">Bitácora</a>
+      <a href="#cotizacion" class="nav-link">Cotización</a>
+    </nav>
+    <div class="header-meta">
+      <span class="badge badge--active">Proyecto Activo</span>
+      <time class="header-date" datetime="2026-06-10">Jun 10, 2026</time>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════
+       HERO VEHICLE CARD
+  ═══════════════════════════════════════════ -->
+  <section class="vehicle-hero" aria-label="Vehículo en restauración">
+    <img class="vehicle-hero__bg" src="vehiculo-toyota.jpg"
+      alt="Toyota Land Cruiser HJ61 1986 — Vehículo en restauración" />
+    <div class="vehicle-hero__accent" aria-hidden="true"></div>
+    <div class="vehicle-hero__content">
+      <p class="vehicle-hero__eyebrow">Restauración Premium · Vehículo Clásico 4×4</p>
+      <h1 class="vehicle-hero__title">Toyota Land Cruiser <em>HJ61</em></h1>
+      <p class="vehicle-hero__subtitle">1986 · Carrocería Station Wagon · Motor 2H 4.0L Diesel</p>
+      <ul class="vehicle-hero__specs" aria-label="Especificaciones clave">
+        <li><span class="spec-label">Placa</span><span class="spec-value">SJC-0042</span></li>
+        <li><span class="spec-label">Chasis</span><span class="spec-value">HJ61-0183947</span></li>
+        <li><span class="spec-label">Motor</span><span class="spec-value">2H · OHV 6 cil.</span></li>
+        <li><span class="spec-label">Cilindrada</span><span class="spec-value">3 980 cc</span></li>
+        <li><span class="spec-label">Transmisión</span><span class="spec-value">Manual H55F 5 vel.</span></li>
+        <li><span class="spec-label">Tracción</span><span class="spec-value">Part-time 4WD</span></li>
+        <li><span class="spec-label">Propietario</span><span class="spec-value">Ing. Rafael Ureña Mora</span></li>
+        <li><span class="spec-label">Ingreso taller</span><span class="spec-value">15 Mar 2026</span></li>
+      </ul>
+    </div>
+    <figure class="vehicle-hero__badge" aria-label="Insignia del modelo">
+      <div class="badge-circle">
+        <span class="badge-circle__year">1986</span>
+        <span class="badge-circle__model">HJ61</span>
+        <span class="badge-circle__engine">2H DIESEL</span>
+      </div>
+    </figure>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       DASHBOARD WRAPPER — Grid asimétrico (A–F)
+  ═══════════════════════════════════════════ -->
+  <main class="dashboard-wrapper" id="resumen">
+
+    <!-- ── ZONA A: Progreso general del proyecto ── -->
+    <section class="dashboard-area area-a" aria-labelledby="progress-heading">
+      <h2 id="progress-heading" class="section-title">Progreso del Proyecto</h2>
+
+      <div class="project-progress">
+        <div class="progress-overview">
+          <div class="progress-ring" role="img" aria-label="68% completado">
+            <svg viewBox="0 0 120 120" class="progress-ring__svg" aria-hidden="true">
+              <circle class="progress-ring__track" cx="60" cy="60" r="50" />
+              <circle class="progress-ring__fill" cx="60" cy="60" r="50" stroke-dasharray="314.16"
+                stroke-dashoffset="100.53" />
+            </svg>
+            <div class="progress-ring__label">
+              <span class="progress-ring__percent">68%</span>
+              <span class="progress-ring__sub">completado</span>
+            </div>
+          </div>
+          <div class="progress-summary">
+            <dl class="summary-list">
+              <div class="summary-item">
+                <dt>Inicio estimado</dt>
+                <dd>15 Mar 2026</dd>
+              </div>
+              <div class="summary-item">
+                <dt>Entrega estimada</dt>
+                <dd>30 Jul 2026</dd>
+              </div>
+              <div class="summary-item">
+                <dt>Días transcurridos</dt>
+                <dd>87 días</dd>
+              </div>
+              <div class="summary-item">
+                <dt>Días restantes</dt>
+                <dd>50 días</dd>
+              </div>
+              <div class="summary-item">
+                <dt>Técnico responsable</dt>
+                <dd>Mauricio Arce Salas</dd>
+              </div>
+              <div class="summary-item">
+                <dt>Categoría</dt>
+                <dd>Restauración integral</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <div class="phase-list" aria-label="Fases del proyecto">
+          <div class="phase-item phase-item--done">
+            <span class="phase-icon" aria-label="Completada">✓</span>
+            <div class="phase-info">
+              <span class="phase-name">Diagnóstico y desmontaje</span>
+              <span class="phase-dates">15 Mar – 28 Mar</span>
+            </div>
+            <div class="phase-bar-wrap">
+              <div class="phase-bar" style="--progress: 100%"></div>
+            </div>
+            <span class="phase-pct">100%</span>
+          </div>
+          <div class="phase-item phase-item--done">
+            <span class="phase-icon" aria-label="Completada">✓</span>
+            <div class="phase-info">
+              <span class="phase-name">Tratamiento anticorrosión y carrocería</span>
+              <span class="phase-dates">29 Mar – 02 May</span>
+            </div>
+            <div class="phase-bar-wrap">
+              <div class="phase-bar" style="--progress: 100%"></div>
+            </div>
+            <span class="phase-pct">100%</span>
+          </div>
+          <div class="phase-item phase-item--active">
+            <span class="phase-icon" aria-label="En progreso">◎</span>
+            <div class="phase-info">
+              <span class="phase-name">Reconstrucción motor 2H</span>
+              <span class="phase-dates">03 May – 25 Jun</span>
+            </div>
+            <div class="phase-bar-wrap">
+              <div class="phase-bar" style="--progress: 72%"></div>
+            </div>
+            <span class="phase-pct">72%</span>
+          </div>
+          <div class="phase-item phase-item--active">
+            <span class="phase-icon" aria-label="En progreso">◎</span>
+            <div class="phase-info">
+              <span class="phase-name">Transmisión H55F y diferencial</span>
+              <span class="phase-dates">10 May – 30 Jun</span>
+            </div>
+            <div class="phase-bar-wrap">
+              <div class="phase-bar" style="--progress: 45%"></div>
+            </div>
+            <span class="phase-pct">45%</span>
+          </div>
+          <div class="phase-item phase-item--pending">
+            <span class="phase-icon" aria-label="Pendiente">○</span>
+            <div class="phase-info">
+              <span class="phase-name">Pintura y acabado exterior</span>
+              <span class="phase-dates">01 Jul – 20 Jul</span>
+            </div>
+            <div class="phase-bar-wrap">
+              <div class="phase-bar" style="--progress: 0%"></div>
+            </div>
+            <span class="phase-pct">0%</span>
+          </div>
+          <div class="phase-item phase-item--pending">
+            <span class="phase-icon" aria-label="Pendiente">○</span>
+            <div class="phase-info">
+              <span class="phase-name">Interior, electricidad y entrega</span>
+              <span class="phase-dates">21 Jul – 30 Jul</span>
+            </div>
+            <div class="phase-bar-wrap">
+              <div class="phase-bar" style="--progress: 0%"></div>
+            </div>
+            <span class="phase-pct">0%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ZONA B: Estado financiero ── -->
+    <section class="dashboard-area area-b" aria-labelledby="finance-heading">
+      <h2 id="finance-heading" class="section-title">Estado Financiero</h2>
+      <div class="finance-card">
+        <div class="finance-total">
+          <span class="finance-total__label">Presupuesto Total</span>
+          <span class="finance-total__amount">₡ 4 850 000</span>
+        </div>
+        <div class="finance-breakdown">
+          <div class="finance-row">
+            <span class="finance-row__label">Mano de obra</span>
+            <span class="finance-row__bar-wrap">
+              <span class="finance-row__bar" style="--progress: 60%"></span>
+            </span>
+            <span class="finance-row__amount">₡ 1 800 000</span>
+          </div>
+          <div class="finance-row">
+            <span class="finance-row__label">Piezas originales</span>
+            <span class="finance-row__bar-wrap">
+              <span class="finance-row__bar" style="--progress: 48%"></span>
+            </span>
+            <span class="finance-row__amount">₡ 1 460 000</span>
+          </div>
+          <div class="finance-row">
+            <span class="finance-row__label">Pintura y materiales</span>
+            <span class="finance-row__bar-wrap">
+              <span class="finance-row__bar" style="--progress: 24%"></span>
+            </span>
+            <span class="finance-row__amount">₡ 720 000</span>
+          </div>
+          <div class="finance-row">
+            <span class="finance-row__label">Electricidad e interior</span>
+            <span class="finance-row__bar-wrap">
+              <span class="finance-row__bar" style="--progress: 14%"></span>
+            </span>
+            <span class="finance-row__amount">₡ 420 000</span>
+          </div>
+          <div class="finance-row">
+            <span class="finance-row__label">Contingencia (10%)</span>
+            <span class="finance-row__bar-wrap">
+              <span class="finance-row__bar finance-row__bar--contingency" style="--progress: 15%"></span>
+            </span>
+            <span class="finance-row__amount">₡ 450 000</span>
+          </div>
+        </div>
+        <div class="finance-spent">
+          <div class="finance-spent__row">
+            <span>Ejecutado a la fecha</span>
+            <span class="finance-spent__value">₡ 2 918 000</span>
+          </div>
+          <div class="finance-spent__row">
+            <span>Saldo disponible</span>
+            <span class="finance-spent__value finance-spent__value--ok">₡ 1 932 000</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ZONA C: Tarjetas de estado (status-grid) ── -->
+    <section class="dashboard-area area-c" id="resumen-estado" aria-labelledby="status-heading">
+      <h2 id="status-heading" class="section-title">Estado de Sistemas</h2>
+      <div class="status-grid">
+
+        <article class="status-card status-card--critical">
+          <header class="status-card__header">
+            <span class="status-card__icon" aria-hidden="true">🔧</span>
+            <h3 class="status-card__title">Motor 2H — Reconstrucción</h3>
+            <span class="status-badge status-badge--critical">En proceso</span>
+          </header>
+          <p class="status-card__desc">Cigüeñal rectificado 0.25 mm sobremedida. Pistones reemplazados por originales
+            Toyota PN 13101-68010. Culata enviada a rectificación plana. Empaque de culata pendiente de instalación.</p>
+          <div class="status-card__progress">
+            <div class="progress-bar">
+              <div class="progress-bar__fill" style="--progress: 72%"></div>
+            </div>
+            <span class="progress-bar__label">72% · Sem. 4 de 6</span>
+          </div>
+          <dl class="status-card__meta">
+            <div>
+              <dt>Técnico</dt>
+              <dd>Mauricio Arce</dd>
+            </div>
+            <div>
+              <dt>Actualizado</dt>
+              <dd>08 Jun 2026</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="status-card status-card--warning">
+          <header class="status-card__header">
+            <span class="status-card__icon" aria-hidden="true">⚙</span>
+            <h3 class="status-card__title">Transmisión H55F</h3>
+            <span class="status-badge status-badge--warning">Espera pieza</span>
+          </header>
+          <p class="status-card__desc">Caja de cambios desmontada y lavada. Sincronizadores de 3.ª y 4.ª velocidad
+            desgastados. Rodamiento delantero reemplazado. Esperando kit de sincronizadores importado de Japón (ETA 18
+            jun).</p>
+          <div class="status-card__progress">
+            <div class="progress-bar">
+              <div class="progress-bar__fill" style="--progress: 45%"></div>
+            </div>
+            <span class="progress-bar__label">45% · Sem. 2 de 4</span>
+          </div>
+          <dl class="status-card__meta">
+            <div>
+              <dt>Técnico</dt>
+              <dd>Jorge Brenes</dd>
+            </div>
+            <div>
+              <dt>Actualizado</dt>
+              <dd>05 Jun 2026</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="status-card status-card--ok">
+          <header class="status-card__header">
+            <span class="status-card__icon" aria-hidden="true">🛡</span>
+            <h3 class="status-card__title">Carrocería y Anticorrosión</h3>
+            <span class="status-badge status-badge--ok">Completado</span>
+          </header>
+          <p class="status-card__desc">Arenado integral completado. Aplicación de fosfato de zinc en zonas críticas
+            (umbrales, pisos y pasos de rueda). Pintura epóxica de imprimación en dos manos. Carrocería lista para
+            acabado final.</p>
+          <div class="status-card__progress">
+            <div class="progress-bar">
+              <div class="progress-bar__fill progress-bar__fill--ok" style="--progress: 100%"></div>
+            </div>
+            <span class="progress-bar__label">100% · Completado</span>
+          </div>
+          <dl class="status-card__meta">
+            <div>
+              <dt>Técnico</dt>
+              <dd>Luis Vega</dd>
+            </div>
+            <div>
+              <dt>Completado</dt>
+              <dd>02 May 2026</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="status-card status-card--ok">
+          <header class="status-card__header">
+            <span class="status-card__icon" aria-hidden="true">⚡</span>
+            <h3 class="status-card__title">Sistema Eléctrico</h3>
+            <span class="status-badge status-badge--pending">Pendiente</span>
+          </header>
+          <p class="status-card__desc">Mazo de cables completo deberá reemplazarse. Se utilizará arnés OEM Toyota
+            BJ/HJ60 reproducido por ORIS Electric (Japón). Instalación programada para semana del 22 de julio 2026.</p>
+          <div class="status-card__progress">
+            <div class="progress-bar">
+              <div class="progress-bar__fill progress-bar__fill--pending" style="--progress: 5%"></div>
+            </div>
+            <span class="progress-bar__label">5% · Cotización aprobada</span>
+          </div>
+          <dl class="status-card__meta">
+            <div>
+              <dt>Técnico</dt>
+              <dd>Por asignar</dd>
+            </div>
+            <div>
+              <dt>Inicio</dt>
+              <dd>22 Jul 2026</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="status-card status-card--warning">
+          <header class="status-card__header">
+            <span class="status-card__icon" aria-hidden="true">🔩</span>
+            <h3 class="status-card__title">Sistema de Frenos</h3>
+            <span class="status-badge status-badge--warning">En revisión</span>
+          </header>
+          <p class="status-card__desc">Discos delanteros medidos: 11.2 mm de espesor (mín. 11.0 mm, recambio
+            recomendado). Cilindros de rueda trasera oxidados, en espera de cilindros nuevos. Líquido de frenos DOT 4
+            vaciado y tubería inspeccionada.</p>
+          <div class="status-card__progress">
+            <div class="progress-bar">
+              <div class="progress-bar__fill" style="--progress: 30%"></div>
+            </div>
+            <span class="progress-bar__label">30% · Diagnóstico activo</span>
+          </div>
+          <dl class="status-card__meta">
+            <div>
+              <dt>Técnico</dt>
+              <dd>Mauricio Arce</dd>
+            </div>
+            <div>
+              <dt>Actualizado</dt>
+              <dd>09 Jun 2026</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="status-card status-card--ok">
+          <header class="status-card__header">
+            <span class="status-card__icon" aria-hidden="true">🪟</span>
+            <h3 class="status-card__title">Suspensión Delantera</h3>
+            <span class="status-badge status-badge--ok">Completado</span>
+          </header>
+          <p class="status-card__desc">Amortiguadores Rancho RS5000 instalados en los cuatro puntos. Resortes
+            helicoidales delanteros reemplazados. Rótulas y terminales de dirección sustituidos. Alineación y balanceo
+            programados para post-motor.</p>
+          <div class="status-card__progress">
+            <div class="progress-bar">
+              <div class="progress-bar__fill progress-bar__fill--ok" style="--progress: 100%"></div>
+            </div>
+            <span class="progress-bar__label">100% · Completado</span>
+          </div>
+          <dl class="status-card__meta">
+            <div>
+              <dt>Técnico</dt>
+              <dd>Jorge Brenes</dd>
+            </div>
+            <div>
+              <dt>Completado</dt>
+              <dd>29 Abr 2026</dd>
+            </div>
+          </dl>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ── ZONA D: Inventario de piezas ── -->
+    <section class="dashboard-area area-d" id="inventario" aria-labelledby="inventory-heading">
+      <h2 id="inventory-heading" class="section-title">Inventario de Piezas</h2>
+      <div class="parts-toolbar">
+        <input class="parts-search" type="search" placeholder="Buscar pieza o número OEM…" aria-label="Buscar piezas" />
+        <div class="parts-filters" role="group" aria-label="Filtrar por estado">
+          <button class="filter-btn filter-btn--active" aria-pressed="true">Todas</button>
+          <button class="filter-btn" aria-pressed="false">Recibidas</button>
+          <button class="filter-btn" aria-pressed="false">En tránsito</button>
+          <button class="filter-btn" aria-pressed="false">Pendientes</button>
+        </div>
+      </div>
+
+      <ul class="parts-list" aria-label="Lista de piezas">
+
+        <li class="parts-item">
+          <div class="part-status-indicator part-status-indicator--received" aria-label="Recibida"></div>
+          <div class="part-info">
+            <span class="part-name">Empaque de culata completo — Motor 2H</span>
+            <span class="part-oem">OEM: 04112-68011 · Victor Reinz</span>
+          </div>
+          <span class="part-price">₡ 87 500</span>
+          <div class="part-actions">
+            <span class="part-tag part-tag--received">Recibida</span>
+            <button class="part-btn" aria-label="Ver detalle de empaque de culata">Ver</button>
+          </div>
+        </li>
+
+        <li class="parts-item">
+          <div class="part-status-indicator part-status-indicator--received" aria-label="Recibida"></div>
+          <div class="part-info">
+            <span class="part-name">Juego de pistones +0.25 mm sobremedida</span>
+            <span class="part-oem">OEM: 13101-68010 · Toyota Original (×6)</span>
+          </div>
+          <span class="part-price">₡ 243 000</span>
+          <div class="part-actions">
+            <span class="part-tag part-tag--received">Recibida</span>
+            <button class="part-btn" aria-label="Ver detalle de pistones">Ver</button>
+          </div>
+        </li>
+
+        <li class="parts-item">
+          <div class="part-status-indicator part-status-indicator--transit" aria-label="En tránsito"></div>
+          <div class="part-info">
+            <span class="part-name">Kit sincronizadores H55F — 3.ª/4.ª vel.</span>
+            <span class="part-oem">OEM: 33367-60010 · Toyota Japan Import</span>
+          </div>
+          <span class="part-price">₡ 138 750</span>
+          <div class="part-actions">
+            <span class="part-tag part-tag--transit">En tránsito</span>
+            <button class="part-btn" aria-label="Ver detalle de sincronizadores">Ver</button>
+          </div>
+        </li>
+
+        <li class="parts-item">
+          <div class="part-status-indicator part-status-indicator--transit" aria-label="En tránsito"></div>
+          <div class="part-info">
+            <span class="part-name">Cilindros de rueda trasera (par)</span>
+            <span class="part-oem">OEM: 47570-60020 · Aisin Original</span>
+          </div>
+          <span class="part-price">₡ 54 200</span>
+          <div class="part-actions">
+            <span class="part-tag part-tag--transit">En tránsito</span>
+            <button class="part-btn" aria-label="Ver detalle de cilindros">Ver</button>
+          </div>
+        </li>
+
+        <li class="parts-item">
+          <div class="part-status-indicator part-status-indicator--received" aria-label="Recibida"></div>
+          <div class="part-info">
+            <span class="part-name">Amortiguadores Rancho RS5000 (×4)</span>
+            <span class="part-oem">Ref: RS5176 / RS5294 · Rancho Performance</span>
+          </div>
+          <span class="part-price">₡ 196 000</span>
+          <div class="part-actions">
+            <span class="part-tag part-tag--received">Instalado</span>
+            <button class="part-btn" aria-label="Ver detalle de amortiguadores">Ver</button>
+          </div>
+        </li>
+
+        <li class="parts-item">
+          <div class="part-status-indicator part-status-indicator--pending" aria-label="Pendiente"></div>
+          <div class="part-info">
+            <span class="part-name">Arnés eléctrico completo OEM reproducido</span>
+            <span class="part-oem">ORIS Electric JP · Ref: HJ61-WH-FULL-86</span>
+          </div>
+          <span class="part-price">₡ 312 000</span>
+          <div class="part-actions">
+            <span class="part-tag part-tag--pending">Pedido</span>
+            <button class="part-btn" aria-label="Ver detalle de arnés">Ver</button>
+          </div>
+        </li>
+
+        <li class="parts-item">
+          <div class="part-status-indicator part-status-indicator--received" aria-label="Recibida"></div>
+          <div class="part-info">
+            <span class="part-name">Rodamiento principal cigüeñal (juego)</span>
+            <span class="part-oem">OEM: 11701-68011 · King Bearings STD</span>
+          </div>
+          <span class="part-price">₡ 67 800</span>
+          <div class="part-actions">
+            <span class="part-tag part-tag--received">Recibida</span>
+            <button class="part-btn" aria-label="Ver detalle de rodamientos">Ver</button>
+          </div>
+        </li>
+
+        <li class="parts-item">
+          <div class="part-status-indicator part-status-indicator--pending" aria-label="Pendiente"></div>
+          <div class="part-info">
+            <span class="part-name">Discos de freno delanteros (par)</span>
+            <span class="part-oem">OEM: 43512-60090 · DBA Street Series</span>
+          </div>
+          <span class="part-price">₡ 92 400</span>
+          <div class="part-actions">
+            <span class="part-tag part-tag--pending">Por cotizar</span>
+            <button class="part-btn" aria-label="Ver detalle de discos">Ver</button>
+          </div>
+        </li>
+
+        <li class="parts-item">
+          <div class="part-status-indicator part-status-indicator--received" aria-label="Recibida"></div>
+          <div class="part-info">
+            <span class="part-name">Rótulas delanteras superiores e inferiores</span>
+            <span class="part-oem">OEM: 43310-60030 / 43330-60050 · Moog</span>
+          </div>
+          <span class="part-price">₡ 76 500</span>
+          <div class="part-actions">
+            <span class="part-tag part-tag--received">Instalado</span>
+            <button class="part-btn" aria-label="Ver detalle de rótulas">Ver</button>
+          </div>
+        </li>
+
+        <li class="parts-item">
+          <div class="part-status-indicator part-status-indicator--transit" aria-label="En tránsito"></div>
+          <div class="part-info">
+            <span class="part-name">Bomba de combustible mecánica 2H</span>
+            <span class="part-oem">OEM: 23100-56030 · Airtex Original</span>
+          </div>
+          <span class="part-price">₡ 48 900</span>
+          <div class="part-actions">
+            <span class="part-tag part-tag--transit">En tránsito</span>
+            <button class="part-btn" aria-label="Ver detalle de bomba">Ver</button>
+          </div>
+        </li>
+
+      </ul>
+    </section>
+
+    <!-- ── ZONA E: Bitácora técnica ── -->
+    <section class="dashboard-area area-e" id="bitacora" aria-labelledby="log-heading">
+      <h2 id="log-heading" class="section-title">Bitácora Técnica</h2>
+      <ol class="activity-log" reversed aria-label="Registro de actividades técnicas">
+
+        <li class="log-entry log-entry--critical">
+          <time class="log-entry__time" datetime="2026-06-09">09 Jun · 14:30</time>
+          <div class="log-entry__content">
+            <strong class="log-entry__title">Culata enviada a rectificación</strong>
+            <p class="log-entry__desc">Culata del motor 2H trasladada a Rectificaciones El Bosque (Alajuela). Se detectó
+              deformación plana de 0.08 mm en zona cilindros 4-5. Plazo estimado de retorno: 5 días hábiles.</p>
+            <span class="log-entry__author">Mauricio Arce Salas</span>
+          </div>
+        </li>
+
+        <li class="log-entry log-entry--info">
+          <time class="log-entry__time" datetime="2026-06-08">08 Jun · 10:15</time>
+          <div class="log-entry__content">
+            <strong class="log-entry__title">Medición de muñones de cigüeñal</strong>
+            <p class="log-entry__desc">Medición con micrómetro de todos los muñones (main y rod). Desgaste dentro de
+              tolerancia: 0.02–0.04 mm de ovalización. Cigüeñal aprobado para uso con cojinetes +0.25 mm. Rectificación
+              innecesaria.</p>
+            <span class="log-entry__author">Mauricio Arce Salas</span>
+          </div>
+        </li>
+
+        <li class="log-entry log-entry--warning">
+          <time class="log-entry__time" datetime="2026-06-05">05 Jun · 09:00</time>
+          <div class="log-entry__content">
+            <strong class="log-entry__title">Detención transmisión — espera de sincronizadores</strong>
+            <p class="log-entry__desc">Trabajo de caja H55F suspendido temporalmente hasta recepción del kit de
+              sincronizadores en tránsito desde Osaka. ETA confirmado: 18 de junio 2026. Sin impacto en ruta crítica del
+              proyecto.</p>
+            <span class="log-entry__author">Jorge Brenes Elizondo</span>
+          </div>
+        </li>
+
+        <li class="log-entry log-entry--ok">
+          <time class="log-entry__time" datetime="2026-05-28">28 May · 16:45</time>
+          <div class="log-entry__content">
+            <strong class="log-entry__title">Instalación amortiguadores Rancho completada</strong>
+            <p class="log-entry__desc">Cuatro amortiguadores RS5000 instalados y torqueados a especificación (90 N·m).
+              Verificación de geometría básica realizada. Vehículo en posición correcta de ride height. Listo para
+              alineación post-ensamble.</p>
+            <span class="log-entry__author">Jorge Brenes Elizondo</span>
+          </div>
+        </li>
+
+        <li class="log-entry log-entry--ok">
+          <time class="log-entry__time" datetime="2026-05-02">02 May · 11:00</time>
+          <div class="log-entry__content">
+            <strong class="log-entry__title">Tratamiento anticorrosión finalizado</strong>
+            <p class="log-entry__desc">Segunda mano de pintura epóxica gris aplicada sobre toda la carrocería. Tiempo de
+              curado: 72 horas. Inspección fotográfica realizada, sin faltas ni burbujas. Carrocería sellada y protegida
+              para almacenamiento intermedio.</p>
+            <span class="log-entry__author">Luis Vega Monge</span>
+          </div>
+        </li>
+
+      </ol>
+    </section>
+
+    <!-- ── ZONA F: Próximos pasos / cotización ── -->
+    <section class="dashboard-area area-f" id="cotizacion" aria-labelledby="next-heading">
+      <h2 id="next-heading" class="section-title">Próximos Pasos</h2>
+      <div class="next-steps">
+
+        <div class="next-item next-item--urgent">
+          <span class="next-item__priority" aria-label="Prioridad alta">!</span>
+          <div class="next-item__body">
+            <strong>Recepcionar culata rectificada</strong>
+            <p>Confirmar planitud ≤ 0.03 mm. Preparar empaque y tornillería de culata para ensamble inmediato.</p>
+            <time>ETA: 16 Jun 2026</time>
+          </div>
+        </div>
+
+        <div class="next-item">
+          <span class="next-item__priority next-item__priority--mid" aria-label="Prioridad media">2</span>
+          <div class="next-item__body">
+            <strong>Recepcionar kit de sincronizadores H55F</strong>
+            <p>Verificar número de parte 33367-60010. Completar ensamble de caja de cambios y prueba en banco.</p>
+            <time>ETA: 18 Jun 2026</time>
+          </div>
+        </div>
+
+        <div class="next-item">
+          <span class="next-item__priority next-item__priority--mid" aria-label="Prioridad media">3</span>
+          <div class="next-item__body">
+            <strong>Cotizar discos de freno delanteros</strong>
+            <p>Solicitar precio a AutoPartes Tico y comparar con importación directa DBA desde Australia.</p>
+            <time>Fecha límite: 20 Jun 2026</time>
+          </div>
+        </div>
+
+        <div class="next-item">
+          <span class="next-item__priority next-item__priority--low" aria-label="Prioridad baja">4</span>
+          <div class="next-item__body">
+            <strong>Confirmar color de pintura exterior</strong>
+            <p>Coordinación con propietario para selección de tono Land Cruiser Heritage. Código original: Toyota 040
+              (Super White II) o restauración custom Bronze Mist Metallic.</p>
+            <time>Fecha límite: 25 Jun 2026</time>
+          </div>
+        </div>
+
+        <div class="next-item">
+          <span class="next-item__priority next-item__priority--low" aria-label="Prioridad baja">5</span>
+          <div class="next-item__body">
+            <strong>Confirmar arnés eléctrico ORIS Electric</strong>
+            <p>Verificar llegada de arnés (ETA 10 Jul). Revisar compatibilidad con instrumentación original de 1986.</p>
+            <time>ETA pedido: 10 Jul 2026</time>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="quote-summary">
+        <h3 class="quote-summary__title">Resumen de Cotización Pendiente</h3>
+        <table class="quote-table" aria-label="Cotización pendiente de aprobación">
+          <thead>
+            <tr>
+              <th scope="col">Concepto</th>
+              <th scope="col">Proveedor</th>
+              <th scope="col" class="text-right">Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pintura exterior completa (base + clear)</td>
+              <td>PinturAutos CR</td>
+              <td class="text-right">₡ 380 000</td>
+            </tr>
+            <tr>
+              <td>Tapicería interior completa en cuero</td>
+              <td>Tapicería San Carlos</td>
+              <td class="text-right">₡ 245 000</td>
+            </tr>
+            <tr>
+              <td>Alineación y balanceo 4 ruedas</td>
+              <td>TecniRueda Quesada</td>
+              <td class="text-right">₡ 35 000</td>
+            </tr>
+            <tr>
+              <td>Llantas BFGoodrich KO2 A/T (×4) 265/75R16</td>
+              <td>Goodyear San Carlos</td>
+              <td class="text-right">₡ 328 000</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th scope="row" colspan="2">Subtotal cotización pendiente</th>
+              <td class="text-right quote-total">₡ 988 000</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+  </main><!-- /.dashboard-wrapper -->
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <p class="footer-copy">© 2026 MecaClásica San Carlos · Restauración de Vehículos Clásicos · San Carlos, Alajuela,
+      Costa Rica</p>
+    <p class="footer-meta">Proyecto: Toyota Land Cruiser HJ61 · 1986 · Expediente #SC-2026-042</p>
+  </footer>
+
+</body>
+
+</html>

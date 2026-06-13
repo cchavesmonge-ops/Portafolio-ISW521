@@ -5,101 +5,121 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Auto Lavado Multiservicios VH — Lavado profesional para tu vehículo. Llámanos al 7168-6242." />
   <title>Auto Lavado Multiservicios VH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
 
   <header role="banner">
-    <nav aria-label="Navegación principal">
-      <a href="#inicio" aria-label="Ir al inicio — Multiservicios VH">
-        Multiservicios VH
-      </a>
-      <ul role="list">
-        <li><a href="#inicio">Inicio</a></li>
-        <li><a href="#servicios">Servicios</a></li>
-        <li><a href="#paquetes">Paquetes</a></li>
-        <li><a href="#contacto">Contacto</a></li>
-      </ul>
+    <nav class="navbar" aria-label="Navegación principal">
+      <div class="nav-inner">
+
+        <a href="#inicio" class="nav-logo" aria-label="Ir al inicio — Multiservicios VH">
+          <img
+            src="img/logo.jpg"
+            alt="Logo de Auto Lavado Multiservicios VH — burbuja azul con texto"
+            class="nav-logo-img"
+          />
+          <span class="nav-logo-text">Multi<span>Servicios VH</span></span>
+        </a>
+
+        <ul class="nav-links" role="list">
+          <li><a href="#inicio">Inicio</a></li>
+          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="#paquetes">Paquetes</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <button
+            id="theme-toggle"
+            class="btn-theme"
+            aria-label="Cambiar a modo claro"
+            aria-pressed="false"
+          >☀️</button>
+
+          <a
+            href="https://wa.me/50671686242"
+            class="btn-nav-cta"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Agendar cita por WhatsApp"
+          >📲 Cita</a>
+
+          <button
+            id="hamburger"
+            class="hamburger"
+            aria-label="Abrir menú"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+          >
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+
+      <nav id="mobile-menu" class="mobile-menu" aria-label="Menú móvil">
+        <a href="#inicio">Inicio</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#paquetes">Paquetes</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
     </nav>
   </header>
 
   <main id="main-content">
 
     <section id="inicio" aria-labelledby="hero-heading">
-      <h1 id="hero-heading">Tu auto, nuestro detalle. Resultados que se notan.</h1>
-      <p>Lavado profesional, detallado y más para tu vehículo.</p>
-      <a href="https://wa.me/50671686242" target="_blank" rel="noopener noreferrer"
-         aria-label="Agendar cita por WhatsApp al 7168-6242">
-        Agendar cita
-      </a>
-    </section>
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="hero-inner">
 
-    <section id="servicios" aria-labelledby="services-heading">
-      <h2 id="services-heading">Nuestros Servicios</h2>
-      <div role="list">
-        <article role="listitem">
-          <h3>Detallado</h3>
-          <p>Limpieza profunda interior y exterior.</p>
-        </article>
-        <article role="listitem">
-          <h3>Encerado</h3>
-          <p>Protege la pintura con cera de alta calidad.</p>
-        </article>
-        <article role="listitem">
-        <article role="listitem">
-          <h3>Limpieza Interior</h3>
-          <p>Aspirado, tapicería, tablero y espacios internos.</p>
-        </article>
-        <article role="listitem">
-          <h3>Lavado Exterior</h3>
-          <p>Carrocería, llantas y limpiaparabrisas.</p>
-        </article>
+        <div class="hero-content">
+          <p class="hero-badge">Multiservicios VH</p>
+          <h1 class="hero-title" id="hero-heading">
+            Tu auto,<br />
+            <em>nuestro</em>
+            <span class="outline">detalle</span>
+          </h1>
+          <p class="hero-tagline">
+            <strong>Resultados que se notan.</strong><br />
+            Lavado profesional, detallado y más para tu vehículo.
+          </p>
+          <div class="hero-cta-group">
+            <a
+              href="https://wa.me/50671686242"
+              class="btn-primary"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Agendar cita por WhatsApp al 7168-6242"
+            >📲 Agendar cita</a>
+            <a href="#servicios" class="btn-secondary" aria-label="Ver todos los servicios">
+              Ver servicios →
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="hero-logo-wrap">
+            <div class="hero-logo-ring"></div>
+            <img src="img/logo.jpg" alt="Logo de Auto Lavado Multiservicios VH" class="hero-logo-img" />
+            <div class="drop drop-1"></div>
+            <div class="drop drop-2"></div>
+            <div class="drop drop-3"></div>
+          </div>
+        </div>
+
       </div>
-    </section>
-
-    <section id="paquetes" aria-labelledby="packages-heading">
-      <h2 id="packages-heading">Elige tu Lavado</h2>
-      <article aria-labelledby="flash-title">
-        <h3 id="flash-title">Lavado Flash</h3>
-        <p>Limpieza exterior rápida — ideal cuando tienes poco tiempo.</p>
-        <ul aria-label="Incluye">
-          <li>Lavado exterior completo</li>
-        </ul>
-      </article>
-      <article aria-labelledby="full-title">
-        <h3 id="full-title">Lavado Full</h3>
-        <p>Todo lo que tu auto necesita.</p>
-        <ul aria-label="Incluye">
-          <li>Lavado exterior</li>
-          <li>Limpieza interior</li>
-          <li>Encerado</li>
-          <li>Detallado completo</li>
-        </ul>
-      </article>
-    </section>
-
-    <section id="contacto" aria-labelledby="contact-heading">
-      <h2 id="contact-heading">Agenda tu Cita</h2>
-      <article aria-labelledby="phone-heading">
-        <h3 id="phone-heading">Llámanos</h3>
-        <a href="https://wa.me/50671686242" target="_blank" rel="noopener noreferrer"
-           aria-label="Contactar por WhatsApp al 7168-6242">
-          7168 6242
-        </a>
-      </article>
-      <article aria-labelledby="hours-heading">
-        <h3 id="hours-heading">Horario</h3>
-        <p>Lunes – Viernes: 8:00 AM – 5:00 PM</p>
-        <p>Sábados y Domingos: 8:00 AM – 2:00 PM</p>
-        <p>Sábados y Domingos: atención únicamente con cita previa</p>
-      </article>
     </section>
 
   </main>
 
   <footer role="contentinfo">
-    <p>© 2026 Auto Lavado Multiservicios VH — Todos los derechos reservados</p>
-    <p>📞 7168 6242</p>
+    <p style="text-align:center; padding:2rem; color:#8baabf; font-family:sans-serif;">
+      © 2026 Auto Lavado Multiservicios VH — 📞 7168 6242
+    </p>
   </footer>
 
+  <script src="js/main.js" defer></script>
 </body>
 </html>

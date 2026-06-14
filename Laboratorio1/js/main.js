@@ -1,20 +1,23 @@
 /**
- * Auto Lavado Multiservicios VH — main.js (v2)
- * Tema (localStorage) + hamburger
+ * Auto Lavado Multiservicios VH — main.js
+ * Web Storage (localStorage) + interacciones generales
  */
 
-const THEME_KEY = 'autolavado_theme';
-const themeBtn  = document.getElementById('theme-toggle');
-const body      = document.body;
+/* =============================================
+   1. THEME TOGGLE — localStorage persistence
+   ============================================= */
+const THEME_KEY = 'autolavado_theme'; // clave en localStorage
 
-function updateThemeIcon(isLight) {
-  if (!themeBtn) return;
-  themeBtn.textContent = isLight ? '🌙' : '☀️';
-  themeBtn.setAttribute('aria-label', isLight ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro');
-}
+const themeBtn   = document.getElementById('theme-toggle');
+const body       = document.body;
 
+/**
+ * Aplica el tema guardado al cargar la página.
+ * Recupera el valor de localStorage y, si existe,
+ * lo aplica antes del primer render visible.
+ */
 function applyStoredTheme() {
-  const stored = localStorage.getItem(THEME_KEY);
+  const stored = localStorage.getItem(THEME_KEY); // leer localStorage
   if (stored === 'light') {
     body.classList.add('light-mode');
     if (themeBtn) themeBtn.setAttribute('aria-pressed', 'true');
@@ -26,17 +29,54 @@ function applyStoredTheme() {
   }
 }
 
-function toggleTheme() {
-  const isLight = body.classList.toggle('light-mode');
-  localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
-  updateThemeIcon(isLight);
-  if (themeBtn) themeBtn.setAttribute('aria-pressed', String(isLight));
+function updateThemeIcon(isLight) {
+  if (!themeBtn) return;
+  themeBtn.textContent = isLight ? '🌙' : '☀️';
+  themeBtn.setAttribute('aria-label',
+    isLight ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'
+  );
 }
 
-if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+function toggleTheme() {
+  const isLight = body.classList.toggle('light-mode');
+  // Persistir en localStorage
+  localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
+  updateThemeIcon(isLight);
+
+  if (themeBtn) themeBtn.setAttribute('aria-pressed', String(isLight));
+  showToast(isLight ? '☀️ Modo claro activado' : '🌙 Modo oscuro activado');
+}
+
+if (themeBtn) {
+  themeBtn.addEventListener('click', toggleTheme);
+}
+
+// Aplicar tema guardado al inicio
 applyStoredTheme();
 
-/* Hamburger */
+
+/* =============================================
+   2. WELCOME BANNER — sessionStorage
+   ============================================= */
+const WELCOME_KEY = 'autolavado_welcome_seen';
+
+function checkWelcomeBanner() {
+  const seen = sessionStorage.getItem(WELCOME_KEY);
+  if (!seen) {
+    // Primera visita en esta sesión
+    sessionStorage.setItem(WELCOME_KEY, 'true');
+    setTimeout(() => {
+      showToast('👋 ¡Bienvenido a Auto Lavado Multiservicios VH!');
+    }, 1200);
+  }
+}
+
+checkWelcomeBanner();
+
+
+/* =============================================
+   3. HAMBURGER MENU
+   ============================================= */
 const hamburger  = document.getElementById('hamburger');
 const mobileMenu = document.getElementById('mobile-menu');
 
@@ -47,6 +87,8 @@ if (hamburger && mobileMenu) {
     hamburger.setAttribute('aria-expanded', String(isOpen));
     hamburger.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
   });
+
+  // Cerrar al hacer clic en un enlace del menú móvil
   mobileMenu.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', () => {
       mobileMenu.classList.remove('open');
@@ -56,21 +98,87 @@ if (hamburger && mobileMenu) {
   });
 }
 
-/* Navbar scroll */
+
+/* =============================================
+   4. NAVBAR SCROLL EFFECT
+   ============================================= */
 const navbar = document.querySelector('.navbar');
+
 window.addEventListener('scroll', () => {
-  navbar.style.background = window.scrollY > 30
-    ? 'rgba(5,13,26,0.98)'
-    : 'rgba(5,13,26,0.92)';
+  if (window.scrollY > 30) {
+    navbar.style.background = 'rgba(5,13,26,0.98)';
+  } else {
+    navbar.style.background = 'rgba(5,13,26,0.92)';
+  }
 }, { passive: true });
 
-/* Smooth scroll */
+
+/* =============================================
+   5. SMOOTH SCROLL — enlaces internos
+   ============================================= */
 document.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener('click', (e) => {
     const target = document.querySelector(link.getAttribute('href'));
     if (target) {
       e.preventDefault();
-      window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+      const offset = 80; // altura del navbar
+      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
     }
   });
+});
+
+
+/* =============================================
+   6. TOAST NOTIFICATION
+   ============================================= */
+let toastTimer = null;
+
+function showToast(message) {
+  let toast = document.getElementById('toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.className = 'toast';
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    document.body.appendChild(toast);
+  }
+
+  toast.textContent = message;
+  toast.classList.add('show');
+
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+
+/* =============================================
+   7. INTERSECTION OBSERVER — animaciones on scroll
+   ============================================= */
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+      observer.unobserve(entry.target);
+    }
+  });
+}, observerOptions);
+
+// Observar tarjetas y secciones
+document.querySelectorAll(
+  '.service-card, .package-card, .contact-card, .bonus-banner'
+).forEach(el => {
+  el.style.opacity    = '0';
+  el.style.transform  = 'translateY(24px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
 });

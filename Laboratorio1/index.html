@@ -14,23 +14,16 @@
   <header role="banner">
     <nav class="navbar" aria-label="Navegación principal">
       <div class="nav-inner">
-
         <a href="#inicio" class="nav-logo" aria-label="Ir al inicio — Multiservicios VH">
-          <img
-            src="img/logo.jpg"
-            alt="Logo de Auto Lavado Multiservicios VH — burbuja azul con texto"
-            class="nav-logo-img"
-          />
+          <img src="img/logo.jpg" alt="Logo de Auto Lavado Multiservicios VH — burbuja azul con texto" class="nav-logo-img" />
           <span class="nav-logo-text">Multi<span>Servicios VH</span></span>
         </a>
-
         <ul class="nav-links" role="list">
           <li><a href="#inicio">Inicio</a></li>
           <li><a href="#servicios">Servicios</a></li>
           <li><a href="#paquetes">Paquetes</a></li>
           <li><a href="#contacto">Contacto</a></li>
         </ul>
-
         <div class="nav-actions">
           <button id="theme-toggle" class="btn-theme" aria-label="Cambiar a modo claro" aria-pressed="false">☀️</button>
           <a href="https://wa.me/50671686242" class="btn-nav-cta" target="_blank" rel="noopener noreferrer" aria-label="Agendar cita por WhatsApp">📲 Cita</a>
@@ -39,7 +32,6 @@
           </button>
         </div>
       </div>
-
       <nav id="mobile-menu" class="mobile-menu" aria-label="Menú móvil">
         <a href="#inicio">Inicio</a>
         <a href="#servicios">Servicios</a>
@@ -90,7 +82,6 @@
           <h2 class="section-title" id="services-heading">Nuestros <span>Servicios</span></h2>
           <p class="section-desc">Cada servicio está diseñado para devolver a tu vehículo el brillo y la limpieza que merece.</p>
         </header>
-
         <div class="services-grid" role="list">
           <article class="service-card" role="listitem">
             <div class="service-icon" aria-hidden="true">✨</div>
@@ -103,7 +94,7 @@
             <p class="service-desc">Protege la pintura de tu auto con una capa de cera de alta calidad que brinda brillo duradero y protección UV.</p>
           </article>
           <article class="service-card" role="listitem">
-            <div class="service-icon" aria-hidden="true">🔧</div>
+            <div class="service-icon" aria-hidden="true">🪑</div>
             <h3 class="service-name">Limpieza Interior</h3>
             <p class="service-desc">Aspirado, limpieza de tapicería, tablero y todos los espacios internos. Tu habitáculo como nuevo.</p>
           </article>
@@ -111,6 +102,58 @@
             <div class="service-icon" aria-hidden="true">🚗</div>
             <h3 class="service-name">Lavado Exterior</h3>
             <p class="service-desc">Lavado completo de la carrocería, llantas y limpiaparabrisas con productos especializados.</p>
+          </article>
+          <article class="service-card" role="listitem">
+            <div class="service-icon" aria-hidden="true">⚙️</div>
+            <h3 class="service-name">Limpieza del Motor</h3>
+            <p class="service-desc">Desengrasado y limpieza profunda del compartimiento del motor. Eliminamos suciedad acumulada para un mejor rendimiento y presentación.</p>
+          </article>
+          <article class="service-card service-card--carblock" role="listitem" aria-label="Servicio Aromatizante Carblock">
+            <div class="service-icon service-icon--carblock" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+                <polygon points="14,2 17,10 26,10 19,15.5 21.5,24 14,19 6.5,24 9,15.5 2,10 11,10" fill="#c9a84c" stroke="#e8c96a" stroke-width="1"/>
+              </svg>
+            </div>
+            <div class="carblock-logo-text" aria-hidden="true">CAR<span>BLOCK</span></div>
+            <h3 class="service-name service-name--carblock">Aromatizante Carblock</h3>
+            <p class="service-desc">Aromatizante premium de larga duración con tecnología Carblock. Fragancia profesional que neutraliza olores y deja tu habitáculo con un aroma fresco y persistente.</p>
+            <div class="carblock-badge" aria-label="Producto premium Carblock">
+              <span>✦ Premium</span>
+              <span>✦ Larga duración</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAQUETES -->
+    <section id="paquetes" aria-labelledby="packages-heading">
+      <div class="section-inner">
+        <header class="section-header">
+          <p class="section-label">Nuestros paquetes</p>
+          <h2 class="section-title" id="packages-heading">Elige tu <span>Lavado</span></h2>
+          <p class="section-desc">Dos opciones pensadas para adaptarse a tu tiempo y tus necesidades.</p>
+        </header>
+        <div class="packages-grid">
+          <article class="package-card package-flash" aria-labelledby="flash-title">
+            <div class="package-badge badge-flash">⚡ Rápido</div>
+            <h3 class="package-title flash-color" id="flash-title">Lavado Flash</h3>
+            <p class="package-sub">Limpieza exterior rápida — ideal cuando tienes poco tiempo</p>
+            <ul class="package-features" aria-label="Incluye">
+              <li class="pkg-feat">Lavado exterior completo</li>
+            </ul>
+            <p class="package-note">La opción perfecta para mantener tu auto siempre presentable sin sacrificar tu agenda.</p>
+          </article>
+          <article class="package-card package-full" aria-labelledby="full-title">
+            <div class="package-badge badge-full">⭐ Completo</div>
+            <h3 class="package-title full-color" id="full-title">Lavado Full</h3>
+            <p class="package-sub">Todo lo que tu auto necesita</p>            <ul class="package-features" aria-label="Incluye">
+              <li class="pkg-feat">Lavado exterior</li>
+              <li class="pkg-feat">Limpieza interior</li>
+              <li class="pkg-feat">Encerado</li>
+              <li class="pkg-feat">Detallado completo</li>
+            </ul>
+            <p class="package-note">El paquete más completo para tu vehículo.</p>
           </article>
         </div>
       </div>

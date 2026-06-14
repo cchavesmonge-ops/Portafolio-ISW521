@@ -485,3 +485,181 @@ section { padding: 5rem 1.5rem; }
 @media (max-width: 480px) {
   .services-grid { grid-template-columns: 1fr; }
 }
+
+/* =============================================
+   PACKAGES — CSS GRID
+   ============================================= */
+#paquetes {
+  background: var(--clr-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.package-card {
+  border-radius: var(--radius-lg);
+  padding: 2.25rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition), box-shadow var(--transition);
+  color: #f0f8ff;
+}
+.package-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+
+.package-flash {
+  background: linear-gradient(145deg, #0a1f38, #0d2645);
+  border: 1px solid rgba(0,168,255,0.2);
+}
+.package-full {
+  background: linear-gradient(145deg, #0d2038, #162e4a);
+  border: 1px solid rgba(0,212,200,0.25);
+}
+
+.package-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.8rem;
+  border-radius: 100px;
+  margin-bottom: 1.25rem;
+}
+.badge-flash { background: rgba(0,168,255,0.15); color: #00a8ff; border: 1px solid rgba(0,168,255,0.3); }
+.badge-full  { background: rgba(0,212,200,0.15); color: #00d4c8; border: 1px solid rgba(0,212,200,0.3); }
+
+.package-title {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.flash-color { color: #00a8ff; }
+.full-color  { color: #00d4c8; }
+
+.package-card .package-sub,
+.package-card .package-note { color: #8baabf; }
+
+.package-sub  { font-size: 0.85rem; margin-bottom: 1.5rem; }
+
+.package-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+  list-style: none;
+}
+
+.package-card .pkg-feat { color: #f0f8ff; }
+
+.pkg-feat {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+.pkg-feat::before {
+  content: '✓';
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: rgba(0,212,200,0.15);
+  color: #00d4c8;
+  font-size: 0.7rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.package-note {
+  font-size: 0.78rem;
+  font-style: italic;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .packages-grid { grid-template-columns: 1fr; }
+}
+
+/* =============================================
+   CARBLOCK — Tarjeta con identidad de marca
+   Color dominante: dorado #c9a84c
+   ============================================= */
+.service-card--carblock {
+  background: linear-gradient(145deg, #1a1400, #2a1f00);
+  border: 1px solid #c9a84c;
+  box-shadow: 0 4px 24px rgba(201,168,76,0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Brillo de fondo sutil */
+.service-card--carblock::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,76,0.08), transparent 70%);
+  pointer-events: none;
+}
+
+.service-card--carblock:hover {
+  border-color: #e8c96a;
+  box-shadow: 0 8px 36px rgba(201,168,76,0.3);
+  transform: translateY(-6px);
+}
+
+/* Ícono dorado */
+.service-icon--carblock {
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 14px;
+}
+
+/* Logo tipo wordmark */
+.carblock-logo-text {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.25em;
+  color: #8a7a5a;
+  margin-bottom: 0.35rem;
+}
+.carblock-logo-text span {
+  color: #c9a84c;
+}
+
+/* Nombre del servicio en dorado */
+.service-name--carblock {
+  color: #e8c96a;
+}
+
+/* Badges inferiores */
+.carblock-badge {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+  flex-wrap: wrap;
+}
+.carblock-badge span {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #c9a84c;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.25);
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+}

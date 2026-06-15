@@ -1,0 +1,79 @@
+actividad 1 - el cliente del sitio diminituo
+
+1. falta etiqueta viewport en el head
+2. devtools y verificar la etiqueta o la escala
+3. configurar la etiqueta y escala correspondiente
+
+actividad 3 - calcule el tamaño real
+
+1000px de ancho la fuente queda fijada en 48px (3rem)
+la media preferida es de 40px
+
+actividad - 4 lea el codigo como el navegador
+a. se activa cuando el ancho de pantalla es 599px o menos, la clase .galeria tendra solo una columna
+b. se activa cuando la pantalla tiene un ancho de 768px o mas y esta en horientacion horizontal (landscape) el elemento aside se mostrara como bloque
+c. se activa al imprimir la pagina, los elementos nav, footer y .anuncios de ocultan
+
+actividad - 5 refactorice a mobile-first
+
+.productos {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 600px) {
+  .productos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .productos {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+}
+
+actividad 6 - encuentre los 3 olores de codigo
+1. rendimineto: se descarga una imagen 4k aunque moviles el banner se oculta
+2. mantenimiento: demasiados breakpoints y anchos fijos que complican futuros cambios
+3. conceptual: diseño desktop-first con medidas rigidas, no sigue el enfoque mobile-first ni responsive
+
+actividad 7 - ¿breakpoint para el telefono del gerente?
+
+NO
+1. los breakpoints deben definirse segun las necesidades del diseño, no segun un modelo especifico de telefono
+2. los dispositivos cambian constantemente, por lo que un breakpoint para un modelo concreto, que a futuro quedara obsoleto
+
+actividad 8 - de valores quemados a tokens
+
+:root {
+  /* Colores */
+  --color-primary: #0a7d4f;
+  --color-text-light: #ffffff;
+
+  /* Espaciado */
+  --spacing-md: 16px;
+
+  /* Bordes */
+  --radius-md: 8px;
+  --border-width-md: 2px;
+}
+
+.boton-comprar {
+  background: var(--color-primary);
+  color: var(--color-text-light);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+}
+
+.enlace-activo {
+  color: var(--color-primary);
+}
+
+.tarjeta-precio {
+  border: var(--border-width-md) solid var(--color-primary);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+}

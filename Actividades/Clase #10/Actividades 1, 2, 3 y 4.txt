@@ -1,0 +1,57 @@
+actividad de análisis - t1
+1. ECMAS
+2. API
+3. ECMAS
+4. API
+5. ECMAS
+6. API
+7. ECMAS
+8. API
+
+actividad 2 - predice la salida
+A. no imprime nada, luego 10
+B. error de referencia
+C. error en obj = {}
+D. 3
+
+actividad 3 - coercion en accion
+
+1 + "3"
+resultado: 13
+tipo: string
+
+"5" - 2
+resultado: 3
+tipo: number
+
+true + true
+resultado: 2
+tipo: number
+
+null + undefined
+resultado: NaN
+tipo: number
+
+"" == false
+resultado: true
+tipo: boolean
+
+typeof NaN
+resultado: "number"
+tipo: string
+
+Boolean("")
+resultado: false
+tipo: boolean
+
+[] == false
+resultado: true
+tipo: boolean
+
+actividad 4 - operadores avanzados
+1.default, porque es el primer valor positivo que encuentra
+2. false, porque todos deben ser el mismo tipo
+3. ultimo, devuelve el primer valor verdadero
+4. null, porque el primer valor es negativo y todos deben ser iguales para ser true
+5. false, porque es igualdad estricta comparando no solo el valor, también el tipo que es en lo que se diferencian
+6. true, porque es igualdad abstracta, con coecion el null y undefined tienen el mismo valor

@@ -9,6 +9,7 @@
   <title>Auto Lavado Multiservicios VH</title>
 
   <!-- Preconnect Google Fonts -->
+  <!-- W3C info #4-5: trailing slash en void elements removido -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -18,20 +19,18 @@
 
 <body>
 
-  <!-- ============================================================
-       NAVBAR
-       FIX W3C #7: role="banner" innecesario en <header> — removido
-       ============================================================ -->
+  <!-- W3C warning #7: role="banner" innecesario en <header> nativo — removido -->
   <header>
     <nav class="navbar" aria-label="Navegación principal">
       <div class="nav-inner">
 
         <a href="#inicio" class="nav-logo" aria-label="Ir al inicio — Multiservicios VH">
+          <!-- W3C info #8: trailing slash en <img /> removido -->
           <img src="img/logo.jpg" alt="Logo de Auto Lavado Multiservicios VH" class="nav-logo-img">
           <span class="nav-logo-text">Multi<span>Servicios VH</span></span>
         </a>
 
-        <!-- FIX W3C #9: role="list" innecesario en <ul> — removido -->
+        <!-- W3C warning #9: role="list" innecesario en <ul> nativo — removido -->
         <ul class="nav-links">
           <li><a href="#inicio">Inicio</a></li>
           <li><a href="#servicios">Servicios</a></li>
@@ -66,10 +65,9 @@
   <main id="main-content">
 
     <!-- ========================
-         HERO
+         HERO — fondo: foto real del local con overlay azul
          ======================== -->
     <section id="inicio" aria-labelledby="hero-heading">
-      <!-- Fondo: foto real del local con overlay azul semitransparente -->
       <div class="hero-bg" aria-hidden="true">
         <div class="hero-bg-photo"></div>
         <div class="hero-bg-overlay"></div>
@@ -85,6 +83,7 @@
             <span class="outline">detalle</span>
           </h1>
 
+          <!-- W3C info #11: trailing slash en <br /> removido -->
           <p class="hero-tagline">
             <strong>Resultados que se notan.</strong><br>
             Lavado profesional, detallado y más para tu vehículo.
@@ -117,8 +116,8 @@
           </p>
         </header>
 
-        <!-- FIX W3C #13-18: role="listitem" inválido en <article> — removido.
-             <article> dentro de <div> es semánticamente válido sin roles adicionales. -->
+        <!-- W3C errors #13-18: role="listitem" inválido en <article> — removido.
+             <article> es semánticamente autónomo y no requiere roles adicionales. -->
         <div class="services-grid">
 
           <article class="service-card">
@@ -164,14 +163,14 @@
             </p>
           </article>
 
-          <!-- FIX W3C #18: role="listitem" removido del article.
-               FIX W3C #19: aria-label en div sin role válido —
-               reemplazado por role="group" + aria-label en el div de badges. -->
+          <!-- W3C error #18: role="listitem" removido.
+               W3C error #19: aria-label en <div> sin role — corregido con role="group" -->
           <article class="service-card service-card--carblock" aria-labelledby="carblock-title">
             <div class="service-icon service-icon--carblock" aria-hidden="true">
               <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true" focusable="false">
                 <polygon points="14,2 17,10 26,10 19,15.5 21.5,24 14,19 6.5,24 9,15.5 2,10 11,10" fill="#c9a84c"
-                  stroke="#e8c96a" stroke-width="1" </svg>
+                  stroke="#e8c96a" stroke-width="1" />
+              </svg>
             </div>
             <div class="carblock-logo-text" aria-hidden="true">CAR<span>BLOCK</span></div>
             <h3 class="service-name service-name--carblock" id="carblock-title">Aromatizante Carblock</h3>
@@ -179,6 +178,7 @@
               Aromatizante premium de larga duración con tecnología Carblock. Fragancia profesional que neutraliza
               olores y deja tu habitáculo con un aroma fresco y persistente.
             </p>
+            <!-- W3C error #19: aria-label en div → role="group" + aria-label válido -->
             <div class="carblock-badge" role="group" aria-label="Características del producto">
               <span>✦ Premium</span>
               <span>✦ Larga duración</span>
@@ -250,7 +250,7 @@
           </h2>
         </header>
 
-        <!-- CSS Grid — 4 tarjetas en 2x2 -->
+        <!-- CSS Grid — 4 tarjetas 2x2 -->
         <div class="contact-grid">
 
           <!-- WhatsApp / Teléfono -->
@@ -288,17 +288,17 @@
           </article>
 
           <!-- Mapa
-               FIX W3C #20:  inválido en <iframe> — removido,
-               el ancho se controla con CSS en .map-wrapper iframe { width: 100% } -->
+               W3C error #20: width="100%" inválido en <iframe> — removido.
+               El ancho se gestiona con CSS: .map-wrapper iframe { width: 100% } -->
           <article class="contact-card map-card" aria-labelledby="map-heading">
             <div class="contact-icon" aria-hidden="true">📍</div>
             <h3 id="map-heading">Nuestra Ubicación</h3>
             <div class="map-wrapper">
-              <iframe src="https://www.google.com/maps?q=9.931227,-84.081706&z=17&output=embed" height="180"
-                style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+              <iframe src="https://maps.app.goo.gl/vQNUQmQaUwYx2ej88" height="180" style="border:0;" allowfullscreen=""
+                loading="lazy" referrerpolicy="no-referrer-when-downgrade"
                 title="Ubicación de Auto Lavado Multiservicios VH en Google Maps"></iframe>
             </div>
-            <a href="https://maps.app.goo.gl/gwP656s24cm2AhPr8" target="_blank" rel="noopener noreferrer"
+            <a href="https://maps.app.goo.gl/vQNUQmQaUwYx2ej88" target="_blank" rel="noopener noreferrer"
               class="map-link" aria-label="Ver ubicación en Google Maps">Ver en Google Maps →</a>
           </article>
 
@@ -322,7 +322,7 @@
 
   </main>
 
-  <!-- FIX W3C #21: role="contentinfo" innecesario en <footer> — removido -->
+  <!-- W3C warning #21: role="contentinfo" innecesario en <footer> nativo — removido -->
   <footer>
     <div class="footer-inner">
       <div class="footer-brand">

@@ -8,8 +8,8 @@
    ============================================= */
 const THEME_KEY = 'autolavado_theme'; // clave en localStorage
 
-const themeBtn = document.getElementById('theme-toggle');
-const body = document.body;
+const themeBtn   = document.getElementById('theme-toggle');
+const body       = document.body;
 
 /**
  * Aplica el tema guardado al cargar la página.
@@ -66,8 +66,8 @@ function checkWelcomeBanner() {
     // Primera visita en esta sesión
     sessionStorage.setItem(WELCOME_KEY, 'true');
     setTimeout(() => {
-      showToast('👋 Bienvenido a Auto Lavado Multiservicios VH');
-    }, 3000);
+      showToast('👋 ¡Bienvenido a Auto Lavado Multiservicios VH!');
+    }, 1200);
   }
 }
 
@@ -77,7 +77,7 @@ checkWelcomeBanner();
 /* =============================================
    3. HAMBURGER MENU
    ============================================= */
-const hamburger = document.getElementById('hamburger');
+const hamburger  = document.getElementById('hamburger');
 const mobileMenu = document.getElementById('mobile-menu');
 
 if (hamburger && mobileMenu) {
@@ -177,8 +177,8 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll(
   '.service-card, .package-card, .contact-card, .bonus-banner'
 ).forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(24px)';
+  el.style.opacity    = '0';
+  el.style.transform  = 'translateY(24px)';
   el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
   observer.observe(el);
 });

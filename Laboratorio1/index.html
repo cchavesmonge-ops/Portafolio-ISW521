@@ -1,70 +1,52 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Auto Lavado Multiservicios VH — Detallado, encerado y lavado profesional para tu vehículo. Llámanos al 7168-6242." />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Auto Lavado Multiservicios VH — Detallado, encerado y lavado profesional para tu vehículo. Llámanos al 7168-6242.">
   <title>Auto Lavado Multiservicios VH</title>
 
   <!-- Preconnect Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
 
   <!-- ============================================================
        NAVBAR
+       FIX W3C #7: role="banner" innecesario en <header> — removido
        ============================================================ -->
-  <header role="banner">
+  <header>
     <nav class="navbar" aria-label="Navegación principal">
       <div class="nav-inner">
 
-        <!-- Logo -->
         <a href="#inicio" class="nav-logo" aria-label="Ir al inicio — Multiservicios VH">
-          <img
-            src="img/logo.jpg"
-            alt="Logo de Auto Lavado Multiservicios VH — burbuja azul con texto"
-            class="nav-logo-img"
-          />
+          <img src="img/logo.jpg" alt="Logo de Auto Lavado Multiservicios VH" class="nav-logo-img">
           <span class="nav-logo-text">Multi<span>Servicios VH</span></span>
         </a>
 
-        <!-- Desktop links — Flexbox nav -->
-        <ul class="nav-links" role="list">
+        <!-- FIX W3C #9: role="list" innecesario en <ul> — removido -->
+        <ul class="nav-links">
           <li><a href="#inicio">Inicio</a></li>
           <li><a href="#servicios">Servicios</a></li>
           <li><a href="#paquetes">Paquetes</a></li>
           <li><a href="#contacto">Contacto</a></li>
         </ul>
 
-        <!-- Actions -->
         <div class="nav-actions">
-          <button
-            id="theme-toggle"
-            class="btn-theme"
-            aria-label="Cambiar a modo claro"
-            aria-pressed="false"
-          >☀️</button>
+          <button id="theme-toggle" class="btn-theme" aria-label="Cambiar a modo claro" aria-pressed="false">☀️</button>
 
-          <a
-            href="https://wa.me/50671686242"
-            class="btn-nav-cta"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Agendar cita por WhatsApp"
-          >📲 Cita</a>
+          <a href="https://wa.me/50671686242" class="btn-nav-cta" target="_blank" rel="noopener noreferrer"
+            aria-label="Agendar cita por WhatsApp">📲 Cita</a>
 
-          <!-- Hamburger (mobile) -->
-          <button
-            id="hamburger"
-            class="hamburger"
-            aria-label="Abrir menú"
-            aria-expanded="false"
-            aria-controls="mobile-menu"
-          >
+          <button id="hamburger" class="hamburger" aria-label="Abrir menú" aria-expanded="false"
+            aria-controls="mobile-menu">
             <span></span>
             <span></span>
             <span></span>
@@ -72,7 +54,6 @@
         </div>
       </div>
 
-      <!-- Mobile menu -->
       <nav id="mobile-menu" class="mobile-menu" aria-label="Menú móvil">
         <a href="#inicio">Inicio</a>
         <a href="#servicios">Servicios</a>
@@ -82,72 +63,46 @@
     </nav>
   </header>
 
-  <!-- ============================================================
-       MAIN CONTENT
-       ============================================================ -->
   <main id="main-content">
 
     <!-- ========================
          HERO
          ======================== -->
     <section id="inicio" aria-labelledby="hero-heading">
-      <div class="hero-bg" aria-hidden="true"></div>
+      <!-- Fondo: foto real del local con overlay azul semitransparente -->
+      <div class="hero-bg" aria-hidden="true">
+        <div class="hero-bg-photo"></div>
+        <div class="hero-bg-overlay"></div>
+      </div>
 
       <div class="hero-inner">
-
-        <!-- Text content -->
         <div class="hero-content">
           <p class="hero-badge">Multiservicios VH</p>
 
           <h1 class="hero-title" id="hero-heading">
-            Tu auto,<br />
+            Tu auto,<br>
             <em>nuestro</em>
             <span class="outline">detalle</span>
           </h1>
 
           <p class="hero-tagline">
-            <strong>Resultados que se notan.</strong><br />
+            <strong>Resultados que se notan.</strong><br>
             Lavado profesional, detallado y más para tu vehículo.
           </p>
 
           <div class="hero-cta-group">
-            <a
-              href="https://wa.me/50671686242"
-              class="btn-primary"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Agendar cita por WhatsApp al 7168-6242"
-            >
-              📲 Agendar cita
-            </a>
+            <a href="https://wa.me/50671686242" class="btn-primary" target="_blank" rel="noopener noreferrer"
+              aria-label="Agendar cita por WhatsApp al 7168-6242">📲 Agendar cita</a>
             <a href="#servicios" class="btn-secondary" aria-label="Ver todos los servicios">
               Ver servicios →
             </a>
           </div>
-
-
         </div>
-
-        <!-- Logo visual -->
-        <div class="hero-visual" aria-hidden="true">
-          <div class="hero-logo-wrap">
-            <div class="hero-logo-ring"></div>
-            <img
-              src="img/logo.jpg"
-              alt="Logo de Auto Lavado Multiservicios VH"
-              class="hero-logo-img"
-            />
-            <div class="drop drop-1"></div>
-            <div class="drop drop-2"></div>
-            <div class="drop drop-3"></div>
-          </div>
-        </div>
-
       </div>
     </section>
 
     <!-- ========================
-         SERVICES
+         SERVICIOS
          ======================== -->
     <section id="servicios" aria-labelledby="services-heading">
       <div class="section-inner">
@@ -162,26 +117,29 @@
           </p>
         </header>
 
-        <!-- CSS GRID — requerimiento del lab -->
-        <div class="services-grid" role="list">
+        <!-- FIX W3C #13-18: role="listitem" inválido en <article> — removido.
+             <article> dentro de <div> es semánticamente válido sin roles adicionales. -->
+        <div class="services-grid">
 
-          <article class="service-card" role="listitem">
+          <article class="service-card">
             <div class="service-icon" aria-hidden="true">✨</div>
             <h3 class="service-name">Detallado</h3>
             <p class="service-desc">
-              Limpieza profunda interior y exterior. Atención meticulosa a cada rincón de tu vehículo para un acabado impecable.
+              Limpieza profunda interior y exterior. Atención meticulosa a cada rincón de tu vehículo para un acabado
+              impecable.
             </p>
           </article>
 
-          <article class="service-card" role="listitem">
+          <article class="service-card">
             <div class="service-icon" aria-hidden="true">💧</div>
             <h3 class="service-name">Encerado</h3>
             <p class="service-desc">
-              Protege la pintura de tu auto con una capa de cera de alta calidad que brinda brillo duradero y protección UV.
+              Protege la pintura de tu auto con una capa de cera de alta calidad que brinda brillo duradero y protección
+              UV.
             </p>
           </article>
 
-          <article class="service-card" role="listitem">
+          <article class="service-card">
             <div class="service-icon" aria-hidden="true">🪑</div>
             <h3 class="service-name">Limpieza Interior</h3>
             <p class="service-desc">
@@ -189,7 +147,7 @@
             </p>
           </article>
 
-          <article class="service-card" role="listitem">
+          <article class="service-card">
             <div class="service-icon" aria-hidden="true">🚗</div>
             <h3 class="service-name">Lavado Exterior</h3>
             <p class="service-desc">
@@ -197,26 +155,31 @@
             </p>
           </article>
 
-          <article class="service-card" role="listitem">
+          <article class="service-card">
             <div class="service-icon" aria-hidden="true">⚙️</div>
             <h3 class="service-name">Limpieza del Motor</h3>
             <p class="service-desc">
-              Desengrasado y limpieza profunda del compartimiento del motor. Eliminamos suciedad acumulada para un mejor rendimiento y presentación.
+              Desengrasado y limpieza profunda del compartimiento del motor. Eliminamos suciedad acumulada para un mejor
+              rendimiento y presentación.
             </p>
           </article>
 
-          <article class="service-card service-card--carblock" role="listitem" aria-label="Servicio Aromatizante Carblock">
+          <!-- FIX W3C #18: role="listitem" removido del article.
+               FIX W3C #19: aria-label en div sin role válido —
+               reemplazado por role="group" + aria-label en el div de badges. -->
+          <article class="service-card service-card--carblock" aria-labelledby="carblock-title">
             <div class="service-icon service-icon--carblock" aria-hidden="true">
-              <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-                <polygon points="14,2 17,10 26,10 19,15.5 21.5,24 14,19 6.5,24 9,15.5 2,10 11,10" fill="#c9a84c" stroke="#e8c96a" stroke-width="1"/>
-              </svg>
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true" focusable="false">
+                <polygon points="14,2 17,10 26,10 19,15.5 21.5,24 14,19 6.5,24 9,15.5 2,10 11,10" fill="#c9a84c"
+                  stroke="#e8c96a" stroke-width="1" </svg>
             </div>
             <div class="carblock-logo-text" aria-hidden="true">CAR<span>BLOCK</span></div>
-            <h3 class="service-name service-name--carblock">Aromatizante Carblock</h3>
+            <h3 class="service-name service-name--carblock" id="carblock-title">Aromatizante Carblock</h3>
             <p class="service-desc">
-              Aromatizante premium de larga duración con tecnología Carblock. Fragancia profesional que neutraliza olores y deja tu habitáculo con un aroma fresco y persistente.
+              Aromatizante premium de larga duración con tecnología Carblock. Fragancia profesional que neutraliza
+              olores y deja tu habitáculo con un aroma fresco y persistente.
             </p>
-            <div class="carblock-badge" aria-label="Producto premium Carblock">
+            <div class="carblock-badge" role="group" aria-label="Características del producto">
               <span>✦ Premium</span>
               <span>✦ Larga duración</span>
             </div>
@@ -227,7 +190,7 @@
     </section>
 
     <!-- ========================
-         PACKAGES
+         PAQUETES
          ======================== -->
     <section id="paquetes" aria-labelledby="packages-heading">
       <div class="section-inner">
@@ -242,10 +205,8 @@
           </p>
         </header>
 
-        <!-- CSS GRID — paquetes -->
         <div class="packages-grid">
 
-          <!-- Lavado Flash -->
           <article class="package-card package-flash" aria-labelledby="flash-title">
             <div class="package-badge badge-flash">⚡ Rápido</div>
             <h3 class="package-title flash-color" id="flash-title">Lavado Flash</h3>
@@ -258,7 +219,6 @@
             </p>
           </article>
 
-          <!-- Lavado Full -->
           <article class="package-card package-full" aria-labelledby="full-title">
             <div class="package-badge badge-full">⭐ Completo</div>
             <h3 class="package-title full-color" id="full-title">Lavado Full</h3>
@@ -278,7 +238,7 @@
     </section>
 
     <!-- ========================
-         CONTACT / HOURS
+         CONTACTO
          ======================== -->
     <section id="contacto" aria-labelledby="contact-heading">
       <div class="section-inner">
@@ -288,35 +248,24 @@
           <h2 class="section-title" id="contact-heading">
             Agenda tu <span>Cita</span>
           </h2>
-          <p class="section-desc">
-            Llámanos o escríbenos por WhatsApp. Los domingos atendemos únicamente con cita previa.
-          </p>
         </header>
 
-        <!-- CSS GRID — contacto -->
+        <!-- CSS Grid — 4 tarjetas en 2x2 -->
         <div class="contact-grid">
 
-          <!-- Teléfono / WhatsApp -->
+          <!-- WhatsApp / Teléfono -->
           <article class="contact-card" aria-labelledby="phone-heading">
             <div class="contact-icon" aria-hidden="true">📱</div>
             <h3 id="phone-heading">Llámanos</h3>
             <p>Agenda tu cita fácilmente por WhatsApp o llamada:</p>
-            <a
-              href="https://wa.me/50671686242"
-              class="phone-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Contactar por WhatsApp al 7168-6242"
-            >
-              7168&nbsp;6242
-            </a>
+            <a href="https://wa.me/50671686242" class="phone-link" target="_blank" rel="noopener noreferrer"
+              aria-label="Contactar por WhatsApp al 7168-6242">7168&nbsp;6242</a>
           </article>
 
           <!-- Horario -->
           <article class="contact-card" aria-labelledby="hours-heading">
             <div class="contact-icon" aria-hidden="true">🕐</div>
             <h3 id="hours-heading">Horario</h3>
-
             <div class="hours-row">
               <span class="day">Lunes – Viernes</span>
               <span class="time">8:00 AM – 5:00 PM</span>
@@ -327,30 +276,30 @@
             </div>
           </article>
 
-          <!-- Ubicación -->
+          <!-- Instagram -->
+          <article class="contact-card" aria-labelledby="ig-heading">
+            <div class="contact-icon" aria-hidden="true">📸</div>
+            <h3 id="ig-heading">Instagram</h3>
+            <p>Síguenos y mira los resultados de nuestro trabajo:</p>
+            <a href="https://www.instagram.com/multi.servicios_vh" class="ig-link" target="_blank"
+              rel="noopener noreferrer" aria-label="Visitar perfil de Instagram de Multiservicios VH">
+              <span class="ig-handle">@multi.servicios_vh</span>
+            </a>
+          </article>
+
+          <!-- Mapa
+               FIX W3C #20:  inválido en <iframe> — removido,
+               el ancho se controla con CSS en .map-wrapper iframe { width: 100% } -->
           <article class="contact-card map-card" aria-labelledby="map-heading">
             <div class="contact-icon" aria-hidden="true">📍</div>
             <h3 id="map-heading">Nuestra Ubicación</h3>
             <div class="map-wrapper">
-              <iframe
-                src="https://www.google.com/maps?q=9.931227,-84.081706&z=17&output=embed"
-                width="100%"
-                height="200"
-                style="border:0; border-radius: 10px;"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-                title="Ubicación de Auto Lavado Multiservicios VH en Google Maps"
-                aria-label="Mapa de ubicación de Auto Lavado Multiservicios VH"
-              ></iframe>
+              <iframe src="https://www.google.com/maps?q=9.931227,-84.081706&z=17&output=embed" height="180"
+                style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                title="Ubicación de Auto Lavado Multiservicios VH en Google Maps"></iframe>
             </div>
-            <a
-              href="https://maps.app.goo.gl/gwP656s24cm2AhPr8"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="map-link"
-              aria-label="Ver ubicación en Google Maps"
-            >Ver en Google Maps →</a>
+            <a href="https://maps.app.goo.gl/gwP656s24cm2AhPr8" target="_blank" rel="noopener noreferrer"
+              class="map-link" aria-label="Ver ubicación en Google Maps">Ver en Google Maps →</a>
           </article>
 
         </div>
@@ -360,15 +309,8 @@
           <h2>¿Listo para un auto <span style="color:var(--clr-primary);">impecable</span>?</h2>
           <p>Agenda tu cita ahora y comprueba los resultados que se notan.</p>
           <div class="cta-buttons">
-            <a
-              href="https://wa.me/50671686242"
-              class="btn-whatsapp"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Escribir por WhatsApp al 7168-6242"
-            >
-              📲 WhatsApp — 7168 6242
-            </a>
+            <a href="https://wa.me/50671686242" class="btn-whatsapp" target="_blank" rel="noopener noreferrer"
+              aria-label="Escribir por WhatsApp al 7168-6242">📲 WhatsApp — 7168 6242</a>
             <a href="#servicios" class="btn-secondary" aria-label="Ver todos los servicios disponibles">
               Ver servicios →
             </a>
@@ -380,10 +322,8 @@
 
   </main>
 
-  <!-- ============================================================
-       FOOTER
-       ============================================================ -->
-  <footer role="contentinfo">
+  <!-- FIX W3C #21: role="contentinfo" innecesario en <footer> — removido -->
+  <footer>
     <div class="footer-inner">
       <div class="footer-brand">
         auto<span>LAVADO</span> Multiservicios VH
@@ -397,8 +337,8 @@
     </div>
   </footer>
 
-  <!-- JavaScript -->
   <script src="js/main.js" defer></script>
 
 </body>
+
 </html>

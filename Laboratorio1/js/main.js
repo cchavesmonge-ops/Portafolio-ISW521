@@ -75,6 +75,48 @@ checkWelcomeBanner();
 
 
 /* =============================================
+   2b. FONT SIZE CONTROL — A / AA / AAA (localStorage)
+   ============================================= */
+const FONT_SIZE_KEY = 'autolavado_font_scale';
+
+const FONT_SCALES = {
+  A:   1,
+  AA:  1.15,
+  AAA: 1.3
+};
+
+const fontSizeBtns = document.querySelectorAll('.btn-font-size');
+
+function applyFontScale(sizeKey) {
+  const scale = FONT_SCALES[sizeKey] || 1;
+  document.documentElement.style.setProperty('--font-scale', scale);
+
+  fontSizeBtns.forEach(btn => {
+    const isActive = btn.dataset.size === sizeKey;
+    btn.setAttribute('aria-pressed', String(isActive));
+  });
+}
+
+function applyStoredFontScale() {
+  const stored = localStorage.getItem(FONT_SIZE_KEY) || 'A';
+  applyFontScale(stored);
+}
+
+fontSizeBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const sizeKey = btn.dataset.size;
+    localStorage.setItem(FONT_SIZE_KEY, sizeKey);
+    applyFontScale(sizeKey);
+
+    const labels = { A: 'normal', AA: 'grande', AAA: 'extra grande' };
+    showToast(`🔤 Tamaño de letra: ${labels[sizeKey]}`);
+  });
+});
+
+applyStoredFontScale();
+
+
+/* =============================================
    3. HAMBURGER MENU
    ============================================= */
 const hamburger  = document.getElementById('hamburger');

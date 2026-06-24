@@ -1,0 +1,54 @@
+ACTIVIDAD INTEGRADORA - TEMA 1
+1. ¿Cuál de las tres líneas corre sin ningún problema? Justifiquen con el concepto correcto.
+declarada() — corre sin error.
+La function declaration pasa por hoisting COMPLETO: el motor guarda en memoria
+el nombre Y el cuerpo entero antes de ejecutar cualquier línea del archivo. Por 
+eso la llamada funciona aunque esté escrita encima de la definición.
+
+2. ¿Cuál lanza ReferenceError? Expliquen por qué con la TDZ.
+expresada() — lanza ReferenceError.
+Las variables const (y let) también se hoistean, pero quedan en la
+Temporal Dead Zone (TDZ) desde el inicio del bloque hasta la línea donde
+se definen. Accederlas antes lanza ReferenceError, no undefined. Como expresada 
+es una function expression asignada a const, hereda esa regla.
+
+3. ¿Cuál lanza TypeError? Expliquen qué le falta a una arrow function.
+new flecha() — lanza TypeError.
+Las arrow functions NO tienen la propiedad interna [[Construct]] ni prototype.
+El operador new necesita [[Construct]] para crear la instancia; al no encontrarla,
+el motor lanza TypeError inmediatamente.
+
+ACTIVIDAD INTEGRADORA - TEMA 2
+1. ¿Por qué this.segundos sale undefined dentro del setTimeout?
+setTimeout invoca la function como llamada suelta, no como método de
+cronometroRoto. La regla dinámica de this dice: si una función se llama
+sin receptor explícito (sin objeto antes del punto), en modo estricto
+this es undefined. cronometroRoto.iniciar() sí tenía el contexto correcto,
+pero la función DENTRO del setTimeout la llama el entorno de forma
+independiente, rompiendo el vínculo con el objeto.
+
+2. Proponer solución cambiando a arrow function.
+La arrow function no tiene su propio this; lo hereda léxicamente del
+contexto donde fue escrita. Como está escrita dentro de iniciar(),
+y cuando iniciar() se llama como cronometro1.iniciar() su this es
+cronometro1, la arrow function conserva ese mismo this sin importar
+quién la invoque después.
+
+3. Proponer segunda solución usando bind sin tocar la function.
+.bind(this) crea una nueva función con el this fijado permanentemente al
+valor que tiene en ese momento. Cuando iniciar() se ejecuta como método de
+cronometro2, su this ES cronometro2. bind captura ese valor y lo graba en
+la función que recibe setTimeout; no importa cómo la invoque el entorno.
+
+4. ¿Cuál solución prefieren y por qué?
+Solución 1 — Arrow Function.
+
+	1. Más concisa: no agrega ruido extra al final de la función.
+	2. Es el estándar moderno: React hooks, promesas y métodos de arreglo
+	usan arrow functions exactamente por esta razón.
+	3. No crea un objeto intermedio: bind genera una función envuelta adicional;
+	la arrow function no tiene ese overhead.
+
+	bind sigue siendo válido en código heredado (clases antiguas de React,
+	librerías legacy) o cuando se necesita separar la definición de la función
+	de su fijación de contexto en pasos distintos.

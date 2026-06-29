@@ -1,0 +1,17 @@
+actividad: rastreen la referencia
+
+-99 99 1
+-a y b apuntan al mismo objeto
+
+actividad: ¿a quien modifico esa linea?
+-hola, pura vida, hola
+-hijo.saludo = "Pura vida no modifica base: crea una propiedad propia en hijo que oculta (shadow) la del prototipo
+-base.saludo queda intacta porque la cadena nunca se tocó solo se agregó una propiedad local a hijo.
+-Regla clave: leer sube por la cadena escribir (sin getters/setters) siempre crea una propiedad local
+
+actividad: encuentren la palabra que falta
+
+-new antes de Curso
+-Sin new, Curso corre como función normal: this no apunta a un objeto nuevo, y en modo estricto es undefined - this.nombre = nombre lanza un error.
+-Fuera de modo estricto, this apuntarfa al objeto global, contaminándolo con una propiedad nombre.
+-Corrección: const prog = new Curso("Programación Web");

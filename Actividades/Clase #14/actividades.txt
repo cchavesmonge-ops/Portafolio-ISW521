@@ -1,0 +1,32 @@
+actividad 1
+
+-arr[2] = "C"
+-el tamaño de arr[7] es de 8 espacios porque se cuenta a partir de 0
+-
+
+actividad 2: reescriban el bucle
+-El bucle filtra: selecciona elementos que cumplen una condición, no los transforma
+-El método correcto es filterl), no map() - map() transformaría cada valor, no decidiría cuáles quedan
+-const caros= preciosflter(p => p> 150);
+	Resultado [250, 400]
+
+actividad 3: cual linea muta y cual no?
+
+-push, pop, splice
+
+actividad 4: formateen con map()
+const estudiantes = [
+	{ nombre: "Ana", carnet: "2024001"}
+	{ nombre: "Luis", carnet: "2024002"}
+];
+
+
+-estudiantes.map(e => Sfe.nombre] ($fe.carnet))".toUpperCase();
+-Resultado: ["ANA 2024001)", "LUIS (2024002)"].
+-El template literal arma el formato exacto antes de aplicar toUpperCase() a todo el string.
+-estudiantes, el arreglo original, queda intacto después de esto.
+
+actividad6
+- el valor inicial es 0
+-const totalGastos = gastos.reduce((acc, g) => acc + g.monto, 0);
+-resultado:1000

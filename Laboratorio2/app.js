@@ -100,11 +100,56 @@ const authenticate = async (email = "test@test.com", password = "test123") => {
   }
 };
 
-// carga inicial de equipos — por ahora solo con el catálogo local;
-// la integración real contra /get/teams se implementa en el próximo commit
+// carga los equipos desde la API y los enriquece con datos del fallback local.
+// El enriquecimiento garantiza que name_es, coach, stadium, etc. siempre estén
+// disponibles aunque la API no los devuelva en el listado inicial.
 const loadAllTeams = async () => {
-  allTeams = FALLBACK_TEAMS;
-  console.log(`[TEAMS] ${allTeams.length} equipos cargados (catálogo local).`);
+  try {
+    // el enunciado dice que /get/teams requiere token JWT sin excepción
+    const res = await fetch(`${API_BASE}/get/teams`, {
+      headers: { Authorization: `Bearer ${authToken}` },
+    });
+
+    if (res.status === 401) {
+      showAuthModal();
+      return;
+    }
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    const apiTeams = normalizeTeams(data);
+
+    // enriquecer cada equipo de la API con los datos completos del fallback
+    // cruzando por fifa_code — así name_es, coach, stadium, etc. siempre existen
+    allTeams = apiTeams.map((apiTeam) => {
+      const local = FALLBACK_TEAMS.find(
+        (f) => f.fifa_code === (apiTeam.fifa_code ?? apiTeam.code ?? "")
+      );
+      return { ...local, ...apiTeam, name_es: local?.name_es ?? apiTeam.name_en };
+    });
+
+    if (allTeams.length === 0) throw new Error("Array vacío tras normalización");
+
+    console.log(`[TEAMS] ${allTeams.length} equipos cargados y enriquecidos desde la API.`);
+    setFeedback("", false);
+
+  } catch (err) {
+    console.warn("[TEAMS] API no disponible, usando datos locales:", err.message);
+    allTeams = FALLBACK_TEAMS;
+    setFeedback("", false);
+  }
+};
+
+// normaliza cualquier estructura de respuesta de la API a un array plano
+const normalizeTeams = (data) => {
+  if (Array.isArray(data) && data.length > 0)       return data;
+  if (data?.teams && Array.isArray(data.teams))       return data.teams;
+  if (data?.data  && Array.isArray(data.data))        return data.data;
+  if (data?.results && Array.isArray(data.results))   return data.results;
+  // si vino un objeto único, envolverlo en array
+  if (data?.name_en || data?.name)                    return [data];
+  return [];
 };
 
 // PARTE DEL LABORATORIO: Mecanismo para corromper el token desde consola
@@ -146,32 +191,173 @@ const setFeedback = (msg, isError = false) => {
 
 // PARTE DEL LABORATORIO: Control de Condiciones de Carrera con AbortController
 // Cada llamada cancela la anterior con .abort() antes de lanzar la nueva petición.
-// Nota: esto es una demostración mínima del mecanismo — la búsqueda real contra
-// la API y el renderizado del dropdown de sugerencias llegan en el siguiente commit.
 const searchTeams = async (query) => {
+  const dropdown = document.getElementById("suggestions-list");
+  const input    = document.getElementById("search-input");
+
   // abortar petición anterior en vuelo — núcleo del AbortController
   if (activeController) activeController.abort();
   activeController = new AbortController();
   const { signal } = activeController;
 
+  if (allTeams.length === 0) {
+    setFeedback("El catálogo no está disponible. Recarga la página.", true);
+    return;
+  }
+
+  // sin texto: mostrar todos los equipos ordenados en español
   if (!query.trim()) {
+    const sorted = [...allTeams].sort((a, b) =>
+      getDisplayName(a).localeCompare(getDisplayName(b), "es")
+    );
+    renderSuggestions(sorted);
+    input.setAttribute("aria-expanded", "true");
     setFeedback("");
     return;
   }
 
+  const q = query.toLowerCase().trim();
+
   try {
-    await fetch(`${API_BASE}/get/teams?name=${encodeURIComponent(query)}`, {
-      headers: { Authorization: `Bearer ${authToken}` },
-      signal,
-    });
-    console.log(`[DEBUG] Búsqueda de "${query}" enviada — el renderizado llega en el próximo commit.`);
+    // usar la API real con el endpoint del enunciado: GET /get/teams?name={busqueda}
+    const res = await fetch(
+      `${API_BASE}/get/teams?name=${encodeURIComponent(query)}`,
+      { headers: { Authorization: `Bearer ${authToken}` }, signal }
+    );
+
+    if (res.status === 401) {
+      showAuthModal();
+      return;
+    }
+
+    // si la API falla, filtrar localmente como fallback
+    let results;
+    if (res.ok) {
+      const data = await res.json();
+      const apiResults = normalizeTeams(data);
+      results = apiResults;
+    } else {
+      // filtro local bilingüe como respaldo
+      results = allTeams.filter((t) => {
+        const byEs = (t.name_es ?? "").toLowerCase().includes(q);
+        const byEn = (t.name_en ?? t.name ?? "").toLowerCase().includes(q);
+        const byCode = (t.fifa_code ?? "").toLowerCase().startsWith(q);
+        return byEs || byEn || byCode;
+      });
+    }
+
+    // PARTE DEL LABORATORIO: Gestión de Errores y Resiliencia (404)
+    if (results.length === 0) {
+      dropdown.innerHTML = "";
+      input.setAttribute("aria-expanded", "false");
+      setFeedback("No se encontraron selecciones con ese nombre.", true);
+      return;
+    }
+
+    setFeedback("");
+    renderSuggestions(results.slice(0, 10));
+    input.setAttribute("aria-expanded", "true");
+
   } catch (err) {
+    // AbortError: cancelación intencional — ignorar en la UI, registrar en consola
     if (err.name === "AbortError") {
       console.log("[DEBUG] Petición cancelada intencionalmente por AbortController — no es un error.");
       return;
     }
-    console.warn("[SEARCH] API no disponible todavía.");
+    // error de red real — filtrar localmente como respaldo
+    const results = allTeams.filter((t) => {
+      const byEs = (t.name_es ?? "").toLowerCase().includes(q);
+      const byEn = (t.name_en ?? t.name ?? "").toLowerCase().includes(q);
+      const byCode = (t.fifa_code ?? "").toLowerCase().startsWith(q);
+      return byEs || byEn || byCode;
+    });
+
+    if (results.length === 0) {
+      setFeedback("No se encontraron selecciones con ese nombre.", true);
+      return;
+    }
+    setFeedback("");
+    renderSuggestions(results.slice(0, 10));
+    input.setAttribute("aria-expanded", "true");
   }
+};
+
+// PARTE DEL LABORATORIO: Estructura de la Interfaz — Renderizado dinámico
+const renderSuggestions = (teams) => {
+  const dropdown = document.getElementById("suggestions-list");
+  dropdown.innerHTML = "";
+
+  teams.forEach((team) => {
+    const li    = document.createElement("li");
+    const flag  = getFlag(team);
+    const name  = getDisplayName(team);
+    const group = team.groups ?? team.group ?? "";
+
+    li.className = "suggestion-item";
+    li.setAttribute("role", "option");
+    li.tabIndex  = 0;
+    li.setAttribute("aria-label", name);
+    li.innerHTML = `
+      <span class="suggestion-item__flag" aria-hidden="true">${flag}</span>
+      <span class="suggestion-item__name">${name}</span>
+      <span class="suggestion-item__group">${group ? `Grupo ${group}` : ""}</span>
+    `;
+
+    const doSelect = () => selectTeam({ ...team, _flag: flag, _name: name });
+    li.addEventListener("click", doSelect);
+    li.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); doSelect(); }
+    });
+
+    dropdown.appendChild(li);
+  });
+};
+
+const selectTeam = (team) => {
+  if (selectedTeams.length >= 2) {
+    setFeedback("Ya hay 2 equipos. Quita uno antes de añadir otro.", true);
+    return;
+  }
+
+  const duplicate = selectedTeams.some(
+    (t) => (t.id ?? t.name_en) === (team.id ?? team.name_en)
+  );
+  if (duplicate) {
+    setFeedback("Ese equipo ya está seleccionado.", true);
+    return;
+  }
+
+  selectedTeams.push(team);
+  document.getElementById("suggestions-list").innerHTML = "";
+  document.getElementById("search-input").value = "";
+  document.getElementById("search-input").setAttribute("aria-expanded", "false");
+  setFeedback("");
+
+  renderChips();
+  if (selectedTeams.length === 2) {
+    console.log("[DEBUG] 2 equipos seleccionados — la comparación en paralelo se implementa en el próximo commit.");
+  }
+};
+
+const renderChips = () => {
+  const chipsEl = document.getElementById("selected-chips");
+  chipsEl.innerHTML = "";
+
+  selectedTeams.forEach((team, i) => {
+    const chip = document.createElement("div");
+    chip.className = "chip";
+    chip.innerHTML = `
+      <span aria-hidden="true">${team._flag ?? getFlag(team)}</span>
+      <span>${team._name ?? team.name_en}</span>
+      <button class="chip__remove" aria-label="Quitar ${team._name ?? team.name_en}">✕</button>
+    `;
+    chip.querySelector(".chip__remove").addEventListener("click", () => {
+      selectedTeams.splice(i, 1);
+      setFeedback("");
+      renderChips();
+    });
+    chipsEl.appendChild(chip);
+  });
 };
 
 // PARTE DEL LABORATORIO: Inicialización
@@ -182,7 +368,26 @@ const init = async () => {
   const input           = document.getElementById("search-input");
   const debouncedSearch = debounce(searchTeams, 300);
 
-  input.addEventListener("input", (e) => debouncedSearch(e.target.value));
+  input.addEventListener("input",   (e) => debouncedSearch(e.target.value));
+
+  // mostrar todos los equipos al hacer foco (aunque el campo esté vacío)
+  input.addEventListener("focus", () => {
+    if (allTeams.length > 0) searchTeams(input.value);
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      document.getElementById("suggestions-list").innerHTML = "";
+      input.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".search-wrapper")) {
+      document.getElementById("suggestions-list").innerHTML = "";
+      input.setAttribute("aria-expanded", "false");
+    }
+  });
 };
 
 init();

@@ -334,9 +334,7 @@ const selectTeam = (team) => {
   setFeedback("");
 
   renderChips();
-  if (selectedTeams.length === 2) {
-    console.log("[DEBUG] 2 equipos seleccionados — la comparación en paralelo se implementa en el próximo commit.");
-  }
+  if (selectedTeams.length === 2) loadComparison();
 };
 
 const renderChips = () => {
@@ -353,11 +351,165 @@ const renderChips = () => {
     `;
     chip.querySelector(".chip__remove").addEventListener("click", () => {
       selectedTeams.splice(i, 1);
+      document.getElementById("comparison-container").innerHTML = "";
       setFeedback("");
       renderChips();
     });
     chipsEl.appendChild(chip);
   });
+};
+
+// PARTE DEL LABORATORIO: Peticiones en Paralelo con Promise.all
+const loadComparison = async () => {
+  if (selectedTeams.length < 2) return;
+
+  const container = document.getElementById("comparison-container");
+
+  container.innerHTML = `
+    <div class="col-12 col-md-6">
+      <div class="team-card" aria-busy="true">${skeletonHTML()}</div>
+    </div>
+    <div class="col-12 col-md-6">
+      <div class="team-card" aria-busy="true">${skeletonHTML()}</div>
+    </div>
+  `;
+
+  if (activeController) activeController.abort();
+  activeController = new AbortController();
+  const { signal } = activeController;
+
+  try {
+    const idA = selectedTeams[0].id ?? "";
+    const idB = selectedTeams[1].id ?? "";
+
+    // OBLIGATORIO: ambas peticiones en paralelo — prohibido await secuencial
+    const [rawA, rawB] = await Promise.all([
+      apiFetch(`${API_BASE}/get/team/${idA}`, signal),
+      apiFetch(`${API_BASE}/get/team/${idB}`, signal),
+    ]);
+
+    // enriquecer el detalle de la API con datos del fallback (coach, stadium, name_es, etc.)
+    const detailA = enrichWithFallback(extractTeam(rawA) ?? selectedTeams[0]);
+    const detailB = enrichWithFallback(extractTeam(rawB) ?? selectedTeams[1]);
+
+    container.innerHTML = "";
+    container.appendChild(buildTeamCard(detailA));
+    container.appendChild(buildTeamCard(detailB));
+
+  } catch (err) {
+    if (err.name === "AuthError") return;
+    if (err.name === "AbortError") {
+      console.log("[DEBUG] Petición cancelada intencionalmente por AbortController — no es un error.");
+      return;
+    }
+    // fallback: los selectedTeams ya tienen datos enriquecidos del paso de selección
+    container.innerHTML = "";
+    container.appendChild(buildTeamCard(selectedTeams[0]));
+    container.appendChild(buildTeamCard(selectedTeams[1]));
+  }
+};
+
+// petición base con Authorization header y manejo centralizado de 401
+const apiFetch = async (url, signal) => {
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${authToken}` },
+    signal,
+  });
+  if (res.status === 401) {
+    showAuthModal();
+    const err = new Error("Unauthorized");
+    err.name = "AuthError";
+    throw err;
+  }
+  if (!res.ok) {
+    const err = new Error(`HTTP ${res.status}`);
+    err.status = res.status;
+    throw err;
+  }
+  return res.json();
+};
+
+const extractTeam = (raw) => {
+  if (!raw)                         return null;
+  if (raw.name_en)                  return raw;
+  if (raw.team?.name_en)            return raw.team;
+  if (Array.isArray(raw))           return raw[0] ?? null;
+  if (raw.data?.name_en)            return raw.data;
+  if (Array.isArray(raw.data))      return raw.data[0] ?? null;
+  return null;
+};
+
+// combina un objeto equipo de la API con los datos completos del FALLBACK_TEAMS
+// el dato de la API tiene prioridad; el fallback rellena lo que falte
+const enrichWithFallback = (team) => {
+  if (!team) return team;
+  const local = FALLBACK_TEAMS.find(
+    (f) => f.fifa_code === (team.fifa_code ?? team.code ?? "")
+  );
+  if (!local) return team;
+  // local primero para obtener name_es, coach, stadium, confederation, etc.
+  // luego team de la API sobreescribe con datos más frescos si los tiene
+  return { ...local, ...team, name_es: local.name_es };
+};
+
+const skeletonHTML = () => `
+  <div class="skeleton" style="height:2rem;width:50%;margin-bottom:1rem"></div>
+  <div class="skeleton" style="height:.85rem;width:30%"></div>
+  <div class="skeleton" style="height:.85rem;margin-top:.5rem"></div>
+  <div class="skeleton" style="height:.85rem;width:75%"></div>
+  <div class="skeleton" style="height:.85rem;width:60%"></div>
+  <div class="skeleton" style="height:.85rem;width:85%"></div>
+`;
+
+const buildTeamCard = (team) => {
+  const flag  = team._flag ?? getFlag(team);
+  const name  = team._name ?? getDisplayName(team);
+  const group = team.groups ?? team.group ?? "—";
+
+  // filtra las filas que tengan valor real (no "—") para que la tabla
+  // no quede llena de guiones cuando la API no devuelve un campo
+  const allStats = {
+    "Código FIFA":    team.fifa_code                       ?? "—",
+    "Grupo":          group,
+    "Confederación":  team.confederation                   ?? "—",
+    "Ranking FIFA":   team.fifa_ranking ?? team.ranking    ?? "—",
+    "Entrenador":     team.coach        ?? team.manager    ?? "—",
+    "Estadio":        team.stadium                         ?? "—",
+  };
+
+  const rows = Object.entries(allStats)
+    .filter(([, v]) => v !== "—")
+    .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`)
+    .join("");
+
+  const flagImg = team.flag
+    ? `<img src="${team.flag}" alt="Bandera de ${name}"
+           class="team-card__flag-img" loading="lazy"
+           onerror="this.style.display='none'">`
+    : "";
+
+  const col  = document.createElement("div");
+  col.className = "col-12 col-md-6";
+
+  const card = document.createElement("article");
+  card.className = "team-card";
+  card.setAttribute("aria-label", `Datos del equipo ${name}`);
+  card.innerHTML = `
+    <header class="team-card__header">
+      <span class="team-card__flag" aria-hidden="true">${flag}</span>
+      ${flagImg}
+      <div>
+        <div class="team-card__name">${name}</div>
+        <div class="team-card__group">${group !== "—" ? `Grupo ${group}` : ""}</div>
+      </div>
+    </header>
+    <table class="team-stats" aria-label="Estadísticas de ${name}">
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+
+  col.appendChild(card);
+  return col;
 };
 
 // PARTE DEL LABORATORIO: Inicialización

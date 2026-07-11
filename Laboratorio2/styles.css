@@ -1,0 +1,158 @@
+/* estilos propios — solo lo que Bootstrap no puede resolver por sí solo */
+
+/* foco visible para accesibilidad (Tab) */
+:focus-visible {
+  outline: 2px solid #0d6efd;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* dropdown de sugerencias — debe flotar exactamente bajo el input */
+.suggestions-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #1c1f23;
+  border: 1px solid #495057;
+  border-radius: 6px;
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 200;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.suggestions-dropdown:empty { display: none; }
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #e9ecef;
+  transition: background 0.15s ease;
+}
+
+.suggestion-item:hover,
+.suggestion-item:focus {
+  background: #2b3035;
+  outline: none;
+}
+
+.suggestion-item__flag  { font-size: 1.25rem; }
+.suggestion-item__name  { flex: 1; }
+.suggestion-item__group { font-size: 0.75rem; color: #6c757d; }
+
+/* feedback de búsqueda */
+.search-feedback         { color: #6c757d; }
+.search-feedback--error  { color: #dc3545; }
+
+/* chips de equipos seleccionados */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #1c2533;
+  border: 1px solid #0d6efd;
+  border-radius: 100px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.82rem;
+  color: #6ea8fe;
+}
+
+.chip__remove {
+  background: none;
+  border: none;
+  color: #6c757d;
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.chip__remove:hover { color: #dc3545; }
+
+/* tarjeta de equipo — la comparación usa Bootstrap .row .col dentro del container */
+.team-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 1.4rem;
+  height: 100%;
+}
+
+.team-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid #30363d;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.team-card__flag     { font-size: 2.4rem; line-height: 1; }
+
+/* imagen de bandera real de la API (con fallback silencioso vía onerror) */
+.team-card__flag-img {
+  width: 36px;
+  height: auto;
+  border-radius: 3px;
+  object-fit: cover;
+}
+
+.team-card__name  { font-size: 1.1rem; font-weight: 700; color: #6ea8fe; }
+.team-card__group { font-size: 0.75rem; color: #6c757d; }
+
+/* tabla de stats */
+.team-stats         { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+.team-stats td      { padding: 0.4rem 0.5rem; border-bottom: 1px solid #21262d; }
+.team-stats td:first-child { color: #6c757d; width: 45%; }
+.team-stats tr:last-child td { border-bottom: none; }
+
+/* esqueleto de carga */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #21262d 25%,
+    #30363d 50%,
+    #21262d 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 4px;
+  height: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* modal de re-autenticación */
+.auth-modal {
+  position: fixed;
+  inset: 0;
+  /* fondo translúcido — deja ver el estado de la app por detrás */
+  background: rgba(13, 17, 23, 0.78);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  /* oculto por defecto */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.auth-modal.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.auth-modal__box { width: min(420px, 90vw); }

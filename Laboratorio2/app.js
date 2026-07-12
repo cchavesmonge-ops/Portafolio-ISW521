@@ -129,6 +129,7 @@ const loadAllTeams = async () => {
       return { ...local, ...apiTeam, name_es: local?.name_es ?? apiTeam.name_en };
     });
 
+    // si la API devolvió equipos sin fifa_code, usar el fallback completo
     if (allTeams.length === 0) throw new Error("Array vacío tras normalización");
 
     console.log(`[TEAMS] ${allTeams.length} equipos cargados y enriquecidos desde la API.`);
@@ -235,7 +236,8 @@ const searchTeams = async (query) => {
     if (res.ok) {
       const data = await res.json();
       const apiResults = normalizeTeams(data);
-      results = apiResults;
+      // enriquecer con datos del fallback (name_es, coach, etc.)
+      results = apiResults.map((t) => enrichWithFallback(t));
     } else {
       // filtro local bilingüe como respaldo
       results = allTeams.filter((t) => {
@@ -475,6 +477,11 @@ const buildTeamCard = (team) => {
     "Ranking FIFA":   team.fifa_ranking ?? team.ranking    ?? "—",
     "Entrenador":     team.coach        ?? team.manager    ?? "—",
     "Estadio":        team.stadium                         ?? "—",
+    "Partidos J. (MF)": team.matches_played                ?? "—",
+    "Goles a favor":  team.goals_for                       ?? "—",
+    "Goles en contra":team.goals_against                   ?? "—",
+    "Diferencia goles":team.goal_difference                ?? "—",
+    "Puntos":         team.points                          ?? "—",
   };
 
   const rows = Object.entries(allStats)
@@ -539,6 +546,34 @@ const init = async () => {
       document.getElementById("suggestions-list").innerHTML = "";
       input.setAttribute("aria-expanded", "false");
     }
+  });
+
+  const modalBtn = document.getElementById("modal-submit");
+  modalBtn.addEventListener("click", async () => {
+    const email   = document.getElementById("modal-email").value.trim();
+    const pass    = document.getElementById("modal-pass").value.trim();
+    const errorEl = document.getElementById("modal-error");
+
+    if (!email || !pass) { errorEl.textContent = "Completa los dos campos."; return; }
+
+    errorEl.textContent  = "";
+    modalBtn.textContent = "Ingresando...";
+    modalBtn.disabled    = true;
+
+    await authenticate(email, pass);
+    await loadAllTeams();
+
+    modalBtn.textContent = "Volver a ingresar";
+    modalBtn.disabled    = false;
+    hideAuthModal();
+
+    if (selectedTeams.length === 2) loadComparison();
+  });
+
+  ["modal-email", "modal-pass"].forEach((id) => {
+    document.getElementById(id).addEventListener("keydown", (e) => {
+      if (e.key === "Enter") modalBtn.click();
+    });
   });
 };
 

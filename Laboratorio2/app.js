@@ -7,72 +7,82 @@ let activeController = null;   // AbortController activo
 const selectedTeams  = [];     // máximo 2 equipos seleccionados
 
 // PARTE DEL LABORATORIO: Datos locales de respaldo
-// Se usan si la API no responde (CORS, red, token).
+// Se usan si la API no responde (CORS, red, token) o si devuelve menos
+// selecciones de las 48 reales — nunca deben faltar equipos en pantalla.
 // Incluyen nombre en español para búsqueda bilingüe y datos completos para comparación.
 const FALLBACK_TEAMS = [
-  { id:"1",  name_en:"Argentina",    name_es:"Argentina",      fifa_code:"ARG", groups:"J", confederation:"CONMEBOL", fifa_ranking:1,  coach:"Lionel Scaloni",     stadium:"Estadio Monumental" },
-  { id:"2",  name_en:"Australia",    name_es:"Australia",      fifa_code:"AUS", groups:"H", confederation:"AFC",      fifa_ranking:23, coach:"Tony Popovic",        stadium:"Stadium Australia" },
-  { id:"3",  name_en:"Belgium",      name_es:"Bélgica",        fifa_code:"BEL", groups:"E", confederation:"UEFA",     fifa_ranking:3,  coach:"Rudi García",         stadium:"Estadio Rey Balduino" },
-  { id:"4",  name_en:"Brazil",       name_es:"Brasil",         fifa_code:"BRA", groups:"C", confederation:"CONMEBOL", fifa_ranking:5,  coach:"Carlo Ancelotti",     stadium:"Estadio do Maracanã" },
-  { id:"5",  name_en:"Cameroon",     name_es:"Camerún",        fifa_code:"CMR", groups:"G", confederation:"CAF",      fifa_ranking:43, coach:"Marc Brys",           stadium:"Stade Ahmadou Ahidjo" },
-  { id:"6",  name_en:"Canada",       name_es:"Canadá",         fifa_code:"CAN", groups:"A", confederation:"CONCACAF", fifa_ranking:40, coach:"Jesse Marsch",        stadium:"BMO Field" },
-  { id:"7",  name_en:"Colombia",     name_es:"Colombia",       fifa_code:"COL", groups:"F", confederation:"CONMEBOL", fifa_ranking:9,  coach:"Néstor Lorenzo",      stadium:"Estadio El Campín" },
-  { id:"8",  name_en:"Costa Rica",   name_es:"Costa Rica",     fifa_code:"CRC", groups:"B", confederation:"CONCACAF", fifa_ranking:51, coach:"Claudio Vivas",       stadium:"Estadio Nacional" },
-  { id:"9",  name_en:"Croatia",      name_es:"Croacia",        fifa_code:"CRO", groups:"D", confederation:"UEFA",     fifa_ranking:10, coach:"Zlatko Dalić",        stadium:"Estadio Maksimir" },
-  { id:"10", name_en:"Ecuador",      name_es:"Ecuador",        fifa_code:"ECU", groups:"I", confederation:"CONMEBOL", fifa_ranking:44, coach:"Sebastián Beccacece", stadium:"Estadio Rodrigo Paz" },
-  { id:"11", name_en:"Egypt",        name_es:"Egipto",         fifa_code:"EGY", groups:"K", confederation:"CAF",      fifa_ranking:36, coach:"Hossam Hassan",       stadium:"Estadio Internacional del Cairo" },
-  { id:"12", name_en:"England",      name_es:"Inglaterra",     fifa_code:"ENG", groups:"F", confederation:"UEFA",     fifa_ranking:4,  coach:"Lee Carsley",         stadium:"Wembley" },
-  { id:"13", name_en:"France",       name_es:"Francia",        fifa_code:"FRA", groups:"E", confederation:"UEFA",     fifa_ranking:2,  coach:"Didier Deschamps",    stadium:"Stade de France" },
-  { id:"14", name_en:"Germany",      name_es:"Alemania",       fifa_code:"GER", groups:"C", confederation:"UEFA",     fifa_ranking:12, coach:"Julian Nagelsmann",   stadium:"Allianz Arena" },
-  { id:"15", name_en:"Ghana",        name_es:"Ghana",          fifa_code:"GHA", groups:"L", confederation:"CAF",      fifa_ranking:60, coach:"Otto Addo",           stadium:"Estadio Baba Yara" },
-  { id:"16", name_en:"Honduras",     name_es:"Honduras",       fifa_code:"HON", groups:"A", confederation:"CONCACAF", fifa_ranking:81, coach:"Reinaldo Rueda",      stadium:"Estadio Olímpico" },
-  { id:"17", name_en:"Iran",         name_es:"Irán",           fifa_code:"IRA", groups:"D", confederation:"AFC",      fifa_ranking:22, coach:"Amir Ghalenoei",      stadium:"Estadio Azadi" },
-  { id:"18", name_en:"Iraq",         name_es:"Irak",           fifa_code:"IRQ", groups:"B", confederation:"AFC",      fifa_ranking:58, coach:"Jesús Casas",         stadium:"Estadio Al-Shaab" },
-  { id:"19", name_en:"Japan",        name_es:"Japón",          fifa_code:"JPN", groups:"G", confederation:"AFC",      fifa_ranking:15, coach:"Hajime Moriyasu",     stadium:"Japan National Stadium" },
-  { id:"20", name_en:"South Korea",  name_es:"Corea del Sur",  fifa_code:"KOR", groups:"H", confederation:"AFC",      fifa_ranking:21, coach:"Hong Myung-bo",       stadium:"Estadio de Seúl" },
-  { id:"21", name_en:"Saudi Arabia", name_es:"Arabia Saudita", fifa_code:"KSA", groups:"K", confederation:"AFC",      fifa_ranking:56, coach:"Hervé Renard",        stadium:"Estadio Rey Fahd" },
-  { id:"22", name_en:"Morocco",      name_es:"Marruecos",      fifa_code:"MAR", groups:"I", confederation:"CAF",      fifa_ranking:14, coach:"Walid Regragui",      stadium:"Stade Mohammed V" },
-  { id:"23", name_en:"Mexico",       name_es:"México",         fifa_code:"MEX", groups:"A", confederation:"CONCACAF", fifa_ranking:16, coach:"Javier Aguirre",      stadium:"Estadio Azteca" },
-  { id:"24", name_en:"Netherlands",  name_es:"Países Bajos",   fifa_code:"NED", groups:"F", confederation:"UEFA",     fifa_ranking:7,  coach:"Ronald Koeman",       stadium:"Johan Cruyff Arena" },
-  { id:"25", name_en:"Nigeria",      name_es:"Nigeria",        fifa_code:"NGA", groups:"L", confederation:"CAF",      fifa_ranking:49, coach:"Eric Chelle",         stadium:"Estadio Nacional de Abuja" },
-  { id:"26", name_en:"New Zealand",  name_es:"Nueva Zelanda",  fifa_code:"NZL", groups:"G", confederation:"OFC",      fifa_ranking:92, coach:"Darren Bazeley",      stadium:"Eden Park" },
-  { id:"27", name_en:"Panama",       name_es:"Panamá",         fifa_code:"PAN", groups:"B", confederation:"CONCACAF", fifa_ranking:73, coach:"Thomas Christiansen", stadium:"Estadio Rommel Fernández" },
-  { id:"28", name_en:"Paraguay",     name_es:"Paraguay",       fifa_code:"PAR", groups:"C", confederation:"CONMEBOL", fifa_ranking:65, coach:"Gustavo Alfaro",      stadium:"Estadio Defensores del Chaco" },
-  { id:"29", name_en:"Portugal",     name_es:"Portugal",       fifa_code:"POR", groups:"E", confederation:"UEFA",     fifa_ranking:6,  coach:"Roberto Martínez",    stadium:"Estadio da Luz" },
-  { id:"30", name_en:"Qatar",        name_es:"Catar",          fifa_code:"QAT", groups:"L", confederation:"AFC",      fifa_ranking:37, coach:"Bartolomé Márquez",   stadium:"Estadio Internacional Khalifa" },
-  { id:"31", name_en:"Romania",      name_es:"Rumanía",        fifa_code:"ROU", groups:"D", confederation:"UEFA",     fifa_ranking:46, coach:"Mircea Lucescu",      stadium:"Arena Națională" },
-  { id:"32", name_en:"South Africa", name_es:"Sudáfrica",      fifa_code:"RSA", groups:"J", confederation:"CAF",      fifa_ranking:63, coach:"Hugo Broos",          stadium:"FNB Stadium" },
-  { id:"33", name_en:"Senegal",      name_es:"Senegal",        fifa_code:"SEN", groups:"H", confederation:"CAF",      fifa_ranking:20, coach:"Aliou Cissé",         stadium:"Estadio Léopold Sédar Senghor" },
-  { id:"34", name_en:"Serbia",       name_es:"Serbia",         fifa_code:"SRB", groups:"D", confederation:"UEFA",     fifa_ranking:33, coach:"Dragan Stojković",    stadium:"Estadio Rajko Mitić" },
-  { id:"35", name_en:"Switzerland",  name_es:"Suiza",          fifa_code:"SUI", groups:"I", confederation:"UEFA",     fifa_ranking:19, coach:"Murat Yakin",         stadium:"Estadio de Ginebra" },
-  { id:"36", name_en:"Tunisia",      name_es:"Túnez",          fifa_code:"TUN", groups:"K", confederation:"CAF",      fifa_ranking:30, coach:"Mondher Kebaier",     stadium:"Estadio de Rades" },
-  { id:"37", name_en:"Ukraine",      name_es:"Ucrania",        fifa_code:"UKR", groups:"J", confederation:"UEFA",     fifa_ranking:24, coach:"Serhiy Rebrov",       stadium:"Olimpiyskiy" },
-  { id:"38", name_en:"Uruguay",      name_es:"Uruguay",        fifa_code:"URU", groups:"C", confederation:"CONMEBOL", fifa_ranking:17, coach:"Marcelo Bielsa",      stadium:"Estadio Centenario" },
-  { id:"39", name_en:"USA",          name_es:"Estados Unidos", fifa_code:"USA", groups:"A", confederation:"CONCACAF", fifa_ranking:11, coach:"Mauricio Pochettino", stadium:"Rose Bowl" },
-  { id:"40", name_en:"Venezuela",    name_es:"Venezuela",      fifa_code:"VEN", groups:"I", confederation:"CONMEBOL", fifa_ranking:47, coach:"Fernando Batista",    stadium:"Estadio Monumental de Maturín" },
-  { id:"41", name_en:"Spain",        name_es:"España",         fifa_code:"ESP", groups:"E", confederation:"UEFA",     fifa_ranking:8,  coach:"Luis de la Fuente",   stadium:"Estadio de La Cartuja" },
-  { id:"42", name_en:"Turkey",       name_es:"Turquía",        fifa_code:"TUR", groups:"K", confederation:"UEFA",     fifa_ranking:29, coach:"Vincenzo Montella",   stadium:"Estadio Atatürk" },
-  { id:"43", name_en:"Ivory Coast",  name_es:"Costa de Marfil",fifa_code:"CIV", groups:"H", confederation:"CAF",      fifa_ranking:11, coach:"Emerse Faé",          stadium:"Estadio FHB" },
-  { id:"44", name_en:"DR Congo",     name_es:"Congo RD",       fifa_code:"COD", groups:"L", confederation:"CAF",      fifa_ranking:26, coach:"Sébastien Desabre",   stadium:"Stade des Martyrs" },
-  { id:"45", name_en:"Norway",       name_es:"Noruega",        fifa_code:"NOR", groups:"G", confederation:"UEFA",     fifa_ranking:25, coach:"Ståle Solbakken",     stadium:"Estadio Ullevaal" },
-  { id:"46", name_en:"Sweden",       name_es:"Suecia",         fifa_code:"SWE", groups:"F", confederation:"UEFA",     fifa_ranking:35, coach:"Jon Dahl Tomasson",   stadium:"Friends Arena" },
-  { id:"47", name_en:"Jordan",       name_es:"Jordania",       fifa_code:"JOR", groups:"B", confederation:"AFC",      fifa_ranking:70, coach:"Hussein Ammouta",     stadium:"Estadio Internacional de Amán" },
-  { id:"48", name_en:"Uzbekistan",   name_es:"Uzbekistán",     fifa_code:"UZB", groups:"H", confederation:"AFC",      fifa_ranking:66, coach:"Srecko Katanec",      stadium:"Estadio Pakhtakor" },
+  { id: "1", name_en: "Argentina", name_es: "Argentina", fifa_code: "ARG", groups: "J", confederation: "CONMEBOL", fifa_ranking: 1, coach: "Lionel Scaloni", stadium: "Estadio Monumental" },
+  { id: "2", name_en: "Brazil", name_es: "Brasil", fifa_code: "BRA", groups: "C", confederation: "CONMEBOL", fifa_ranking: 5, coach: "Carlo Ancelotti", stadium: "Estadio do Maracana" },
+  { id: "3", name_en: "Colombia", name_es: "Colombia", fifa_code: "COL", groups: "F", confederation: "CONMEBOL", fifa_ranking: 9, coach: "Nestor Lorenzo", stadium: "Estadio El Campin" },
+  { id: "4", name_en: "Ecuador", name_es: "Ecuador", fifa_code: "ECU", groups: "I", confederation: "CONMEBOL", fifa_ranking: 44, coach: "Sebastian Beccacece", stadium: "Estadio Rodrigo Paz" },
+  { id: "5", name_en: "Paraguay", name_es: "Paraguay", fifa_code: "PAR", groups: "D", confederation: "CONMEBOL", fifa_ranking: 65, coach: "Gustavo Alfaro", stadium: "Estadio Defensores del Chaco" },
+  { id: "6", name_en: "Uruguay", name_es: "Uruguay", fifa_code: "URU", groups: "C", confederation: "CONMEBOL", fifa_ranking: 17, coach: "Marcelo Bielsa", stadium: "Estadio Centenario" },
+  { id: "7", name_en: "Canada", name_es: "Canada", fifa_code: "CAN", groups: "B", confederation: "CONCACAF", fifa_ranking: 40, coach: "Jesse Marsch", stadium: "BMO Field" },
+  { id: "8", name_en: "Mexico", name_es: "Mexico", fifa_code: "MEX", groups: "A", confederation: "CONCACAF", fifa_ranking: 16, coach: "Javier Aguirre", stadium: "Estadio Azteca" },
+  { id: "9", name_en: "USA", name_es: "Estados Unidos", fifa_code: "USA", groups: "D", confederation: "CONCACAF", fifa_ranking: 11, coach: "Mauricio Pochettino", stadium: "Rose Bowl" },
+  { id: "10", name_en: "Panama", name_es: "Panama", fifa_code: "PAN", groups: "B", confederation: "CONCACAF", fifa_ranking: 73, coach: "Thomas Christiansen", stadium: "Estadio Rommel Fernandez" },
+  { id: "11", name_en: "Curacao", name_es: "Curazao", fifa_code: "CUW", groups: "K", confederation: "CONCACAF", fifa_ranking: 88, coach: "Remko Bicentini", stadium: "Ergilio Hato Stadium" },
+  { id: "12", name_en: "Haiti", name_es: "Haiti", fifa_code: "HAI", groups: "C", confederation: "CONCACAF", fifa_ranking: 80, coach: "Marc Collat", stadium: "Stade Sylvio Cator" },
+  { id: "13", name_en: "Australia", name_es: "Australia", fifa_code: "AUS", groups: "D", confederation: "AFC", fifa_ranking: 23, coach: "Tony Popovic", stadium: "Stadium Australia" },
+  { id: "14", name_en: "Iraq", name_es: "Irak", fifa_code: "IRQ", groups: "B", confederation: "AFC", fifa_ranking: 58, coach: "Jesus Casas", stadium: "Estadio Al-Shaab" },
+  { id: "15", name_en: "IR Iran", name_es: "Iran", fifa_code: "IRI", groups: "G", confederation: "AFC", fifa_ranking: 22, coach: "Amir Ghalenoei", stadium: "Estadio Azadi" },
+  { id: "16", name_en: "Japan", name_es: "Japon", fifa_code: "JPN", groups: "H", confederation: "AFC", fifa_ranking: 15, coach: "Hajime Moriyasu", stadium: "Japan National Stadium" },
+  { id: "17", name_en: "Jordan", name_es: "Jordania", fifa_code: "JOR", groups: "G", confederation: "AFC", fifa_ranking: 70, coach: "Hussein Ammouta", stadium: "Estadio Internacional de Aman" },
+  { id: "18", name_en: "South Korea", name_es: "Corea del Sur", fifa_code: "KOR", groups: "A", confederation: "AFC", fifa_ranking: 21, coach: "Hong Myung-bo", stadium: "Estadio de Seoul" },
+  { id: "19", name_en: "Saudi Arabia", name_es: "Arabia Saudita", fifa_code: "KSA", groups: "I", confederation: "AFC", fifa_ranking: 56, coach: "Herve Renard", stadium: "Estadio Rey Fahd" },
+  { id: "20", name_en: "Qatar", name_es: "Catar", fifa_code: "QAT", groups: "B", confederation: "AFC", fifa_ranking: 37, coach: "Bartolome Marquez", stadium: "Estadio Internacional Khalifa" },
+  { id: "21", name_en: "Uzbekistan", name_es: "Uzbekistan", fifa_code: "UZB", groups: "F", confederation: "AFC", fifa_ranking: 66, coach: "Srecko Katanec", stadium: "Estadio Pakhtakor" },
+  { id: "22", name_en: "Algeria", name_es: "Argelia", fifa_code: "ALG", groups: "E", confederation: "CAF", fifa_ranking: 35, coach: "Vladimir Petkovic", stadium: "Stade Mustapha Tchaker" },
+  { id: "23", name_en: "Cabo Verde", name_es: "Cabo Verde", fifa_code: "CPV", groups: "L", confederation: "CAF", fifa_ranking: 77, coach: "Bubista", stadium: "Estadio Nacional de Cabo Verde" },
+  { id: "24", name_en: "DR Congo", name_es: "Congo RD", fifa_code: "COD", groups: "J", confederation: "CAF", fifa_ranking: 26, coach: "Sebastien Desabre", stadium: "Stade des Martyrs" },
+  { id: "25", name_en: "Ivory Coast", name_es: "Costa de Marfil", fifa_code: "CIV", groups: "H", confederation: "CAF", fifa_ranking: 11, coach: "Emerse Fae", stadium: "Estadio FHB" },
+  { id: "26", name_en: "Egypt", name_es: "Egipto", fifa_code: "EGY", groups: "K", confederation: "CAF", fifa_ranking: 36, coach: "Hossam Hassan", stadium: "Estadio Internacional del Cairo" },
+  { id: "27", name_en: "Ghana", name_es: "Ghana", fifa_code: "GHA", groups: "L", confederation: "CAF", fifa_ranking: 60, coach: "Otto Addo", stadium: "Estadio Baba Yara" },
+  { id: "28", name_en: "Morocco", name_es: "Marruecos", fifa_code: "MAR", groups: "H", confederation: "CAF", fifa_ranking: 14, coach: "Walid Regragui", stadium: "Stade Mohammed V" },
+  { id: "29", name_en: "Senegal", name_es: "Senegal", fifa_code: "SEN", groups: "F", confederation: "CAF", fifa_ranking: 20, coach: "Aliou Cisse", stadium: "Estadio Leopold Sedar Senghor" },
+  { id: "30", name_en: "South Africa", name_es: "Sudafrica", fifa_code: "RSA", groups: "A", confederation: "CAF", fifa_ranking: 63, coach: "Hugo Broos", stadium: "FNB Stadium" },
+  { id: "31", name_en: "Tunisia", name_es: "Tunez", fifa_code: "TUN", groups: "K", confederation: "CAF", fifa_ranking: 30, coach: "Mondher Kebaier", stadium: "Estadio de Rades" },
+  { id: "32", name_en: "New Zealand", name_es: "Nueva Zelanda", fifa_code: "NZL", groups: "E", confederation: "OFC", fifa_ranking: 92, coach: "Darren Bazeley", stadium: "Eden Park" },
+  { id: "33", name_en: "Austria", name_es: "Austria", fifa_code: "AUT", groups: "I", confederation: "UEFA", fifa_ranking: 28, coach: "Ralf Rangnick", stadium: "Ernst Happel Stadion" },
+  { id: "34", name_en: "Belgium", name_es: "Belgica", fifa_code: "BEL", groups: "E", confederation: "UEFA", fifa_ranking: 3, coach: "Rudi Garcia", stadium: "Estadio Rey Balduino" },
+  { id: "35", name_en: "Bosnia and Herzegovina", name_es: "Bosnia y Herzegovina", fifa_code: "BIH", groups: "L", confederation: "UEFA", fifa_ranking: 62, coach: "Sergej Barbarez", stadium: "Stadion Bilino Polje" },
+  { id: "36", name_en: "Croatia", name_es: "Croacia", fifa_code: "CRO", groups: "K", confederation: "UEFA", fifa_ranking: 10, coach: "Zlatko Dalic", stadium: "Estadio Maksimir" },
+  { id: "37", name_en: "Czechia", name_es: "Chequia", fifa_code: "CZE", groups: "G", confederation: "UEFA", fifa_ranking: 36, coach: "Ivan Hasek", stadium: "Estadio Eden" },
+  { id: "38", name_en: "England", name_es: "Inglaterra", fifa_code: "ENG", groups: "F", confederation: "UEFA", fifa_ranking: 4, coach: "Lee Carsley", stadium: "Wembley" },
+  { id: "39", name_en: "France", name_es: "Francia", fifa_code: "FRA", groups: "E", confederation: "UEFA", fifa_ranking: 2, coach: "Didier Deschamps", stadium: "Stade de France" },
+  { id: "40", name_en: "Germany", name_es: "Alemania", fifa_code: "GER", groups: "C", confederation: "UEFA", fifa_ranking: 12, coach: "Julian Nagelsmann", stadium: "Allianz Arena" },
+  { id: "41", name_en: "Netherlands", name_es: "Paises Bajos", fifa_code: "NED", groups: "J", confederation: "UEFA", fifa_ranking: 7, coach: "Ronald Koeman", stadium: "Johan Cruyff Arena" },
+  { id: "42", name_en: "Norway", name_es: "Noruega", fifa_code: "NOR", groups: "G", confederation: "UEFA", fifa_ranking: 25, coach: "Stale Solbakken", stadium: "Estadio Ullevaal" },
+  { id: "43", name_en: "Portugal", name_es: "Portugal", fifa_code: "POR", groups: "F", confederation: "UEFA", fifa_ranking: 6, coach: "Roberto Martinez", stadium: "Estadio da Luz" },
+  { id: "44", name_en: "Scotland", name_es: "Escocia", fifa_code: "SCO", groups: "C", confederation: "UEFA", fifa_ranking: 38, coach: "Steve Clarke", stadium: "Hampden Park" },
+  { id: "45", name_en: "Spain", name_es: "Espana", fifa_code: "ESP", groups: "H", confederation: "UEFA", fifa_ranking: 8, coach: "Luis de la Fuente", stadium: "Estadio de La Cartuja" },
+  { id: "46", name_en: "Sweden", name_es: "Suecia", fifa_code: "SWE", groups: "I", confederation: "UEFA", fifa_ranking: 35, coach: "Jon Dahl Tomasson", stadium: "Friends Arena" },
+  { id: "47", name_en: "Switzerland", name_es: "Suiza", fifa_code: "SUI", groups: "J", confederation: "UEFA", fifa_ranking: 19, coach: "Murat Yakin", stadium: "Estadio de Ginebra" },
+  { id: "48", name_en: "Turkey", name_es: "Turquia", fifa_code: "TUR", groups: "D", confederation: "UEFA", fifa_ranking: 29, coach: "Vincenzo Montella", stadium: "Estadio Ataturk" },
 ];
 
-// PARTE DEL LABORATORIO: Mapa de banderas emoji por código FIFA
-const FLAG_EMOJI = {
-  ARG:"🇦🇷", AUS:"🇦🇺", BEL:"🇧🇪", BRA:"🇧🇷", CMR:"🇨🇲", CAN:"🇨🇦",
-  COL:"🇨🇴", CRC:"🇨🇷", CRO:"🇭🇷", ECU:"🇪🇨", EGY:"🇪🇬", ENG:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-  ESP:"🇪🇸", FRA:"🇫🇷", GER:"🇩🇪", GHA:"🇬🇭", HON:"🇭🇳", IRA:"🇮🇷",
-  IRQ:"🇮🇶", JPN:"🇯🇵", KOR:"🇰🇷", KSA:"🇸🇦", MAR:"🇲🇦", MEX:"🇲🇽",
-  NED:"🇳🇱", NGA:"🇳🇬", NOR:"🇳🇴", NZL:"🇳🇿", PAN:"🇵🇦", PAR:"🇵🇾",
-  POR:"🇵🇹", QAT:"🇶🇦", ROU:"🇷🇴", RSA:"🇿🇦", SEN:"🇸🇳", SRB:"🇷🇸",
-  SUI:"🇨🇭", TUN:"🇹🇳", TUR:"🇹🇷", UKR:"🇺🇦", URU:"🇺🇾", USA:"🇺🇸",
-  VEN:"🇻🇪", CIV:"🇨🇮", COD:"🇨🇩", SWE:"🇸🇪", JOR:"🇯🇴", UZB:"🇺🇿",
+// PARTE DEL LABORATORIO: Bandera a partir del código FIFA -> ISO-3166 alpha-2
+// Se genera con los caracteres regionales Unicode en vez de un mapa fijo de
+// emojis, para que ninguna selección se quede sin bandera visible.
+const FIFA_TO_ISO = {
+  ARG: "AR", BRA: "BR", COL: "CO", ECU: "EC", PAR: "PY", URU: "UY",
+  CAN: "CA", MEX: "MX", USA: "US", PAN: "PA", CUW: "CW", HAI: "HT",
+  AUS: "AU", IRQ: "IQ", IRI: "IR", JPN: "JP", JOR: "JO", KOR: "KR",
+  KSA: "SA", QAT: "QA", UZB: "UZ",
+  ALG: "DZ", CPV: "CV", COD: "CD", CIV: "CI", EGY: "EG", GHA: "GH",
+  MAR: "MA", SEN: "SN", RSA: "ZA", TUN: "TN",
+  NZL: "NZ",
+  AUT: "AT", BEL: "BE", BIH: "BA", CRO: "HR", CZE: "CZ",
+  ENG: "GB", FRA: "FR", GER: "DE", NED: "NL", NOR: "NO",
+  POR: "PT", SCO: "GB", ESP: "ES", SWE: "SE", SUI: "CH", TUR: "TR",
 };
 
-const getFlag = (team) => FLAG_EMOJI[team?.fifa_code] ?? "🏳️";
+const getFlag = (team) => {
+  const fifa = team?.fifa_code;
+  if (!fifa || !FIFA_TO_ISO[fifa]) return "🏳️";
+  const iso = FIFA_TO_ISO[fifa];
+  return String.fromCodePoint(...iso.split('').map(c => 127397 + c.charCodeAt(0)));
+};
 
 // devuelve el nombre a mostrar: español si existe, inglés como fallback
 const getDisplayName = (team) => team.name_es ?? team.name_en ?? team.name ?? "—";
@@ -121,18 +131,27 @@ const loadAllTeams = async () => {
     const apiTeams = normalizeTeams(data);
 
     // enriquecer cada equipo de la API con los datos completos del fallback
-    // cruzando por fifa_code — así name_es, coach, stadium, etc. siempre existen
-    allTeams = apiTeams.map((apiTeam) => {
-      const local = FALLBACK_TEAMS.find(
-        (f) => f.fifa_code === (apiTeam.fifa_code ?? apiTeam.code ?? "")
-      );
-      return { ...local, ...apiTeam, name_es: local?.name_es ?? apiTeam.name_en };
-    });
+    // cruzando por fifa_code — así name_es, coach, stadium, etc. siempre existen,
+    // descartando cualquier código que no pertenezca al catálogo real
+    const validCodes = new Set(FALLBACK_TEAMS.map(f => f.fifa_code));
+    const enriched = apiTeams
+      .filter(t => validCodes.has(t.fifa_code ?? t.code ?? ""))
+      .map(t => {
+        const local = FALLBACK_TEAMS.find(f => f.fifa_code === (t.fifa_code ?? t.code ?? ""));
+        return { ...local, ...t, name_es: local?.name_es ?? t.name_en };
+      });
 
-    // si la API devolvió equipos sin fifa_code, usar el fallback completo
-    if (allTeams.length === 0) throw new Error("Array vacío tras normalización");
+    // si la API devolvió menos de las 48 selecciones, se completa con el
+    // fallback para que ninguna selección desaparezca del buscador
+    if (enriched.length < 48) {
+      const returnedCodes = new Set(enriched.map(t => t.fifa_code));
+      const missing = FALLBACK_TEAMS.filter(f => !returnedCodes.has(f.fifa_code));
+      allTeams = [...enriched, ...missing];
+    } else {
+      allTeams = enriched;
+    }
 
-    console.log(`[TEAMS] ${allTeams.length} equipos cargados y enriquecidos desde la API.`);
+    console.log(`[TEAMS] ${allTeams.length} equipos cargados.`);
     setFeedback("", false);
 
   } catch (err) {
@@ -380,19 +399,33 @@ const loadComparison = async () => {
   activeController = new AbortController();
   const { signal } = activeController;
 
+  const fallbackA = enrichWithFallback(selectedTeams[0]);
+  const fallbackB = enrichWithFallback(selectedTeams[1]);
+
   try {
     const idA = selectedTeams[0].id ?? "";
     const idB = selectedTeams[1].id ?? "";
 
+    // Función auxiliar para no usar .catch() encadenado, cumpliendo con la regla del laboratorio.
+    // Aísla el fallo de UN equipo para que el otro no pierda sus datos reales de la API.
+    const fetchSafe = async (id) => {
+      try {
+        return await apiFetch(`${API_BASE}/get/team/${id}`, signal);
+      } catch (err) {
+        if (err.name === "AuthError" || err.name === "AbortError") throw err;
+        return null;
+      }
+    };
+
     // OBLIGATORIO: ambas peticiones en paralelo — prohibido await secuencial
     const [rawA, rawB] = await Promise.all([
-      apiFetch(`${API_BASE}/get/team/${idA}`, signal),
-      apiFetch(`${API_BASE}/get/team/${idB}`, signal),
+      fetchSafe(idA),
+      fetchSafe(idB),
     ]);
 
     // enriquecer el detalle de la API con datos del fallback (coach, stadium, name_es, etc.)
-    const detailA = enrichWithFallback(extractTeam(rawA) ?? selectedTeams[0]);
-    const detailB = enrichWithFallback(extractTeam(rawB) ?? selectedTeams[1]);
+    const detailA = enrichWithFallback(extractTeam(rawA) ?? fallbackA);
+    const detailB = enrichWithFallback(extractTeam(rawB) ?? fallbackB);
 
     container.innerHTML = "";
     container.appendChild(buildTeamCard(detailA));
@@ -406,8 +439,8 @@ const loadComparison = async () => {
     }
     // fallback: los selectedTeams ya tienen datos enriquecidos del paso de selección
     container.innerHTML = "";
-    container.appendChild(buildTeamCard(selectedTeams[0]));
-    container.appendChild(buildTeamCard(selectedTeams[1]));
+    container.appendChild(buildTeamCard(fallbackA));
+    container.appendChild(buildTeamCard(fallbackB));
   }
 };
 
@@ -433,7 +466,7 @@ const apiFetch = async (url, signal) => {
 
 const extractTeam = (raw) => {
   if (!raw)                         return null;
-  if (raw.name_en)                  return raw;
+  if (raw.name_en || raw.name)      return raw;
   if (raw.team?.name_en)            return raw.team;
   if (Array.isArray(raw))           return raw[0] ?? null;
   if (raw.data?.name_en)            return raw.data;
@@ -450,8 +483,17 @@ const enrichWithFallback = (team) => {
   );
   if (!local) return team;
   // local primero para obtener name_es, coach, stadium, confederation, etc.
-  // luego team de la API sobreescribe con datos más frescos si los tiene
-  return { ...local, ...team, name_es: local.name_es };
+  // luego team de la API sobreescribe con datos más frescos si los tiene,
+  // pero cada campo clave cae de vuelta al fallback si la API lo trae vacío
+  return {
+    ...local,
+    ...team,
+    name_es: local.name_es,
+    coach: team.coach ?? local.coach,
+    stadium: team.stadium ?? local.stadium,
+    confederation: team.confederation ?? local.confederation,
+    fifa_ranking: team.fifa_ranking ?? team.ranking ?? local.fifa_ranking,
+  };
 };
 
 const skeletonHTML = () => `
@@ -469,19 +511,16 @@ const buildTeamCard = (team) => {
   const group = team.groups ?? team.group ?? "—";
 
   // filtra las filas que tengan valor real (no "—") para que la tabla
-  // no quede llena de guiones cuando la API no devuelve un campo
+  // no quede llena de guiones cuando la API no devuelve un campo.
+  // Se retiran las estadísticas de partidos jugados porque el torneo aún
+  // no ha comenzado y siempre llegaban en cero, mostrando datos falsos.
   const allStats = {
     "Código FIFA":    team.fifa_code                       ?? "—",
-    "Grupo":          group,
+    "Grupo":          group !== "—" ? `Grupo ${group}` : "—",
     "Confederación":  team.confederation                   ?? "—",
     "Ranking FIFA":   team.fifa_ranking ?? team.ranking    ?? "—",
     "Entrenador":     team.coach        ?? team.manager    ?? "—",
     "Estadio":        team.stadium                         ?? "—",
-    "Partidos J. (MF)": team.matches_played                ?? "—",
-    "Goles a favor":  team.goals_for                       ?? "—",
-    "Goles en contra":team.goals_against                   ?? "—",
-    "Diferencia goles":team.goal_difference                ?? "—",
-    "Puntos":         team.points                          ?? "—",
   };
 
   const rows = Object.entries(allStats)

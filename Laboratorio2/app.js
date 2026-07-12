@@ -84,8 +84,29 @@ const getFlag = (team) => {
   return String.fromCodePoint(...iso.split('').map(c => 127397 + c.charCodeAt(0)));
 };
 
-// devuelve el nombre a mostrar: español si existe, inglés como fallback
-const getDisplayName = (team) => team.name_es ?? team.name_en ?? team.name ?? "—";
+// PARTE DEL LABORATORIO: Nombre en español canónico por código FIFA
+// Se agrega esta tabla porque depender solo de team.name_es fallaba cuando
+// la API devolvía el equipo sin ese campo, mostrando el nombre en inglés
+// aunque el usuario hubiera buscado en español.
+const ES_DISPLAY = {
+  ARG: "Argentina", BRA: "Brasil", COL: "Colombia", ECU: "Ecuador", PAR: "Paraguay", URU: "Uruguay",
+  CAN: "Canadá", MEX: "México", USA: "Estados Unidos", PAN: "Panamá", CUW: "Curazao", HAI: "Haití",
+  AUS: "Australia", IRQ: "Irak", IRI: "Irán", JPN: "Japón", JOR: "Jordania", KOR: "Corea del Sur",
+  KSA: "Arabia Saudita", QAT: "Catar", UZB: "Uzbekistán",
+  ALG: "Argelia", CPV: "Cabo Verde", COD: "Congo RD", CIV: "Costa de Marfil", EGY: "Egipto",
+  GHA: "Ghana", MAR: "Marruecos", SEN: "Senegal", RSA: "Sudáfrica", TUN: "Túnez",
+  NZL: "Nueva Zelanda",
+  AUT: "Austria", BEL: "Bélgica", BIH: "Bosnia y Herzegovina", CRO: "Croacia", CZE: "Chequia",
+  ENG: "Inglaterra", FRA: "Francia", GER: "Alemania", NED: "Países Bajos", NOR: "Noruega",
+  POR: "Portugal", SCO: "Escocia", ESP: "España", SWE: "Suecia", SUI: "Suiza", TUR: "Turquía",
+};
+
+// devuelve el nombre a mostrar: español canónico por código FIFA,
+// name_es del propio equipo, o inglés como último fallback
+const getDisplayName = (team) => {
+  if (team.fifa_code && ES_DISPLAY[team.fifa_code]) return ES_DISPLAY[team.fifa_code];
+  return team.name_es ?? team.name_en ?? team.name ?? "—";
+};
 
 // PARTE DEL LABORATORIO: Simulación e Integración con la API Rest
 const authenticate = async (email = "test@test.com", password = "test123") => {
@@ -209,6 +230,24 @@ const setFeedback = (msg, isError = false) => {
   el.className = `search-feedback mt-1 small${isError ? " search-feedback--error" : ""}`;
 };
 
+// PARTE DEL LABORATORIO: Búsqueda bilingüe robusta
+// Bug corregido: la búsqueda comparaba el texto tal cual, así que "espana"
+// no encontraba "España" y "MEXICO" no encontraba "México". Se normalizan
+// ambos lados (NFD + eliminación de diacríticos) antes de comparar, y se
+// permite además buscar por confederación o grupo.
+const filterLocal = (q) => {
+  const norm = q.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return allTeams.filter((t) => {
+    const displayName = ES_DISPLAY[t.fifa_code] ?? t.name_es ?? "";
+    const es = displayName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const en = (t.name_en ?? t.name ?? "").toLowerCase();
+    const code = (t.fifa_code ?? "").toLowerCase();
+    const conf = (t.confederation ?? "").toLowerCase();
+    const group = (t.groups ?? t.group ?? "").toLowerCase();
+    return es.includes(norm) || en.includes(norm) || code.startsWith(norm) || conf.includes(norm) || group === norm;
+  });
+};
+
 // PARTE DEL LABORATORIO: Control de Condiciones de Carrera con AbortController
 // Cada llamada cancela la anterior con .abort() antes de lanzar la nueva petición.
 const searchTeams = async (query) => {
@@ -236,7 +275,19 @@ const searchTeams = async (query) => {
     return;
   }
 
-  const q = query.toLowerCase().trim();
+  // PARTE DEL LABORATORIO: Gestión de Errores y Resiliencia (404)
+  // Se filtra localmente PRIMERO (instantáneo y ya sin el bug de tildes/mayúsculas)
+  // para no dejar al usuario sin resultados mientras la API responde.
+  const localResults = filterLocal(query);
+  if (localResults.length === 0) {
+    dropdown.innerHTML = "";
+    input.setAttribute("aria-expanded", "false");
+    setFeedback("No se encontraron selecciones con ese nombre.", true);
+    return;
+  }
+  setFeedback("");
+  renderSuggestions(localResults.slice(0, 48));
+  input.setAttribute("aria-expanded", "true");
 
   try {
     // usar la API real con el endpoint del enunciado: GET /get/teams?name={busqueda}
@@ -250,56 +301,38 @@ const searchTeams = async (query) => {
       return;
     }
 
-    // si la API falla, filtrar localmente como fallback
-    let results;
     if (res.ok) {
       const data = await res.json();
       const apiResults = normalizeTeams(data);
-      // enriquecer con datos del fallback (name_es, coach, etc.)
-      results = apiResults.map((t) => enrichWithFallback(t));
-    } else {
-      // filtro local bilingüe como respaldo
-      results = allTeams.filter((t) => {
-        const byEs = (t.name_es ?? "").toLowerCase().includes(q);
-        const byEn = (t.name_en ?? t.name ?? "").toLowerCase().includes(q);
-        const byCode = (t.fifa_code ?? "").toLowerCase().startsWith(q);
-        return byEs || byEn || byCode;
+      const validCodes = new Set(FALLBACK_TEAMS.map(f => f.fifa_code));
+      // enriquecer con datos del fallback (name_es, coach, etc.) y descartar códigos inválidos
+      let enriched = apiResults.filter(t => validCodes.has(t.fifa_code ?? t.code ?? "")).map(t => enrichWithFallback(t));
+
+      // re-filtrar con la misma normalización bilingüe por si la API
+      // devuelve coincidencias más laxas que las que el usuario pidió
+      const norm = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      enriched = enriched.filter(t => {
+        const displayName = ES_DISPLAY[t.fifa_code] ?? t.name_es ?? "";
+        const es = displayName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const en = (t.name_en ?? t.name ?? "").toLowerCase();
+        const code = (t.fifa_code ?? "").toLowerCase();
+        return es.includes(norm) || en.includes(norm) || code.startsWith(norm);
       });
+
+      if (enriched.length > 0) {
+        setFeedback("");
+        renderSuggestions(enriched.slice(0, 48));
+        input.setAttribute("aria-expanded", "true");
+      }
     }
-
-    // PARTE DEL LABORATORIO: Gestión de Errores y Resiliencia (404)
-    if (results.length === 0) {
-      dropdown.innerHTML = "";
-      input.setAttribute("aria-expanded", "false");
-      setFeedback("No se encontraron selecciones con ese nombre.", true);
-      return;
-    }
-
-    setFeedback("");
-    renderSuggestions(results.slice(0, 10));
-    input.setAttribute("aria-expanded", "true");
-
   } catch (err) {
     // AbortError: cancelación intencional — ignorar en la UI, registrar en consola
     if (err.name === "AbortError") {
       console.log("[DEBUG] Petición cancelada intencionalmente por AbortController — no es un error.");
       return;
     }
-    // error de red real — filtrar localmente como respaldo
-    const results = allTeams.filter((t) => {
-      const byEs = (t.name_es ?? "").toLowerCase().includes(q);
-      const byEn = (t.name_en ?? t.name ?? "").toLowerCase().includes(q);
-      const byCode = (t.fifa_code ?? "").toLowerCase().startsWith(q);
-      return byEs || byEn || byCode;
-    });
-
-    if (results.length === 0) {
-      setFeedback("No se encontraron selecciones con ese nombre.", true);
-      return;
-    }
-    setFeedback("");
-    renderSuggestions(results.slice(0, 10));
-    input.setAttribute("aria-expanded", "true");
+    // error de red real — ya se mostraron resultados locales arriba, no hay nada más que hacer
+    console.warn("[SEARCH] API no disponible, se mantiene el resultado local.");
   }
 };
 
@@ -318,11 +351,20 @@ const renderSuggestions = (teams) => {
     li.setAttribute("role", "option");
     li.tabIndex  = 0;
     li.setAttribute("aria-label", name);
-    li.innerHTML = `
-      <span class="suggestion-item__flag" aria-hidden="true">${flag}</span>
-      <span class="suggestion-item__name">${name}</span>
-      <span class="suggestion-item__group">${group ? `Grupo ${group}` : ""}</span>
-    `;
+
+    const flagSpan = document.createElement("span");
+    flagSpan.className = "suggestion-item__flag";
+    flagSpan.setAttribute("aria-hidden", "true");
+    flagSpan.textContent = flag;
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "suggestion-item__name";
+    nameSpan.textContent = name;
+    const groupSpan = document.createElement("span");
+    groupSpan.className = "suggestion-item__group";
+    groupSpan.textContent = group ? `Grupo ${group}` : "";
+    li.appendChild(flagSpan);
+    li.appendChild(nameSpan);
+    li.appendChild(groupSpan);
 
     const doSelect = () => selectTeam({ ...team, _flag: flag, _name: name });
     li.addEventListener("click", doSelect);
@@ -365,17 +407,26 @@ const renderChips = () => {
   selectedTeams.forEach((team, i) => {
     const chip = document.createElement("div");
     chip.className = "chip";
-    chip.innerHTML = `
-      <span aria-hidden="true">${team._flag ?? getFlag(team)}</span>
-      <span>${team._name ?? team.name_en}</span>
-      <button class="chip__remove" aria-label="Quitar ${team._name ?? team.name_en}">✕</button>
-    `;
-    chip.querySelector(".chip__remove").addEventListener("click", () => {
+
+    const flagSpan = document.createElement("span");
+    flagSpan.setAttribute("aria-hidden", "true");
+    flagSpan.textContent = team._flag ?? getFlag(team);
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = team._name ?? getDisplayName(team);
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "chip__remove";
+    removeBtn.setAttribute("aria-label", `Quitar ${team._name ?? getDisplayName(team)}`);
+    removeBtn.textContent = "✕";
+    removeBtn.addEventListener("click", () => {
       selectedTeams.splice(i, 1);
       document.getElementById("comparison-container").innerHTML = "";
       setFeedback("");
       renderChips();
     });
+
+    chip.appendChild(flagSpan);
+    chip.appendChild(nameSpan);
+    chip.appendChild(removeBtn);
     chipsEl.appendChild(chip);
   });
 };

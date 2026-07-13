@@ -43,9 +43,13 @@ const state = {
 
 /* =============================== AUTH ================================ */
 
+// nota: los parámetros por defecto (email/password) se conservan como
+// resguardo interno de la función, pero ya no se usan de forma automática
+// al cargar la página — ahora el flujo pasa siempre por la pantalla de
+// inicio de sesión (#login-screen), que exige que el usuario escriba
+// explícitamente esas credenciales antes de llamar a authenticate().
 const authenticate = async (email = null, password = null) => {
-  // sin credenciales explícitas (carga inicial, antes de que el usuario
-  // use el modal de login): no tiene sentido pegarle a la API con datos
+  // sin credenciales explícitas: no tiene sentido pegarle a la API con datos
   // de prueba que sabemos que va a rechazar, así que vamos directo al
   // token simulado y evitamos ruido innecesario en la consola.
   if (!email || !password) {
@@ -429,6 +433,22 @@ const ui = {
     el.className = `search-feedback mt-1 small${isError ? " search-feedback--error" : ""}`;
   },
 
+  // pantalla de inicio de sesión (login inicial, obligatorio al cargar)
+  showLoginScreen() {
+    const screen = document.getElementById("login-screen");
+    screen.classList.add("is-visible");
+    screen.setAttribute("aria-hidden", "false");
+    document.getElementById("login-email").focus();
+  },
+
+  hideLoginScreen() {
+    const screen = document.getElementById("login-screen");
+    screen.classList.remove("is-visible");
+    screen.setAttribute("aria-hidden", "true");
+    document.getElementById("search-input").focus();
+  },
+
+  // modal de re-autenticación (se dispara ante un 401 en plena sesión)
   showAuthModal() {
     const modal = document.getElementById("auth-modal");
     modal.classList.add("is-visible");
@@ -721,9 +741,10 @@ const loadComparison = async () => {
 
 const init = async () => {
   ui.setupFontSize();
-  await authenticate();
-  await Promise.all([loadAllTeams(), loadAllGroups()]);
 
+  // los listeners del buscador se registran de una vez; no representan
+  // ningún riesgo porque la pantalla de login (#login-screen) cubre toda
+  // la interfaz y bloquea la interacción hasta que el usuario se autentique
   const input = document.getElementById("search-input");
   const debouncedSearch = debounce(searchTeams, 300);
 
@@ -747,6 +768,43 @@ const init = async () => {
     }
   });
 
+  // PARTE DEL LABORATORIO: inicio de sesión — la app ya no se autentica
+  // sola con credenciales por defecto al cargar; espera a que el usuario
+  // las escriba en la pantalla de login y las envíe.
+  ui.showLoginScreen();
+
+  const loginBtn = document.getElementById("login-submit");
+  const doLogin = async () => {
+    const email = document.getElementById("login-email").value.trim();
+    const pass = document.getElementById("login-pass").value.trim();
+    const errorEl = document.getElementById("login-error");
+
+    if (!email || !pass) {
+      errorEl.textContent = "Completa los dos campos.";
+      return;
+    }
+
+    errorEl.textContent = "";
+    loginBtn.textContent = "Ingresando...";
+    loginBtn.disabled = true;
+
+    await authenticate(email, pass);
+    await Promise.all([loadAllTeams(), loadAllGroups()]);
+
+    loginBtn.textContent = "Ingresar";
+    loginBtn.disabled = false;
+    ui.hideLoginScreen();
+  };
+
+  loginBtn.addEventListener("click", doLogin);
+  ["login-email", "login-pass"].forEach((id) => {
+    document.getElementById(id).addEventListener("keydown", (e) => {
+      if (e.key === "Enter") doLogin();
+    });
+  });
+
+  // modal de re-autenticación — se dispara si el token queda inválido
+  // (401) durante la sesión ya iniciada
   const modalBtn = document.getElementById("modal-submit");
   modalBtn.addEventListener("click", async () => {
     const email = document.getElementById("modal-email").value.trim();

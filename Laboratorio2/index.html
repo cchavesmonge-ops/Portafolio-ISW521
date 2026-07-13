@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,16 +8,13 @@
   <title>Buscador de Equipos — Mundial 2026</title>
 
   <!-- Bootstrap 5 — único framework CSS, sin jQuery -->
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-    crossorigin="anonymous"
-  />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
 
   <!-- estilos propios mínimos solo para lo que Bootstrap no cubre -->
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body class="bg-dark text-light min-vh-100">
 
   <header class="bg-black border-bottom border-secondary py-3 px-4 mb-4">
@@ -45,32 +43,17 @@
 
           <!-- wrapper relativo para que el dropdown flote correctamente -->
           <div class="search-wrapper position-relative">
-            <input
-              type="text"
-              id="search-input"
-              class="form-control bg-dark-subtle text-light border-secondary"
-              placeholder="Ej: Mexico, Brazil, Spain..."
-              autocomplete="off"
-              aria-autocomplete="list"
-              aria-controls="suggestions-list"
-              aria-expanded="false"
-            />
+            <input type="text" id="search-input" class="form-control bg-dark-subtle text-light border-secondary"
+              placeholder="Ej: Mexico, Brazil, Spain..." autocomplete="off" aria-autocomplete="list"
+              aria-controls="suggestions-list" aria-expanded="false" />
 
             <!-- dropdown vacío — se llena 100% desde JS -->
-            <ul
-              id="suggestions-list"
-              class="suggestions-dropdown list-unstyled mb-0"
-              role="listbox"
-              aria-label="Sugerencias de equipos"
-            ></ul>
+            <ul id="suggestions-list" class="suggestions-dropdown list-unstyled mb-0" role="listbox"
+              aria-label="Sugerencias de equipos"></ul>
           </div>
 
           <!-- feedback de búsqueda (404, errores de red) -->
-          <div
-            id="search-feedback"
-            class="search-feedback mt-1 small"
-            aria-live="polite"
-          ></div>
+          <div id="search-feedback" class="search-feedback mt-1 small" aria-live="polite"></div>
         </div>
       </div>
     </section>
@@ -87,15 +70,49 @@
 
   </main>
 
-  <!-- modal de re-autenticación — oculto por defecto -->
-  <div
-    id="auth-modal"
-    class="auth-modal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="modal-title"
-    aria-hidden="true"
-  >
+  <!-- pantalla de inicio de sesión — visible al cargar la página, bloquea
+       el resto de la interfaz hasta que se autentique correctamente.
+       Reutiliza el mismo estilo visual que el modal de re-autenticación
+       (clase .auth-modal), pero con sus propios ids para no interferir
+       con la lógica de reautenticación tras un 401. -->
+  <div id="login-screen" class="auth-modal is-visible" role="dialog" aria-modal="true" aria-labelledby="login-title"
+    aria-hidden="false">
+    <div class="auth-modal__box bg-dark border border-secondary rounded-3 p-4 shadow-lg">
+      <h2 id="login-title" class="h5 text-primary mb-1">Iniciar sesión</h2>
+      <p class="text-secondary small mb-3">
+        Ingresa tus credenciales para acceder al buscador de equipos.
+      </p>
+
+      <div class="mb-2">
+        <label for="login-email" class="form-label small text-secondary">
+          Correo electrónico
+        </label>
+        <input type="email" id="login-email"
+          class="form-control form-control-sm bg-dark-subtle text-light border-secondary"
+          placeholder="correo@ejemplo.com" autocomplete="email" />
+      </div>
+
+      <div class="mb-3">
+        <label for="login-pass" class="form-label small text-secondary">
+          Contraseña
+        </label>
+        <input type="password" id="login-pass"
+          class="form-control form-control-sm bg-dark-subtle text-light border-secondary" placeholder="••••••••"
+          autocomplete="current-password" />
+      </div>
+
+      <button id="login-submit" class="btn btn-primary w-100">
+        Ingresar
+      </button>
+
+      <p id="login-error" class="text-danger small mt-2 mb-0" aria-live="assertive"></p>
+    </div>
+  </div>
+
+  <!-- modal de re-autenticación — oculto por defecto, se muestra si el
+       token queda inválido (401) durante la sesión -->
+  <div id="auth-modal" class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"
+    aria-hidden="true">
     <div class="auth-modal__box bg-dark border border-secondary rounded-3 p-4 shadow-lg">
       <h2 id="modal-title" class="h5 text-danger mb-1">Sesión expirada</h2>
       <p class="text-secondary small mb-3">
@@ -107,40 +124,29 @@
         <label for="modal-email" class="form-label small text-secondary">
           Correo electrónico
         </label>
-        <input
-          type="email"
-          id="modal-email"
+        <input type="email" id="modal-email"
           class="form-control form-control-sm bg-dark-subtle text-light border-secondary"
-          placeholder="correo@ejemplo.com"
-          autocomplete="email"
-        />
+          placeholder="correo@ejemplo.com" autocomplete="email" />
       </div>
 
       <div class="mb-3">
         <label for="modal-pass" class="form-label small text-secondary">
           Contraseña
         </label>
-        <input
-          type="password"
-          id="modal-pass"
-          class="form-control form-control-sm bg-dark-subtle text-light border-secondary"
-          placeholder="••••••••"
-          autocomplete="current-password"
-        />
+        <input type="password" id="modal-pass"
+          class="form-control form-control-sm bg-dark-subtle text-light border-secondary" placeholder="••••••••"
+          autocomplete="current-password" />
       </div>
 
       <button id="modal-submit" class="btn btn-primary w-100">
         Volver a ingresar
       </button>
 
-      <p
-        id="modal-error"
-        class="text-danger small mt-2 mb-0"
-        aria-live="assertive"
-      ></p>
+      <p id="modal-error" class="text-danger small mt-2 mb-0" aria-live="assertive"></p>
     </div>
   </div>
 
   <script src="app.js"></script>
 </body>
+
 </html>

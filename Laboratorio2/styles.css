@@ -1,5 +1,27 @@
 /* estilos propios — solo lo que Bootstrap no puede resolver por sí solo */
 
+/* Variables y clases de tamaño de fuente */
+:root {
+  --base-font-size: 16px;
+}
+
+html {
+  font-size: var(--base-font-size);
+  transition: font-size 0.3s ease;
+}
+
+html.font-size-a {
+  --base-font-size: 16px;
+}
+
+html.font-size-aa {
+  --base-font-size: 18px;
+}
+
+html.font-size-aaa {
+  --base-font-size: 20px;
+}
+
 /* foco visible para accesibilidad (Tab) */
 :focus-visible {
   outline: 2px solid #0d6efd;

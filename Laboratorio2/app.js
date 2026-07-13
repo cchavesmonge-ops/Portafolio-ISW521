@@ -1,93 +1,17 @@
-// PARTE DEL LABORATORIO: Estado global del módulo
+/* =====================================================================
+ * BUSCADOR Y COMPARADOR DE EQUIPOS — MUNDIAL 2026
+ * Refactor: sin datos hardcodeados, equipos e índice de búsqueda
+ * construidos dinámicamente desde la API. Organizado en secciones:
+ * CONFIG, AUTH, CACHE, API, SEARCH, UI, INIT.
+ * ===================================================================== */
+
+/* ============================== CONFIG ============================== */
+
 const API_BASE = "https://worldcup26.ir";
 
-let authToken   = null;
-let allTeams    = [];           // caché local de los 48 equipos
-let activeController = null;   // AbortController activo
-const selectedTeams  = [];     // máximo 2 equipos seleccionados
-
-// PARTE DEL LABORATORIO: Datos locales de respaldo
-// Se usan si la API no responde (CORS, red, token) o si devuelve menos
-// selecciones de las 48 reales — nunca deben faltar equipos en pantalla.
-// Incluyen nombre en español para búsqueda bilingüe y datos completos para comparación.
-const FALLBACK_TEAMS = [
-  { id: "1", name_en: "Argentina", name_es: "Argentina", fifa_code: "ARG", groups: "J", confederation: "CONMEBOL", fifa_ranking: 1, coach: "Lionel Scaloni", stadium: "Estadio Monumental" },
-  { id: "2", name_en: "Brazil", name_es: "Brasil", fifa_code: "BRA", groups: "C", confederation: "CONMEBOL", fifa_ranking: 5, coach: "Carlo Ancelotti", stadium: "Estadio do Maracana" },
-  { id: "3", name_en: "Colombia", name_es: "Colombia", fifa_code: "COL", groups: "F", confederation: "CONMEBOL", fifa_ranking: 9, coach: "Nestor Lorenzo", stadium: "Estadio El Campin" },
-  { id: "4", name_en: "Ecuador", name_es: "Ecuador", fifa_code: "ECU", groups: "I", confederation: "CONMEBOL", fifa_ranking: 44, coach: "Sebastian Beccacece", stadium: "Estadio Rodrigo Paz" },
-  { id: "5", name_en: "Paraguay", name_es: "Paraguay", fifa_code: "PAR", groups: "D", confederation: "CONMEBOL", fifa_ranking: 65, coach: "Gustavo Alfaro", stadium: "Estadio Defensores del Chaco" },
-  { id: "6", name_en: "Uruguay", name_es: "Uruguay", fifa_code: "URU", groups: "C", confederation: "CONMEBOL", fifa_ranking: 17, coach: "Marcelo Bielsa", stadium: "Estadio Centenario" },
-  { id: "7", name_en: "Canada", name_es: "Canada", fifa_code: "CAN", groups: "B", confederation: "CONCACAF", fifa_ranking: 40, coach: "Jesse Marsch", stadium: "BMO Field" },
-  { id: "8", name_en: "Mexico", name_es: "Mexico", fifa_code: "MEX", groups: "A", confederation: "CONCACAF", fifa_ranking: 16, coach: "Javier Aguirre", stadium: "Estadio Azteca" },
-  { id: "9", name_en: "USA", name_es: "Estados Unidos", fifa_code: "USA", groups: "D", confederation: "CONCACAF", fifa_ranking: 11, coach: "Mauricio Pochettino", stadium: "Rose Bowl" },
-  { id: "10", name_en: "Panama", name_es: "Panama", fifa_code: "PAN", groups: "B", confederation: "CONCACAF", fifa_ranking: 73, coach: "Thomas Christiansen", stadium: "Estadio Rommel Fernandez" },
-  { id: "11", name_en: "Curacao", name_es: "Curazao", fifa_code: "CUW", groups: "K", confederation: "CONCACAF", fifa_ranking: 88, coach: "Remko Bicentini", stadium: "Ergilio Hato Stadium" },
-  { id: "12", name_en: "Haiti", name_es: "Haiti", fifa_code: "HAI", groups: "C", confederation: "CONCACAF", fifa_ranking: 80, coach: "Marc Collat", stadium: "Stade Sylvio Cator" },
-  { id: "13", name_en: "Australia", name_es: "Australia", fifa_code: "AUS", groups: "D", confederation: "AFC", fifa_ranking: 23, coach: "Tony Popovic", stadium: "Stadium Australia" },
-  { id: "14", name_en: "Iraq", name_es: "Irak", fifa_code: "IRQ", groups: "B", confederation: "AFC", fifa_ranking: 58, coach: "Jesus Casas", stadium: "Estadio Al-Shaab" },
-  { id: "15", name_en: "IR Iran", name_es: "Iran", fifa_code: "IRI", groups: "G", confederation: "AFC", fifa_ranking: 22, coach: "Amir Ghalenoei", stadium: "Estadio Azadi" },
-  { id: "16", name_en: "Japan", name_es: "Japon", fifa_code: "JPN", groups: "H", confederation: "AFC", fifa_ranking: 15, coach: "Hajime Moriyasu", stadium: "Japan National Stadium" },
-  { id: "17", name_en: "Jordan", name_es: "Jordania", fifa_code: "JOR", groups: "G", confederation: "AFC", fifa_ranking: 70, coach: "Hussein Ammouta", stadium: "Estadio Internacional de Aman" },
-  { id: "18", name_en: "South Korea", name_es: "Corea del Sur", fifa_code: "KOR", groups: "A", confederation: "AFC", fifa_ranking: 21, coach: "Hong Myung-bo", stadium: "Estadio de Seoul" },
-  { id: "19", name_en: "Saudi Arabia", name_es: "Arabia Saudita", fifa_code: "KSA", groups: "I", confederation: "AFC", fifa_ranking: 56, coach: "Herve Renard", stadium: "Estadio Rey Fahd" },
-  { id: "20", name_en: "Qatar", name_es: "Catar", fifa_code: "QAT", groups: "B", confederation: "AFC", fifa_ranking: 37, coach: "Bartolome Marquez", stadium: "Estadio Internacional Khalifa" },
-  { id: "21", name_en: "Uzbekistan", name_es: "Uzbekistan", fifa_code: "UZB", groups: "F", confederation: "AFC", fifa_ranking: 66, coach: "Srecko Katanec", stadium: "Estadio Pakhtakor" },
-  { id: "22", name_en: "Algeria", name_es: "Argelia", fifa_code: "ALG", groups: "E", confederation: "CAF", fifa_ranking: 35, coach: "Vladimir Petkovic", stadium: "Stade Mustapha Tchaker" },
-  { id: "23", name_en: "Cabo Verde", name_es: "Cabo Verde", fifa_code: "CPV", groups: "L", confederation: "CAF", fifa_ranking: 77, coach: "Bubista", stadium: "Estadio Nacional de Cabo Verde" },
-  { id: "24", name_en: "DR Congo", name_es: "Congo RD", fifa_code: "COD", groups: "J", confederation: "CAF", fifa_ranking: 26, coach: "Sebastien Desabre", stadium: "Stade des Martyrs" },
-  { id: "25", name_en: "Ivory Coast", name_es: "Costa de Marfil", fifa_code: "CIV", groups: "H", confederation: "CAF", fifa_ranking: 11, coach: "Emerse Fae", stadium: "Estadio FHB" },
-  { id: "26", name_en: "Egypt", name_es: "Egipto", fifa_code: "EGY", groups: "K", confederation: "CAF", fifa_ranking: 36, coach: "Hossam Hassan", stadium: "Estadio Internacional del Cairo" },
-  { id: "27", name_en: "Ghana", name_es: "Ghana", fifa_code: "GHA", groups: "L", confederation: "CAF", fifa_ranking: 60, coach: "Otto Addo", stadium: "Estadio Baba Yara" },
-  { id: "28", name_en: "Morocco", name_es: "Marruecos", fifa_code: "MAR", groups: "H", confederation: "CAF", fifa_ranking: 14, coach: "Walid Regragui", stadium: "Stade Mohammed V" },
-  { id: "29", name_en: "Senegal", name_es: "Senegal", fifa_code: "SEN", groups: "F", confederation: "CAF", fifa_ranking: 20, coach: "Aliou Cisse", stadium: "Estadio Leopold Sedar Senghor" },
-  { id: "30", name_en: "South Africa", name_es: "Sudafrica", fifa_code: "RSA", groups: "A", confederation: "CAF", fifa_ranking: 63, coach: "Hugo Broos", stadium: "FNB Stadium" },
-  { id: "31", name_en: "Tunisia", name_es: "Tunez", fifa_code: "TUN", groups: "K", confederation: "CAF", fifa_ranking: 30, coach: "Mondher Kebaier", stadium: "Estadio de Rades" },
-  { id: "32", name_en: "New Zealand", name_es: "Nueva Zelanda", fifa_code: "NZL", groups: "E", confederation: "OFC", fifa_ranking: 92, coach: "Darren Bazeley", stadium: "Eden Park" },
-  { id: "33", name_en: "Austria", name_es: "Austria", fifa_code: "AUT", groups: "I", confederation: "UEFA", fifa_ranking: 28, coach: "Ralf Rangnick", stadium: "Ernst Happel Stadion" },
-  { id: "34", name_en: "Belgium", name_es: "Belgica", fifa_code: "BEL", groups: "E", confederation: "UEFA", fifa_ranking: 3, coach: "Rudi Garcia", stadium: "Estadio Rey Balduino" },
-  { id: "35", name_en: "Bosnia and Herzegovina", name_es: "Bosnia y Herzegovina", fifa_code: "BIH", groups: "L", confederation: "UEFA", fifa_ranking: 62, coach: "Sergej Barbarez", stadium: "Stadion Bilino Polje" },
-  { id: "36", name_en: "Croatia", name_es: "Croacia", fifa_code: "CRO", groups: "K", confederation: "UEFA", fifa_ranking: 10, coach: "Zlatko Dalic", stadium: "Estadio Maksimir" },
-  { id: "37", name_en: "Czechia", name_es: "Chequia", fifa_code: "CZE", groups: "G", confederation: "UEFA", fifa_ranking: 36, coach: "Ivan Hasek", stadium: "Estadio Eden" },
-  { id: "38", name_en: "England", name_es: "Inglaterra", fifa_code: "ENG", groups: "F", confederation: "UEFA", fifa_ranking: 4, coach: "Lee Carsley", stadium: "Wembley" },
-  { id: "39", name_en: "France", name_es: "Francia", fifa_code: "FRA", groups: "E", confederation: "UEFA", fifa_ranking: 2, coach: "Didier Deschamps", stadium: "Stade de France" },
-  { id: "40", name_en: "Germany", name_es: "Alemania", fifa_code: "GER", groups: "C", confederation: "UEFA", fifa_ranking: 12, coach: "Julian Nagelsmann", stadium: "Allianz Arena" },
-  { id: "41", name_en: "Netherlands", name_es: "Paises Bajos", fifa_code: "NED", groups: "J", confederation: "UEFA", fifa_ranking: 7, coach: "Ronald Koeman", stadium: "Johan Cruyff Arena" },
-  { id: "42", name_en: "Norway", name_es: "Noruega", fifa_code: "NOR", groups: "G", confederation: "UEFA", fifa_ranking: 25, coach: "Stale Solbakken", stadium: "Estadio Ullevaal" },
-  { id: "43", name_en: "Portugal", name_es: "Portugal", fifa_code: "POR", groups: "F", confederation: "UEFA", fifa_ranking: 6, coach: "Roberto Martinez", stadium: "Estadio da Luz" },
-  { id: "44", name_en: "Scotland", name_es: "Escocia", fifa_code: "SCO", groups: "C", confederation: "UEFA", fifa_ranking: 38, coach: "Steve Clarke", stadium: "Hampden Park" },
-  { id: "45", name_en: "Spain", name_es: "Espana", fifa_code: "ESP", groups: "H", confederation: "UEFA", fifa_ranking: 8, coach: "Luis de la Fuente", stadium: "Estadio de La Cartuja" },
-  { id: "46", name_en: "Sweden", name_es: "Suecia", fifa_code: "SWE", groups: "I", confederation: "UEFA", fifa_ranking: 35, coach: "Jon Dahl Tomasson", stadium: "Friends Arena" },
-  { id: "47", name_en: "Switzerland", name_es: "Suiza", fifa_code: "SUI", groups: "J", confederation: "UEFA", fifa_ranking: 19, coach: "Murat Yakin", stadium: "Estadio de Ginebra" },
-  { id: "48", name_en: "Turkey", name_es: "Turquia", fifa_code: "TUR", groups: "D", confederation: "UEFA", fifa_ranking: 29, coach: "Vincenzo Montella", stadium: "Estadio Ataturk" },
-];
-
-// PARTE DEL LABORATORIO: Bandera a partir del código FIFA -> ISO-3166 alpha-2
-// Se genera con los caracteres regionales Unicode en vez de un mapa fijo de
-// emojis, para que ninguna selección se quede sin bandera visible.
-const FIFA_TO_ISO = {
-  ARG: "AR", BRA: "BR", COL: "CO", ECU: "EC", PAR: "PY", URU: "UY",
-  CAN: "CA", MEX: "MX", USA: "US", PAN: "PA", CUW: "CW", HAI: "HT",
-  AUS: "AU", IRQ: "IQ", IRI: "IR", JPN: "JP", JOR: "JO", KOR: "KR",
-  KSA: "SA", QAT: "QA", UZB: "UZ",
-  ALG: "DZ", CPV: "CV", COD: "CD", CIV: "CI", EGY: "EG", GHA: "GH",
-  MAR: "MA", SEN: "SN", RSA: "ZA", TUN: "TN",
-  NZL: "NZ",
-  AUT: "AT", BEL: "BE", BIH: "BA", CRO: "HR", CZE: "CZ",
-  ENG: "GB", FRA: "FR", GER: "DE", NED: "NL", NOR: "NO",
-  POR: "PT", SCO: "GB", ESP: "ES", SWE: "SE", SUI: "CH", TUR: "TR",
-};
-
-const getFlag = (team) => {
-  const fifa = team?.fifa_code;
-  if (!fifa || !FIFA_TO_ISO[fifa]) return "🏳️";
-  const iso = FIFA_TO_ISO[fifa];
-  return String.fromCodePoint(...iso.split('').map(c => 127397 + c.charCodeAt(0)));
-};
-
-// PARTE DEL LABORATORIO: Nombre en español canónico por código FIFA
-// Se agrega esta tabla porque depender solo de team.name_es fallaba cuando
-// la API devolvía el equipo sin ese campo, mostrando el nombre en inglés
-// aunque el usuario hubiera buscado en español.
+// Nombre en español canónico por código FIFA. Se mantiene como diccionario
+// de apoyo porque la API no siempre trae name_es; sirve como fallback,
+// no como fuente de los equipos (esos vienen 100% de /get/teams).
 const ES_DISPLAY = {
   ARG: "Argentina", BRA: "Brasil", COL: "Colombia", ECU: "Ecuador", PAR: "Paraguay", URU: "Uruguay",
   CAN: "Canadá", MEX: "México", USA: "Estados Unidos", PAN: "Panamá", CUW: "Curazao", HAI: "Haití",
@@ -101,15 +25,35 @@ const ES_DISPLAY = {
   POR: "Portugal", SCO: "Escocia", ESP: "España", SWE: "Suecia", SUI: "Suiza", TUR: "Turquía",
 };
 
-// devuelve el nombre a mostrar: español canónico por código FIFA,
-// name_es del propio equipo, o inglés como último fallback
-const getDisplayName = (team) => {
-  if (team.fifa_code && ES_DISPLAY[team.fifa_code]) return ES_DISPLAY[team.fifa_code];
-  return team.name_es ?? team.name_en ?? team.name ?? "—";
+const STORAGE_KEYS = {
+  teams: "backup_teams",
+  groups: "backup_groups",
+  fontSize: "fontSizePreference",
 };
 
-// PARTE DEL LABORATORIO: Simulación e Integración con la API Rest
-const authenticate = async (email = "test@test.com", password = "test123") => {
+// Estado global del módulo
+const state = {
+  authToken: null,
+  allTeams: [],          // caché local de los equipos (desde la API)
+  searchIndex: [],       // índice de búsqueda derivado de allTeams
+  selectedTeams: [],     // máximo 2 equipos seleccionados
+  activeController: null,
+  groupStandingsCache: {},
+};
+
+/* =============================== AUTH ================================ */
+
+const authenticate = async (email = null, password = null) => {
+  // sin credenciales explícitas (carga inicial, antes de que el usuario
+  // use el modal de login): no tiene sentido pegarle a la API con datos
+  // de prueba que sabemos que va a rechazar, así que vamos directo al
+  // token simulado y evitamos ruido innecesario en la consola.
+  if (!email || !password) {
+    state.authToken = `sim.${Date.now()}`;
+    console.log("[AUTH] Sin credenciales — usando token simulado.");
+    return { simulated: true };
+  }
+
   try {
     const res = await fetch(`${API_BASE}/auth/authenticate`, {
       method: "POST",
@@ -118,88 +62,286 @@ const authenticate = async (email = "test@test.com", password = "test123") => {
     });
     if (res.ok) {
       const data = await res.json();
-      authToken = data.token ?? `sim.${Date.now()}`;
+      state.authToken = data.token ?? `sim.${Date.now()}`;
       console.log("[AUTH] Token real obtenido.");
       return { ok: true };
     }
-    authToken = `sim.${Date.now()}`;
+    state.authToken = `sim.${Date.now()}`;
     return { simulated: true };
   } catch {
-    authToken = `sim.${Date.now()}`;
+    state.authToken = `sim.${Date.now()}`;
     console.log("[AUTH] Usando token simulado (CORS o red inaccesible).");
     return { simulated: true };
   }
 };
 
-// carga los equipos desde la API y los enriquece con datos del fallback local.
-// El enriquecimiento garantiza que name_es, coach, stadium, etc. siempre estén
-// disponibles aunque la API no los devuelva en el listado inicial.
-const loadAllTeams = async () => {
+// PARTE DEL LABORATORIO: Mecanismo para corromper el token desde consola
+window.__corruptToken = () => {
+  state.authToken = "token.invalido.401";
+  console.log("[DEBUG] Token corrompido — el próximo apiFetch disparará un 401.");
+};
+
+/* =============================== CACHE ================================ */
+
+const cache = {
+  saveTeams(teams) {
+    localStorage.setItem(STORAGE_KEYS.teams, JSON.stringify(teams));
+  },
+  loadTeams() {
+    const raw = localStorage.getItem(STORAGE_KEYS.teams);
+    return raw ? JSON.parse(raw) : null;
+  },
+  saveGroups(groupStandingsCache) {
+    localStorage.setItem(STORAGE_KEYS.groups, JSON.stringify(groupStandingsCache));
+  },
+  loadGroups() {
+    const raw = localStorage.getItem(STORAGE_KEYS.groups);
+    return raw ? JSON.parse(raw) : null;
+  },
+};
+
+/* ================================ API ================================= */
+
+// petición centralizada: agrega el token, maneja 401 (AuthError), HTTP
+// errors, y un timeout corto para que un endpoint lento/caído no cuelgue
+// la interfaz (se combina con el signal externo del AbortController de
+// búsqueda/comparación, si viene uno)
+const REQUEST_TIMEOUT_MS = 6000;
+
+const apiFetch = async (url, externalSignal) => {
+  const timeoutController = new AbortController();
+  const timeoutId = setTimeout(() => timeoutController.abort(), REQUEST_TIMEOUT_MS);
+
+  const onExternalAbort = () => timeoutController.abort();
+  externalSignal?.addEventListener("abort", onExternalAbort);
+
   try {
-    // el enunciado dice que /get/teams requiere token JWT sin excepción
-    const res = await fetch(`${API_BASE}/get/teams`, {
-      headers: { Authorization: `Bearer ${authToken}` },
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${state.authToken}` },
+      signal: timeoutController.signal,
     });
 
     if (res.status === 401) {
-      showAuthModal();
-      return;
+      ui.showAuthModal();
+      const err = new Error("Unauthorized");
+      err.name = "AuthError";
+      throw err;
     }
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-    const data = await res.json();
-    const apiTeams = normalizeTeams(data);
-
-    // enriquecer cada equipo de la API con los datos completos del fallback
-    // cruzando por fifa_code — así name_es, coach, stadium, etc. siempre existen,
-    // descartando cualquier código que no pertenezca al catálogo real
-    const validCodes = new Set(FALLBACK_TEAMS.map(f => f.fifa_code));
-    const enriched = apiTeams
-      .filter(t => validCodes.has(t.fifa_code ?? t.code ?? ""))
-      .map(t => {
-        const local = FALLBACK_TEAMS.find(f => f.fifa_code === (t.fifa_code ?? t.code ?? ""));
-        return { ...local, ...t, name_es: local?.name_es ?? t.name_en };
-      });
-
-    // si la API devolvió menos de las 48 selecciones, se completa con el
-    // fallback para que ninguna selección desaparezca del buscador
-    if (enriched.length < 48) {
-      const returnedCodes = new Set(enriched.map(t => t.fifa_code));
-      const missing = FALLBACK_TEAMS.filter(f => !returnedCodes.has(f.fifa_code));
-      allTeams = [...enriched, ...missing];
-    } else {
-      allTeams = enriched;
+    if (!res.ok) {
+      const err = new Error(`HTTP ${res.status}`);
+      err.status = res.status;
+      throw err;
     }
-
-    console.log(`[TEAMS] ${allTeams.length} equipos cargados.`);
-    setFeedback("", false);
-
+    return await res.json();
   } catch (err) {
-    console.warn("[TEAMS] API no disponible, usando datos locales:", err.message);
-    allTeams = FALLBACK_TEAMS;
-    setFeedback("", false);
+    // distinguir un timeout nuestro de una cancelación real del usuario
+    if (err.name === "AbortError" && !externalSignal?.aborted) {
+      const timeoutErr = new Error(`Timeout tras ${REQUEST_TIMEOUT_MS}ms`);
+      timeoutErr.name = "TimeoutError";
+      throw timeoutErr;
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeoutId);
+    externalSignal?.removeEventListener("abort", onExternalAbort);
+  }
+};
+
+// una petición con un reintento inmediato — útil para endpoints que a
+// veces devuelven 504/500 por sobrecarga del servidor gratuito
+const apiFetchWithRetry = async (url, signal, retries = 1) => {
+  try {
+    return await apiFetch(url, signal);
+  } catch (err) {
+    if (retries > 0 && (err.name === "TimeoutError" || err.status >= 500)) {
+      return apiFetchWithRetry(url, signal, retries - 1);
+    }
+    throw err;
   }
 };
 
 // normaliza cualquier estructura de respuesta de la API a un array plano
 const normalizeTeams = (data) => {
-  if (Array.isArray(data) && data.length > 0)       return data;
-  if (data?.teams && Array.isArray(data.teams))       return data.teams;
-  if (data?.data  && Array.isArray(data.data))        return data.data;
-  if (data?.results && Array.isArray(data.results))   return data.results;
-  // si vino un objeto único, envolverlo en array
-  if (data?.name_en || data?.name)                    return [data];
+  if (Array.isArray(data) && data.length > 0) return data;
+  if (data?.teams && Array.isArray(data.teams)) return data.teams;
+  if (data?.data && Array.isArray(data.data)) return data.data;
+  if (data?.results && Array.isArray(data.results)) return data.results;
+  if (data?.name_en || data?.name) return [data]; // objeto único
   return [];
 };
 
-// PARTE DEL LABORATORIO: Mecanismo para corromper el token desde consola
-window.__corruptToken = () => {
-  authToken = "token.invalido.401";
-  console.log("[DEBUG] Token corrompido — el próximo apiFetch disparará un 401.");
+// enriquece un equipo crudo de la API con campos derivados/consistentes
+// (nombre en español, grupo, pts/gf/ga si vienen incluidos)
+const enrichTeamData = (team = {}) => {
+  const fifa = team.fifa_code ?? team.code ?? "";
+  return {
+    ...team,
+    fifa_code: fifa,
+    name_es: ES_DISPLAY[fifa] ?? team.name_es ?? team.name ?? team.name_en ?? "—",
+    groups: team.groups ?? team.group ?? team.group_name ?? team.group_letter ?? "—",
+    pts: team.pts ?? team.points ?? team.points_total ?? null,
+    gf: team.gf ?? team.goals_for ?? team.goals_scored ?? null,
+    ga: team.ga ?? team.goals_against ?? team.goals_received ?? null,
+  };
 };
 
-// PARTE DEL LABORATORIO: Mecanismo de Debounce Propio
+// carga TODOS los equipos desde GET /get/teams, los guarda en localStorage
+// y reconstruye el índice de búsqueda. Si la API falla, usa el respaldo local.
+const loadAllTeams = async () => {
+  try {
+    const data = await apiFetch(`${API_BASE}/get/teams`);
+    const rawTeams = normalizeTeams(data);
+    state.allTeams = rawTeams.map(enrichTeamData);
+
+    cache.saveTeams(state.allTeams);
+    search.buildIndex(state.allTeams);
+
+    console.log(`[TEAMS] ${state.allTeams.length} equipos cargados.`);
+    ui.setFeedback("", false);
+  } catch (err) {
+    if (err.name === "AuthError") return;
+
+    console.warn("[TEAMS] API no disponible, intentando usar localStorage:", err.message);
+    const backup = cache.loadTeams();
+    if (backup) {
+      state.allTeams = backup;
+      search.buildIndex(state.allTeams);
+      ui.setFeedback("Usando datos locales de respaldo.", false);
+    } else {
+      state.allTeams = [];
+      search.buildIndex([]);
+      ui.setFeedback("Error al cargar equipos y no hay respaldo local.", true);
+    }
+  }
+};
+
+// GET /get/team/?name= — refinamiento remoto de la búsqueda local
+// (nota: la ruta documentada es /get/team/ en singular, no /get/teams/)
+const fetchTeamsByName = async (query, signal) => {
+  const data = await apiFetch(`${API_BASE}/get/team/?name=${encodeURIComponent(query)}`, signal);
+  return normalizeTeams(data).map(enrichTeamData);
+};
+
+// nota: se eliminó la llamada a /get/team/:id — ese endpoint del servidor
+// gratuito responde 504 de forma consistente y, según el README, solo
+// devuelve los mismos campos que ya trae /get/teams (id, name_en, name_fa,
+// fifa_code, groups, flag). No hay ganancia en pedirlo de nuevo por equipo;
+// el detalle de cada equipo seleccionado se arma con lo que ya está en
+// memoria (state.allTeams) más las estadísticas de /get/group.
+
+// normaliza cualquier estructura de respuesta de /get/groups a un array
+// plano de grupos: [{ group: "G", teams: [...] }, ...]
+const normalizeGroupsList = (data) => {
+  if (Array.isArray(data) && data.length > 0) return data;
+  if (data?.groups && Array.isArray(data.groups)) return data.groups;
+  if (data?.data && Array.isArray(data.data)) return data.data;
+  if (data?.group && data?.teams) return [data]; // objeto único
+  return [];
+};
+
+// normaliza un solo grupo ({ group, teams: [...] }) a { teamId: {pts,gf,ga} }
+const normalizeGroupStandings = (data) => {
+  const groupObj =
+    data?.teams ? data
+      : data?.group?.teams ? data.group
+        : Array.isArray(data) && data[0]?.teams ? data[0]
+          : data?.data?.teams ? data.data
+            : null;
+
+  const list = groupObj?.teams ?? [];
+  const map = {};
+  list.forEach((t) => {
+    const teamId = t.team_id ?? t.id;
+    if (teamId != null) map[String(teamId)] = t;
+  });
+  return map;
+};
+
+// carga TODOS los grupos desde GET /get/groups (bulk, igual que /get/teams)
+// y arma de una vez el mapa de estadísticas por letra de grupo. Este
+// endpoint bulk es confiable; el endpoint por letra (/get/group/?name=)
+// resultó no serlo en este servidor, así que se deja solo como respaldo.
+const loadAllGroups = async () => {
+  try {
+    const data = await apiFetch(`${API_BASE}/get/groups`);
+    const rawGroups = normalizeGroupsList(data);
+
+    rawGroups.forEach((g) => {
+      const letter = g.group ?? g.name ?? g.group_name ?? g.letter;
+      if (!letter) return;
+      state.groupStandingsCache[letter] = normalizeGroupStandings(g);
+    });
+
+    cache.saveGroups(state.groupStandingsCache);
+    console.log(`[GROUPS] ${rawGroups.length} grupos cargados.`);
+  } catch (err) {
+    if (err.name === "AuthError") return;
+    console.warn("[GROUPS] API no disponible, intentando usar localStorage:", err.message);
+    const backup = cache.loadGroups();
+    if (backup) state.groupStandingsCache = backup;
+  }
+};
+
+// devuelve las estadísticas de un grupo desde la caché ya cargada; si por
+// alguna razón no están (grupo nuevo, caché vacía), intenta la petición
+// individual como último recurso
+const getGroupStandings = async (groupLetter) => {
+  if (!groupLetter || groupLetter === "—") return null;
+  if (state.groupStandingsCache[groupLetter]) return state.groupStandingsCache[groupLetter];
+
+  try {
+    const raw = await apiFetchWithRetry(`${API_BASE}/get/group/?name=${encodeURIComponent(groupLetter)}`);
+    const map = normalizeGroupStandings(raw);
+    state.groupStandingsCache[groupLetter] = map;
+    return map;
+  } catch (err) {
+    console.warn(`[STANDINGS] No se pudo cargar la tabla del grupo ${groupLetter}:`, err.message);
+    return null;
+  }
+};
+
+/* ============================== SEARCH ================================ */
+
+const normalizeText = (str) =>
+  (str ?? "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+const search = {
+  // construye automáticamente el índice de búsqueda a partir de allTeams,
+  // precomputando los campos normalizados una sola vez (evita recalcular
+  // la normalización en cada tecla presionada)
+  buildIndex(teams) {
+    state.searchIndex = teams.map((team) => ({
+      team,
+      es: normalizeText(ES_DISPLAY[team.fifa_code] ?? team.name_es),
+      en: normalizeText(team.name_en ?? team.name),
+      code: (team.fifa_code ?? "").toLowerCase(),
+      conf: (team.confederation ?? "").toLowerCase(),
+      group: (team.groups ?? team.group ?? "").toLowerCase(),
+    }));
+  },
+
+  // filtra el índice local por español, inglés, código FIFA, confederación o grupo
+  filterLocal(query) {
+    const norm = normalizeText(query);
+    return state.searchIndex
+      .filter(
+        (entry) =>
+          entry.es.includes(norm) ||
+          entry.en.includes(norm) ||
+          entry.code.startsWith(norm) ||
+          entry.conf.includes(norm) ||
+          entry.group === norm
+      )
+      .map((entry) => entry.team);
+  },
+
+  sortedBySpanishName(teams) {
+    return [...teams].sort((a, b) =>
+      ui.getDisplayName(a).localeCompare(ui.getDisplayName(b), "es")
+    );
+  },
+};
+
 const debounce = (fn, delay) => {
   let timerId = null;
   return (...args) => {
@@ -208,420 +350,387 @@ const debounce = (fn, delay) => {
   };
 };
 
-// PARTE DEL LABORATORIO: Gestión de Errores y Resiliencia (401)
-const showAuthModal = () => {
-  const modal = document.getElementById("auth-modal");
-  modal.classList.add("is-visible");
-  modal.setAttribute("aria-hidden", "false");
-  document.getElementById("modal-email").focus();
-};
-
-const hideAuthModal = () => {
-  const modal = document.getElementById("auth-modal");
-  modal.classList.remove("is-visible");
-  modal.setAttribute("aria-hidden", "true");
-  document.getElementById("search-input").focus();
-};
-
-// helper centralizado para el feedback bajo el input
-const setFeedback = (msg, isError = false) => {
-  const el = document.getElementById("search-feedback");
-  el.textContent = msg;
-  el.className = `search-feedback mt-1 small${isError ? " search-feedback--error" : ""}`;
-};
-
-// PARTE DEL LABORATORIO: Búsqueda bilingüe robusta
-// Bug corregido: la búsqueda comparaba el texto tal cual, así que "espana"
-// no encontraba "España" y "MEXICO" no encontraba "México". Se normalizan
-// ambos lados (NFD + eliminación de diacríticos) antes de comparar, y se
-// permite además buscar por confederación o grupo.
-const filterLocal = (q) => {
-  const norm = q.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  return allTeams.filter((t) => {
-    const displayName = ES_DISPLAY[t.fifa_code] ?? t.name_es ?? "";
-    const es = displayName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    const en = (t.name_en ?? t.name ?? "").toLowerCase();
-    const code = (t.fifa_code ?? "").toLowerCase();
-    const conf = (t.confederation ?? "").toLowerCase();
-    const group = (t.groups ?? t.group ?? "").toLowerCase();
-    return es.includes(norm) || en.includes(norm) || code.startsWith(norm) || conf.includes(norm) || group === norm;
-  });
-};
-
 // PARTE DEL LABORATORIO: Control de Condiciones de Carrera con AbortController
 // Cada llamada cancela la anterior con .abort() antes de lanzar la nueva petición.
 const searchTeams = async (query) => {
-  const dropdown = document.getElementById("suggestions-list");
-  const input    = document.getElementById("search-input");
+  const input = document.getElementById("search-input");
 
-  // abortar petición anterior en vuelo — núcleo del AbortController
-  if (activeController) activeController.abort();
-  activeController = new AbortController();
-  const { signal } = activeController;
+  if (state.activeController) state.activeController.abort();
+  state.activeController = new AbortController();
+  const { signal } = state.activeController;
 
-  if (allTeams.length === 0) {
-    setFeedback("El catálogo no está disponible. Recarga la página.", true);
+  if (state.allTeams.length === 0) {
+    ui.setFeedback("El catálogo no está disponible. Recarga la página.", true);
     return;
   }
 
   // sin texto: mostrar todos los equipos ordenados en español
   if (!query.trim()) {
-    const sorted = [...allTeams].sort((a, b) =>
-      getDisplayName(a).localeCompare(getDisplayName(b), "es")
-    );
-    renderSuggestions(sorted);
+    ui.renderSuggestions(search.sortedBySpanishName(state.allTeams));
     input.setAttribute("aria-expanded", "true");
-    setFeedback("");
+    ui.setFeedback("");
     return;
   }
 
-  // PARTE DEL LABORATORIO: Gestión de Errores y Resiliencia (404)
-  // Se filtra localmente PRIMERO (instantáneo y ya sin el bug de tildes/mayúsculas)
-  // para no dejar al usuario sin resultados mientras la API responde.
-  const localResults = filterLocal(query);
+  // filtrar localmente primero (instantáneo) para no dejar al usuario sin
+  // resultados mientras la API responde
+  const localResults = search.filterLocal(query);
   if (localResults.length === 0) {
-    dropdown.innerHTML = "";
+    document.getElementById("suggestions-list").innerHTML = "";
     input.setAttribute("aria-expanded", "false");
-    setFeedback("No se encontraron selecciones con ese nombre.", true);
+    ui.setFeedback("No se encontraron selecciones con ese nombre.", true);
     return;
   }
-  setFeedback("");
-  renderSuggestions(localResults.slice(0, 48));
+  ui.setFeedback("");
+  ui.renderSuggestions(localResults.slice(0, 48));
   input.setAttribute("aria-expanded", "true");
 
   try {
-    // usar la API real con el endpoint del enunciado: GET /get/teams?name={busqueda}
-    const res = await fetch(
-      `${API_BASE}/get/teams?name=${encodeURIComponent(query)}`,
-      { headers: { Authorization: `Bearer ${authToken}` }, signal }
-    );
+    const apiResults = await fetchTeamsByName(query, signal);
+    const norm = normalizeText(query);
+    const enriched = apiResults.filter((t) => {
+      const es = normalizeText(ES_DISPLAY[t.fifa_code] ?? t.name_es);
+      const en = normalizeText(t.name_en ?? t.name);
+      const code = (t.fifa_code ?? "").toLowerCase();
+      return es.includes(norm) || en.includes(norm) || code.startsWith(norm);
+    });
 
-    if (res.status === 401) {
-      showAuthModal();
-      return;
-    }
-
-    if (res.ok) {
-      const data = await res.json();
-      const apiResults = normalizeTeams(data);
-      const validCodes = new Set(FALLBACK_TEAMS.map(f => f.fifa_code));
-      // enriquecer con datos del fallback (name_es, coach, etc.) y descartar códigos inválidos
-      let enriched = apiResults.filter(t => validCodes.has(t.fifa_code ?? t.code ?? "")).map(t => enrichWithFallback(t));
-
-      // re-filtrar con la misma normalización bilingüe por si la API
-      // devuelve coincidencias más laxas que las que el usuario pidió
-      const norm = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      enriched = enriched.filter(t => {
-        const displayName = ES_DISPLAY[t.fifa_code] ?? t.name_es ?? "";
-        const es = displayName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        const en = (t.name_en ?? t.name ?? "").toLowerCase();
-        const code = (t.fifa_code ?? "").toLowerCase();
-        return es.includes(norm) || en.includes(norm) || code.startsWith(norm);
-      });
-
-      if (enriched.length > 0) {
-        setFeedback("");
-        renderSuggestions(enriched.slice(0, 48));
-        input.setAttribute("aria-expanded", "true");
-      }
+    if (enriched.length > 0) {
+      ui.setFeedback("");
+      ui.renderSuggestions(enriched.slice(0, 48));
+      input.setAttribute("aria-expanded", "true");
     }
   } catch (err) {
-    // AbortError: cancelación intencional — ignorar en la UI, registrar en consola
     if (err.name === "AbortError") {
       console.log("[DEBUG] Petición cancelada intencionalmente por AbortController — no es un error.");
       return;
     }
-    // error de red real — ya se mostraron resultados locales arriba, no hay nada más que hacer
+    if (err.name === "AuthError") return;
     console.warn("[SEARCH] API no disponible, se mantiene el resultado local.");
   }
 };
 
-// PARTE DEL LABORATORIO: Estructura de la Interfaz — Renderizado dinámico
-const renderSuggestions = (teams) => {
-  const dropdown = document.getElementById("suggestions-list");
-  dropdown.innerHTML = "";
+/* ================================ UI =================================== */
 
-  teams.forEach((team) => {
-    const li    = document.createElement("li");
-    const flag  = getFlag(team);
-    const name  = getDisplayName(team);
-    const group = team.groups ?? team.group ?? "";
+const ui = {
+  getDisplayName(team) {
+    if (team.fifa_code && ES_DISPLAY[team.fifa_code]) return ES_DISPLAY[team.fifa_code];
+    return team.name_es ?? team.name_en ?? team.name ?? "—";
+  },
 
-    li.className = "suggestion-item";
-    li.setAttribute("role", "option");
-    li.tabIndex  = 0;
-    li.setAttribute("aria-label", name);
+  // la API entrega la URL de la bandera directamente en team.flag
+  getFlagUrl(team) {
+    return team.flag || null;
+  },
 
-    const flagSpan = document.createElement("span");
-    flagSpan.className = "suggestion-item__flag";
-    flagSpan.setAttribute("aria-hidden", "true");
-    flagSpan.textContent = flag;
-    const nameSpan = document.createElement("span");
-    nameSpan.className = "suggestion-item__name";
-    nameSpan.textContent = name;
-    const groupSpan = document.createElement("span");
-    groupSpan.className = "suggestion-item__group";
-    groupSpan.textContent = group ? `Grupo ${group}` : "";
-    li.appendChild(flagSpan);
-    li.appendChild(nameSpan);
-    li.appendChild(groupSpan);
+  setFeedback(msg, isError = false) {
+    const el = document.getElementById("search-feedback");
+    el.textContent = msg;
+    el.className = `search-feedback mt-1 small${isError ? " search-feedback--error" : ""}`;
+  },
 
-    const doSelect = () => selectTeam({ ...team, _flag: flag, _name: name });
-    li.addEventListener("click", doSelect);
-    li.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); doSelect(); }
+  showAuthModal() {
+    const modal = document.getElementById("auth-modal");
+    modal.classList.add("is-visible");
+    modal.setAttribute("aria-hidden", "false");
+    document.getElementById("modal-email").focus();
+  },
+
+  hideAuthModal() {
+    const modal = document.getElementById("auth-modal");
+    modal.classList.remove("is-visible");
+    modal.setAttribute("aria-hidden", "true");
+    document.getElementById("search-input").focus();
+  },
+
+  renderSuggestions(teams) {
+    const dropdown = document.getElementById("suggestions-list");
+    dropdown.innerHTML = "";
+
+    teams.forEach((team) => {
+      const name = ui.getDisplayName(team);
+      const group = team.groups ?? team.group ?? "";
+
+      const li = document.createElement("li");
+      li.className = "suggestion-item";
+      li.setAttribute("role", "option");
+      li.tabIndex = 0;
+      li.setAttribute("aria-label", name);
+
+      li.appendChild(ui.buildFlagNode(team, "suggestion-item__flag"));
+
+      const nameSpan = document.createElement("span");
+      nameSpan.className = "suggestion-item__name";
+      nameSpan.textContent = name;
+
+      const groupSpan = document.createElement("span");
+      groupSpan.className = "suggestion-item__group";
+      groupSpan.textContent = group ? `Grupo ${group}` : "";
+
+      li.appendChild(nameSpan);
+      li.appendChild(groupSpan);
+
+      const doSelect = () => ui.selectTeam({ ...team, _name: name });
+      li.addEventListener("click", doSelect);
+      li.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          doSelect();
+        }
+      });
+
+      dropdown.appendChild(li);
     });
+  },
 
-    dropdown.appendChild(li);
-  });
-};
+  // crea un nodo visual de bandera: <img> si team.flag existe, emoji de
+  // respaldo si no (por ejemplo mientras se usa la caché offline).
+  // El tamaño se fija inline porque styles.css solo define dimensiones
+  // de imagen para .team-card__flag-img (no se puede tocar el CSS).
+  buildFlagNode(team, className, sizePx = 22) {
+    const flagUrl = ui.getFlagUrl(team);
+    if (flagUrl) {
+      const img = document.createElement("img");
+      img.src = flagUrl;
+      img.alt = `Bandera de ${ui.getDisplayName(team)}`;
+      img.loading = "lazy";
+      img.className = className;
+      img.style.width = `${sizePx}px`;
+      img.style.height = "auto";
+      img.style.borderRadius = "3px";
+      img.style.objectFit = "cover";
+      img.style.flexShrink = "0";
+      img.onerror = () => {
+        img.replaceWith(ui.buildFlagFallback(className));
+      };
+      return img;
+    }
+    return ui.buildFlagFallback(className);
+  },
 
-const selectTeam = (team) => {
-  if (selectedTeams.length >= 2) {
-    setFeedback("Ya hay 2 equipos. Quita uno antes de añadir otro.", true);
-    return;
-  }
+  buildFlagFallback(className) {
+    const span = document.createElement("span");
+    span.className = className;
+    span.setAttribute("aria-hidden", "true");
+    span.textContent = "🏳️";
+    return span;
+  },
 
-  const duplicate = selectedTeams.some(
-    (t) => (t.id ?? t.name_en) === (team.id ?? team.name_en)
-  );
-  if (duplicate) {
-    setFeedback("Ese equipo ya está seleccionado.", true);
-    return;
-  }
+  selectTeam(team) {
+    if (state.selectedTeams.length >= 2) {
+      ui.setFeedback("Ya hay 2 equipos. Quita uno antes de añadir otro.", true);
+      return;
+    }
 
-  selectedTeams.push(team);
-  document.getElementById("suggestions-list").innerHTML = "";
-  document.getElementById("search-input").value = "";
-  document.getElementById("search-input").setAttribute("aria-expanded", "false");
-  setFeedback("");
+    const duplicate = state.selectedTeams.some(
+      (t) => (t.id ?? t._id ?? t.name_en) === (team.id ?? team._id ?? team.name_en)
+    );
+    if (duplicate) {
+      ui.setFeedback("Ese equipo ya está seleccionado.", true);
+      return;
+    }
 
-  renderChips();
-  if (selectedTeams.length === 2) loadComparison();
-};
+    state.selectedTeams.push(team);
+    document.getElementById("suggestions-list").innerHTML = "";
+    document.getElementById("search-input").value = "";
+    document.getElementById("search-input").setAttribute("aria-expanded", "false");
+    ui.setFeedback("");
 
-const renderChips = () => {
-  const chipsEl = document.getElementById("selected-chips");
-  chipsEl.innerHTML = "";
+    ui.renderChips();
+    if (state.selectedTeams.length === 2) loadComparison();
+  },
 
-  selectedTeams.forEach((team, i) => {
-    const chip = document.createElement("div");
-    chip.className = "chip";
+  renderChips() {
+    const chipsEl = document.getElementById("selected-chips");
+    chipsEl.innerHTML = "";
 
-    const flagSpan = document.createElement("span");
-    flagSpan.setAttribute("aria-hidden", "true");
-    flagSpan.textContent = team._flag ?? getFlag(team);
-    const nameSpan = document.createElement("span");
-    nameSpan.textContent = team._name ?? getDisplayName(team);
-    const removeBtn = document.createElement("button");
-    removeBtn.className = "chip__remove";
-    removeBtn.setAttribute("aria-label", `Quitar ${team._name ?? getDisplayName(team)}`);
-    removeBtn.textContent = "✕";
-    removeBtn.addEventListener("click", () => {
-      selectedTeams.splice(i, 1);
-      document.getElementById("comparison-container").innerHTML = "";
-      setFeedback("");
-      renderChips();
+    state.selectedTeams.forEach((team, i) => {
+      const name = team._name ?? ui.getDisplayName(team);
+
+      const chip = document.createElement("div");
+      chip.className = "chip";
+
+      chip.appendChild(ui.buildFlagNode(team, "chip__flag"));
+
+      const nameSpan = document.createElement("span");
+      nameSpan.textContent = name;
+
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "chip__remove";
+      removeBtn.setAttribute("aria-label", `Quitar ${name}`);
+      removeBtn.textContent = "✕";
+      removeBtn.addEventListener("click", () => {
+        state.selectedTeams.splice(i, 1);
+        document.getElementById("comparison-container").innerHTML = "";
+        ui.setFeedback("");
+        ui.renderChips();
+      });
+
+      chip.appendChild(nameSpan);
+      chip.appendChild(removeBtn);
+      chipsEl.appendChild(chip);
     });
+  },
 
-    chip.appendChild(flagSpan);
-    chip.appendChild(nameSpan);
-    chip.appendChild(removeBtn);
-    chipsEl.appendChild(chip);
-  });
-};
+  skeletonHTML() {
+    return `
+      <div class="skeleton" style="height:2rem;width:50%;margin-bottom:1rem"></div>
+      <div class="skeleton" style="height:.85rem;width:30%"></div>
+      <div class="skeleton" style="height:.85rem;margin-top:.5rem"></div>
+      <div class="skeleton" style="height:.85rem;width:75%"></div>
+      <div class="skeleton" style="height:.85rem;width:60%"></div>
+      <div class="skeleton" style="height:.85rem;width:85%"></div>
+    `;
+  },
 
-// PARTE DEL LABORATORIO: Peticiones en Paralelo con Promise.all
-const loadComparison = async () => {
-  if (selectedTeams.length < 2) return;
+  buildTeamCard(team = {}) {
+    const name = team._name || ui.getDisplayName(team) || "Selección";
+    const group = team.groups ?? team.group ?? "—";
 
-  const container = document.getElementById("comparison-container");
-
-  container.innerHTML = `
-    <div class="col-12 col-md-6">
-      <div class="team-card" aria-busy="true">${skeletonHTML()}</div>
-    </div>
-    <div class="col-12 col-md-6">
-      <div class="team-card" aria-busy="true">${skeletonHTML()}</div>
-    </div>
-  `;
-
-  if (activeController) activeController.abort();
-  activeController = new AbortController();
-  const { signal } = activeController;
-
-  const fallbackA = enrichWithFallback(selectedTeams[0]);
-  const fallbackB = enrichWithFallback(selectedTeams[1]);
-
-  try {
-    const idA = selectedTeams[0].id ?? "";
-    const idB = selectedTeams[1].id ?? "";
-
-    // Función auxiliar para no usar .catch() encadenado, cumpliendo con la regla del laboratorio.
-    // Aísla el fallo de UN equipo para que el otro no pierda sus datos reales de la API.
-    const fetchSafe = async (id) => {
-      try {
-        return await apiFetch(`${API_BASE}/get/team/${id}`, signal);
-      } catch (err) {
-        if (err.name === "AuthError" || err.name === "AbortError") throw err;
-        return null;
-      }
+    const allStats = {
+      "Código FIFA": team.fifa_code || "—",
+      Grupo: group !== "—" ? `Grupo ${group}` : "—",
+      Puntos: team.pts ?? "—",
+      "Goles a favor": team.gf ?? "—",
+      "Goles en contra": team.ga ?? "—",
     };
 
-    // OBLIGATORIO: ambas peticiones en paralelo — prohibido await secuencial
-    const [rawA, rawB] = await Promise.all([
-      fetchSafe(idA),
-      fetchSafe(idB),
+    const rows = Object.entries(allStats)
+      .map(
+        ([key, value]) => `
+        <tr>
+          <td>${key}</td>
+          <td>${value ?? "—"}</td>
+        </tr>`
+      )
+      .join("");
+
+    const col = document.createElement("div");
+    col.className = "col-12 col-md-6";
+
+    const card = document.createElement("article");
+    card.className = "team-card";
+    card.setAttribute("aria-label", `Datos del equipo ${name}`);
+
+    const header = document.createElement("header");
+    header.className = "team-card__header";
+    header.appendChild(ui.buildFlagNode(team, "team-card__flag-img", 36));
+
+    const infoDiv = document.createElement("div");
+    const nameDiv = document.createElement("div");
+    nameDiv.className = "team-card__name";
+    nameDiv.textContent = name;
+    const groupDiv = document.createElement("div");
+    groupDiv.className = "team-card__group";
+    groupDiv.textContent = group !== "—" ? `Grupo ${group}` : "";
+    infoDiv.appendChild(nameDiv);
+    infoDiv.appendChild(groupDiv);
+    header.appendChild(infoDiv);
+
+    const table = document.createElement("table");
+    table.className = "team-stats";
+    table.setAttribute("aria-label", `Estadísticas de ${name}`);
+    table.innerHTML = `<tbody>${rows}</tbody>`;
+
+    card.appendChild(header);
+    card.appendChild(table);
+
+    if (team._liveDataUnavailable) {
+      const notice = document.createElement("p");
+      notice.className = "text-secondary small mt-2 mb-0";
+      notice.textContent = "⚠️ No se pudieron obtener puntos/goles en vivo del servidor; el resto de los datos del equipo sí están disponibles.";
+      card.appendChild(notice);
+    }
+
+    col.appendChild(card);
+
+    return col;
+  },
+
+  setupFontSize() {
+    const html = document.documentElement;
+    const savedSize = localStorage.getItem(STORAGE_KEYS.fontSize) || "font-size-a";
+    html.className = savedSize;
+
+    const setSize = (sizeClass) => {
+      html.className = sizeClass;
+      localStorage.setItem(STORAGE_KEYS.fontSize, sizeClass);
+    };
+
+    const btnA = document.getElementById("btn-font-a");
+    const btnAA = document.getElementById("btn-font-aa");
+    const btnAAA = document.getElementById("btn-font-aaa");
+
+    if (btnA) btnA.addEventListener("click", () => setSize("font-size-a"));
+    if (btnAA) btnAA.addEventListener("click", () => setSize("font-size-aa"));
+    if (btnAAA) btnAAA.addEventListener("click", () => setSize("font-size-aaa"));
+  },
+};
+
+/* PARTE DEL LABORATORIO: Peticiones en Paralelo con Promise.all */
+const loadComparison = async () => {
+  if (state.selectedTeams.length < 2) return;
+
+  const container = document.getElementById("comparison-container");
+  container.innerHTML = `
+    <div class="col-12 col-md-6"><div class="team-card" aria-busy="true">${ui.skeletonHTML()}</div></div>
+    <div class="col-12 col-md-6"><div class="team-card" aria-busy="true">${ui.skeletonHTML()}</div></div>
+  `;
+
+  if (state.activeController) state.activeController.abort();
+  state.activeController = new AbortController();
+
+  // el equipo ya viene enriquecido desde allTeams/búsqueda: nombre, bandera,
+  // código FIFA y grupo. Solo falta pedir pts/gf/ga a /get/group.
+  let detailA = enrichTeamData(state.selectedTeams[0]);
+  let detailB = enrichTeamData(state.selectedTeams[1]);
+
+  try {
+    const [standingsA, standingsB] = await Promise.all([
+      getGroupStandings(detailA.groups),
+      getGroupStandings(detailB.groups),
     ]);
 
-    // enriquecer el detalle de la API con datos del fallback (coach, stadium, name_es, etc.)
-    const detailA = enrichWithFallback(extractTeam(rawA) ?? fallbackA);
-    const detailB = enrichWithFallback(extractTeam(rawB) ?? fallbackB);
+    const rowA = standingsA?.[String(detailA.id ?? detailA._id)];
+    const rowB = standingsB?.[String(detailB.id ?? detailB._id)];
+
+    if (rowA) detailA = { ...detailA, pts: rowA.pts, gf: rowA.gf, ga: rowA.ga };
+    else detailA._liveDataUnavailable = true;
+
+    if (rowB) detailB = { ...detailB, pts: rowB.pts, gf: rowB.gf, ga: rowB.ga };
+    else detailB._liveDataUnavailable = true;
 
     container.innerHTML = "";
-    container.appendChild(buildTeamCard(detailA));
-    container.appendChild(buildTeamCard(detailB));
-
+    container.appendChild(ui.buildTeamCard(detailA));
+    container.appendChild(ui.buildTeamCard(detailB));
   } catch (err) {
     if (err.name === "AuthError") return;
     if (err.name === "AbortError") {
-      console.log("[DEBUG] Petición cancelada intencionalmente por AbortController — no es un error.");
+      console.log("[DEBUG] Petición cancelada.");
       return;
     }
-    // fallback: los selectedTeams ya tienen datos enriquecidos del paso de selección
+    detailA._liveDataUnavailable = true;
+    detailB._liveDataUnavailable = true;
     container.innerHTML = "";
-    container.appendChild(buildTeamCard(fallbackA));
-    container.appendChild(buildTeamCard(fallbackB));
+    container.appendChild(ui.buildTeamCard(detailA));
+    container.appendChild(ui.buildTeamCard(detailB));
   }
 };
 
-// petición base con Authorization header y manejo centralizado de 401
-const apiFetch = async (url, signal) => {
-  const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${authToken}` },
-    signal,
-  });
-  if (res.status === 401) {
-    showAuthModal();
-    const err = new Error("Unauthorized");
-    err.name = "AuthError";
-    throw err;
-  }
-  if (!res.ok) {
-    const err = new Error(`HTTP ${res.status}`);
-    err.status = res.status;
-    throw err;
-  }
-  return res.json();
-};
+/* ================================ INIT ================================= */
 
-const extractTeam = (raw) => {
-  if (!raw)                         return null;
-  if (raw.name_en || raw.name)      return raw;
-  if (raw.team?.name_en)            return raw.team;
-  if (Array.isArray(raw))           return raw[0] ?? null;
-  if (raw.data?.name_en)            return raw.data;
-  if (Array.isArray(raw.data))      return raw.data[0] ?? null;
-  return null;
-};
-
-// combina un objeto equipo de la API con los datos completos del FALLBACK_TEAMS
-// el dato de la API tiene prioridad; el fallback rellena lo que falte
-const enrichWithFallback = (team) => {
-  if (!team) return team;
-  const local = FALLBACK_TEAMS.find(
-    (f) => f.fifa_code === (team.fifa_code ?? team.code ?? "")
-  );
-  if (!local) return team;
-  // local primero para obtener name_es, coach, stadium, confederation, etc.
-  // luego team de la API sobreescribe con datos más frescos si los tiene,
-  // pero cada campo clave cae de vuelta al fallback si la API lo trae vacío
-  return {
-    ...local,
-    ...team,
-    name_es: local.name_es,
-    coach: team.coach ?? local.coach,
-    stadium: team.stadium ?? local.stadium,
-    confederation: team.confederation ?? local.confederation,
-    fifa_ranking: team.fifa_ranking ?? team.ranking ?? local.fifa_ranking,
-  };
-};
-
-const skeletonHTML = () => `
-  <div class="skeleton" style="height:2rem;width:50%;margin-bottom:1rem"></div>
-  <div class="skeleton" style="height:.85rem;width:30%"></div>
-  <div class="skeleton" style="height:.85rem;margin-top:.5rem"></div>
-  <div class="skeleton" style="height:.85rem;width:75%"></div>
-  <div class="skeleton" style="height:.85rem;width:60%"></div>
-  <div class="skeleton" style="height:.85rem;width:85%"></div>
-`;
-
-const buildTeamCard = (team) => {
-  const flag  = team._flag ?? getFlag(team);
-  const name  = team._name ?? getDisplayName(team);
-  const group = team.groups ?? team.group ?? "—";
-
-  // filtra las filas que tengan valor real (no "—") para que la tabla
-  // no quede llena de guiones cuando la API no devuelve un campo.
-  // Se retiran las estadísticas de partidos jugados porque el torneo aún
-  // no ha comenzado y siempre llegaban en cero, mostrando datos falsos.
-  const allStats = {
-    "Código FIFA":    team.fifa_code                       ?? "—",
-    "Grupo":          group !== "—" ? `Grupo ${group}` : "—",
-    "Confederación":  team.confederation                   ?? "—",
-    "Ranking FIFA":   team.fifa_ranking ?? team.ranking    ?? "—",
-    "Entrenador":     team.coach        ?? team.manager    ?? "—",
-    "Estadio":        team.stadium                         ?? "—",
-  };
-
-  const rows = Object.entries(allStats)
-    .filter(([, v]) => v !== "—")
-    .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`)
-    .join("");
-
-  const flagImg = team.flag
-    ? `<img src="${team.flag}" alt="Bandera de ${name}"
-           class="team-card__flag-img" loading="lazy"
-           onerror="this.style.display='none'">`
-    : "";
-
-  const col  = document.createElement("div");
-  col.className = "col-12 col-md-6";
-
-  const card = document.createElement("article");
-  card.className = "team-card";
-  card.setAttribute("aria-label", `Datos del equipo ${name}`);
-  card.innerHTML = `
-    <header class="team-card__header">
-      <span class="team-card__flag" aria-hidden="true">${flag}</span>
-      ${flagImg}
-      <div>
-        <div class="team-card__name">${name}</div>
-        <div class="team-card__group">${group !== "—" ? `Grupo ${group}` : ""}</div>
-      </div>
-    </header>
-    <table class="team-stats" aria-label="Estadísticas de ${name}">
-      <tbody>${rows}</tbody>
-    </table>
-  `;
-
-  col.appendChild(card);
-  return col;
-};
-
-// PARTE DEL LABORATORIO: Inicialización
 const init = async () => {
+  ui.setupFontSize();
   await authenticate();
-  await loadAllTeams();
+  await Promise.all([loadAllTeams(), loadAllGroups()]);
 
-  const input           = document.getElementById("search-input");
+  const input = document.getElementById("search-input");
   const debouncedSearch = debounce(searchTeams, 300);
 
-  input.addEventListener("input",   (e) => debouncedSearch(e.target.value));
+  input.addEventListener("input", (e) => debouncedSearch(e.target.value));
 
-  // mostrar todos los equipos al hacer foco (aunque el campo esté vacío)
   input.addEventListener("focus", () => {
-    if (allTeams.length > 0) searchTeams(input.value);
+    if (state.allTeams.length > 0) searchTeams(input.value);
   });
 
   input.addEventListener("keydown", (e) => {
@@ -640,24 +749,27 @@ const init = async () => {
 
   const modalBtn = document.getElementById("modal-submit");
   modalBtn.addEventListener("click", async () => {
-    const email   = document.getElementById("modal-email").value.trim();
-    const pass    = document.getElementById("modal-pass").value.trim();
+    const email = document.getElementById("modal-email").value.trim();
+    const pass = document.getElementById("modal-pass").value.trim();
     const errorEl = document.getElementById("modal-error");
 
-    if (!email || !pass) { errorEl.textContent = "Completa los dos campos."; return; }
+    if (!email || !pass) {
+      errorEl.textContent = "Completa los dos campos.";
+      return;
+    }
 
-    errorEl.textContent  = "";
+    errorEl.textContent = "";
     modalBtn.textContent = "Ingresando...";
-    modalBtn.disabled    = true;
+    modalBtn.disabled = true;
 
     await authenticate(email, pass);
-    await loadAllTeams();
+    await Promise.all([loadAllTeams(), loadAllGroups()]);
 
     modalBtn.textContent = "Volver a ingresar";
-    modalBtn.disabled    = false;
-    hideAuthModal();
+    modalBtn.disabled = false;
+    ui.hideAuthModal();
 
-    if (selectedTeams.length === 2) loadComparison();
+    if (state.selectedTeams.length === 2) loadComparison();
   });
 
   ["modal-email", "modal-pass"].forEach((id) => {

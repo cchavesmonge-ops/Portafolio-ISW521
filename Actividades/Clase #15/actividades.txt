@@ -1,0 +1,35 @@
+actividad 1
+1-
+	a. Web API del navegador
+	b. En Node existe una version distinta implementada por un RunTime, asi que el código funciona, pero técnicamente no es la misma API 	del navegador
+2-
+	a. API de ECMAScript
+	b. Funciona igual en cualquier motod de JS incluyendo Node, no hay alguna diferencia
+3-
+	a. Web API del navegador
+	b. Da un error de referencia
+
+actividad 2
+a. const segundoLi = document.querySelectorAll("#lista li")[1];
+b. const primerLi = document.querySelector("#lista li");
+   const segundoLi = primerLi.nextElementSibling;
+	
+	el que sigue funcionando correctamente es con traversal
+
+actividad 3
+Riesgo: Vulnerabilidad XSS (Cross-Site Scripting) por usar innerHTML con datos sin validar.
+Corrección: Usar textContent o crear el elemento con createElement() y asignar el texto mediante textContent.
+classList: Utilizar classList.add("invalido") para resaltar el campo cuando la entrada sea sospechosa y classList.remove("invalido") cuando sea válida.
+
+actividad 4
+
+const ul = document.querySelector("ul");
+const fragment = document.createDocumentFragment();
+
+for (let i = 1; i <= 200; i++) {
+    const li = document.createElement("li");
+    li.textContent = `Elemento ${i}`;
+    fragment.appendChild(li);
+}
+
+ul.appendChild(fragment);

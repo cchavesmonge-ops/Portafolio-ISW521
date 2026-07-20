@@ -1,0 +1,15 @@
+actividad #1
+
+esta guardado en sessionstorage, asi que se vacio el carrito el cerrar la sesión, debería guardarlo en localstorage o de alguna forma en la nube/red
+
+actividad #2
+
+el arreglo grande se serializa en cada pulsación, se debería aplicar un debounce y que espere un tiempo corto sin alguna actividad para activar el evento de guardado
+
+actividad #3
+
+solo viaja a la que tiene el path pq la de perfil no cae dentro del admin, el path define donde la cookie es valida
+
+actividad #4
+
+cookie httpOnly, secure y SameSite=Strict, como frontend y backend comparten el dominio, no hace falta mandar el token a mano entre distintos orígenes, además de eliminar el riesgo de robo por XSS, mas critico que el riesgo CSRF, se mitiga con SameSite y tokens adicionales

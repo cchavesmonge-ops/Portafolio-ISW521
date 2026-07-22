@@ -1,0 +1,25 @@
+Actividad 1
+-hay que tocar 2 líneas, estas serán valor y historial, si existiera un contador del headers hay que tocar una tercer linea
+-si alguien olvida actualizar una linea la interfaz mostrara un dato viejo, mientras el estado real ya cambio, ese es el problema de sincronización manual
+-este es un dolor que los frameworks declarativos resuelven
+
+actividad 2
+-ninguna, es suficiente con agregar otro estado, el historial, y mapeado en el JSX con .map()
+-la vista se actualiza sola por el react detecta el cambio de estado y vuelve a renderizar esa parte
+-esa es la diferencia central, es imperativo el programador es responsable de cada actualización visual, en declarativo es el framework
+
+actividad 3
+-debe tocar solo un nodo, el que contiene el nombre del usuario #237
+-tocar los 500 significa que el diffings no esta funcionando bien o hay una ley mal puesta en la lista
+-este es justamente el valor virtual del DOM: convertir un problema de repintar todo en un problema de encontrar la diferencia minima
+
+actividad 4
+
+-angular suele se la mejor opcion, la estructura opinada reduce la variabilidad entre desarrolladores distintos que entran y salen del proyecto
+-TypeScript obligatorio y la inyeccion de dependencias facilitan que un desarrollador nuevo en tienda el codigo sin tanta curva de adaptacion
+-el costo, curva de aprendizaje y peso del framework, se justifica porque el proyecto es grande y de larga duracion, no un sitio pequeño de vida corta
+
+actividad 5
+-enrutamiento
+-pasarelas de pago
+-interfaz de usuario

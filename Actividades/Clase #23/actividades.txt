@@ -1,0 +1,36 @@
+actividad 1
+
+interface Caja<T> {
+    contenido: T;
+    abrir(): T;
+}
+
+function intercambiar<T>(a: T, b: T): [T, T] {
+    return [b, a];
+}
+
+- type script muestra un error porque la función genérica requiere que ambos valores sean del mismo tipo
+- porque no puede inferir un único tipo T un valor es string y el otro es number, por lo que se rompe la restricción de la función
+
+actividad 2
+
+type ProduccionNuevo = Omit<Producto, 'id'>;
+
+type ActualizarInventario =
+  Partial<Pick<Producto, 'precio' | 'stock'>>;
+
+hace opcionales precio y stock para un PATCH
+
+actividad 3
+
+- smart, porque hace el fetch directamente
+- un container/hook realiza el fetch y tableroClima solo recibe y muestra los datos como Dumb component
+
+actividad 4
+
+se intentan modificar los props dentro de button, pero estas son inmutables
+
+<Button
+  etiqueta={deshabilitado ? "Cargando..." : "Enviar"}
+  deshabilitado={deshabilitado}
+/>
